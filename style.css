@@ -1,0 +1,57 @@
+*{
+    box-sizing: border-box;
+}
+
+.topnav ul{
+    list-style-type: none;
+    margin: 0;
+}
+
+.topnav li{
+    display: inline;
+    font-size: 28pt;
+    margin-left: 10px;
+}
+
+a{
+    text-decoration: none;
+    color: black;
+}
+
+a:hover{
+    color: black;
+    opacity: 70%;
+}
+
+.container{
+    margin: 30px;
+}
+
+.center{
+    text-align: center;
+}
+
+.column-contact{
+    float: left;
+    width: 50%;
+}
+
+.column-about{
+    float: left;
+    width: 33.33%;
+}
+
+.row:after{
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.contact{
+    font-size: 20pt;
+    font-weight: bold;
+}
+
+p{
+    font-size: 16pt;
+}
