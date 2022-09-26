@@ -56,16 +56,11 @@ a:hover{
     display: table-cell;
 }
 
-.row{
-    width: 100%;
-    display: tab;
-}
-
-/* .row:after{
+.row:after{
     content: "";
     display: table;
     clear: both;
-} */
+}
 
 .contact{
     font-size: 20pt;
