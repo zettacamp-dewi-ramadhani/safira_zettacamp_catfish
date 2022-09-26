@@ -58,7 +58,7 @@ a:hover{
 
 .row{
     width: 100%;
-    display: table;
+    display: tab;
 }
 
 /* .row:after{
