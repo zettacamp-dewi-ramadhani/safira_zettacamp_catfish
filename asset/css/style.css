@@ -19,6 +19,10 @@ td, th{
     text-align: center;
 }
 
+.desc{
+    margin-left: 5px;
+}
+
 .shopping tr:nth-child(even){
     background-color: azure;
 }
