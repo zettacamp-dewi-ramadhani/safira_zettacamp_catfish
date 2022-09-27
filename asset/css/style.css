@@ -12,14 +12,14 @@ td, th{
 }
 
 .shopping{
-    width: 70%;
+    width: 100%;
 }
 
 .item{
     text-align: center;
 }
 
-tr:nth-child(even){
+.shopping tr:nth-child(even){
     background-color: azure;
 }
 
