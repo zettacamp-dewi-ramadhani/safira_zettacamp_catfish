@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="asset/css/style.css">
+    <title>Task HTML Day 4</title>
+</head>
+<body>
+    <!-- multimedia -->
+    <section>
+    <h1>Multimedia</h1>
+    <p style="font-size: 14pt;">This is playlist and gallery of my favorites music, video, and image</p>
+    
+        <!-- audio -->
+        <h2>Musics</h2>
+        <div class="row">
+            <div class="col">
+                <p>En Fermant Les Yeux - Solita</p>
+                <audio src="asset/media/En fermant les yeux by Solita - 3 gatsu no lion Full song..mp3" controls>
+                    Your browser doesn't support the audio element
+                </audio>
+            </div>
+
+            <div class="col">  
+                <p>Mirrorball - Taylor Swift</p>
+                <audio src="asset/media/Taylor Swift – mirrorball (Official Lyric Video) (320 kbps).mp3" controls>
+                    Your browser doesn't support the audio element
+                </audio>
+            </div>
+        </div>
+        <br><br>
+
+        <div class="row">
+            <iframe style="border-radius:12px;" src="https://open.spotify.com/embed/track/4RVwu0g32PAqgUiJoXsdF8?utm_source=generator&theme=0" width="25%" height="200px" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:12px;" src="https://open.spotify.com/embed/track/2xtP8RNbo2BEMzLX7tK7aq?utm_source=generator&theme=0" width="25%" height="200px" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:12px;" src="https://open.spotify.com/embed/track/6heT4iobgbs6RSYnen31L6?utm_source=generator&theme=0" width="25%" height="200px" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            <iframe style="border-radius:12px;" src="https://open.spotify.com/embed/track/472KSrkzMNFWHPSjCN331O?utm_source=generator&theme=0" width="25%" height="200px" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+        <hr>
+
+        <!-- video -->
+        <h2>Videos</h2>
+        <div class="row">
+            <iframe width="400px" height="200px" src="https://www.youtube.com/embed/8PmK71Yv6-Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe width="400px" height="200px" src="https://www.youtube.com/embed/dg95rKkhJDA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe width="400px" height="200px" src="https://www.youtube.com/embed/ZCaZz0pzsms" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <hr>
+
+        <!-- picture -->
+        <h2>Images</h2>
+        <div class="row">
+            <img src="asset/img/photo.jpg" alt="Ice Bear" width="200px" height="200px">
+            <img src="asset/img/umaru.jpg" alt="Umaru-chan" width="400px" height="200px">
+            <img src="https://i.pinimg.com/564x/45/f8/5e/45f85ee4248367769812b9ae59d08224.jpg" alt="Pikachu" width="200px" height="200px">
+            <img src="https://i.pinimg.com/564x/0d/c9/6f/0dc96f1a433d9b69f1f5be330a894038.jpg" alt="Wallpaper" width="400px" height="200px">
+        </div>
+        <hr>
+    </section>
+
+    <!-- Form -->
+    <section>
+        <form action="">
+            <fieldset>
+                <legend><h1>Identity Form</h1></legend>
+
+                <!-- first name -->
+                <label for="fname"><b>First Name</b></label>
+                <input type="text" id="fname" name="fname">
+                
+                <!-- last name -->
+                <label for="lname"><b>Last Name</b></label>
+                <input type="text" id="lname" name="lname">
+                <br><br>
+                <!-- gender - radio -->
+                <label for=""><b>Gender</b></label><br>
+                <input type="radio" name="gender" id="male">
+                <label for="male">Male</label>
+                <input type="radio" name="gender" id="female">
+                <label for="female">Female</label>
+                <br><br>
+
+                <!-- age - number -->
+                <label for="age"><b>Age</b></label>
+                <input type="number" name="age" id="age">
+                <br><br>
+            
+                <!-- telp -->
+                <label for="phone"><b>Phone</b></label>
+                <input type="text" name="phone" id="phone">
+                <br><br>
+
+                <!-- biography - textarea -->
+                <label for="bio"><b>Biography</b></label> <br>
+                <textarea name="bio" id="bio" cols="66" rows="10"></textarea>
+                <br><br>
+
+                <!-- email -->
+                <label for="email"><b>Email</b></label>
+                <input type="email" name="email" id="email">
+                <br><br>
+                <!-- pass -->
+                <label for="pass"><b>Password</b></label>
+                <input type="password" name="pass" id="pass">
+                <br><br>
+
+                <!-- url for sosmed -->
+                <label for=""><b>Social Media</b></label> <br>
+                <label for="ig">Instagram</label>
+                <input type="url" name="ig" id="ig">
+                <br><br>
+
+                <label for="twitter">Twitter</label>
+                <input type="url" name="twitter" id="twitter">
+                <br><br>
+
+                <label for="linkedin">Linkedin</label>
+                <input type="url" name="linkedin" id="linkedin">
+            </fieldset>
+        </form>
+    </section>
+
+    <!-- footer -->
+    <footer>
+        <p>&copy; pilak 2022</p>
+    </footer>
+</body>
+</html>
