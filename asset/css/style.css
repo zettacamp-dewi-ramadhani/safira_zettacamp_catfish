@@ -30,3 +30,28 @@ td, th{
 .price{
     text-align: right;
 }
+
+.row{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.col{
+    display: flex;
+    flex-direction: column;
+}
+
+.row > div{
+    margin: 10px;
+    text-align: center;
+    font-size: 16pt;
+}
+
+iframe{
+    padding: 5px;
+}
+
+.row img{
+    margin: 2px;
+}
