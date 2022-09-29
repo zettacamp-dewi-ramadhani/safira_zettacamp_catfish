@@ -15,6 +15,15 @@ td, th{
     width: 100%;
 }
 
+.table-form{
+    width: 100%;
+    text-align: center;
+}
+
+.table-form img{
+    width: 200px;
+}
+
 .item{
     text-align: center;
 }
@@ -54,4 +63,37 @@ iframe{
 
 .row img{
     margin: 2px;
+}
+
+nav{
+    padding: 10px;
+    background-color: azure;
+}
+
+.topnav li{
+    display: inline;
+    margin-left: 10px;
+    margin-right: 10px
+}
+
+.topnav ul{
+    list-style-type: none;
+}
+
+li a{
+    font-size: 18pt;
+}
+
+a{
+    text-decoration: none;
+    color: black;
+    font-size: 14pt;
+}
+
+a:hover{
+    color: gray;
+}
+
+.center{
+    text-align: center;
 }
