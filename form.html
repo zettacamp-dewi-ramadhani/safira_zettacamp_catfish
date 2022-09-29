@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="asset/css/style.css">
+    <title>Task HTML Day 5</title>
+</head>
+<body>
+    <header>
+        <nav class="topnav">
+            <ul class="center">
+                <li><a href="form.html">Form Input Data</a></li>
+                <li><a href="tableData.html">Tabel Data</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- form input -->
+    <section>
+        <form action="">
+            <fieldset>
+                <legend class="center"><h1>Form Input Data</h1></legend>
+                <label for="fname">Full Name &nbsp;:</label>
+                <input type="text" id="fname" name="fname"><br><br>
+
+                <label for="nname">Nick Name &nbsp;:</label>
+                <input type="text" id="nname" name="nname"><br><br>
+
+                <label>Gender &nbsp;:</label>
+                <input type="radio" value="Male" id="male" name="gender">
+                <label for="male">Male</label>
+                <input type="radio" value="Female" id="female" name="gender">
+                <label for="female">Female</label><br><br>
+
+                <label for="age">Age &nbsp;:</label>
+                <input type="number" name="age" id="age"><br><br>
+
+                <label for="phone">Phone &nbsp;:</label>
+                <input type="text" name="phone" id="phone"><br><br>
+
+                <label for="email">Email &nbsp;:</label>
+                <input type="email" name="email" id="email"><br><br>
+
+                <label for="ig">Instagram</label>
+                <input type="url" name="ig" id="ig"><br><br>
+
+                <label for="image">Upload Your Image Profile</label><br><br>
+                <input type="file" name="image" id="image" accept="image/jpeg, image/png"><br><br>
+
+                <input type="button" value="Submit" id="submit">
+                <input type="reset" value="Reset">
+            </fieldset>
+        </form>
+        <hr>
+    </section>
+
+    <!-- tabel output -->
+    <section>
+        <h1>Data Output</h1>
+        <div id="img"></div>
+        <p>First Name : <span id="full"></span></p>
+        <p>Nick Name : <span id="nick"></span></p>
+        <p>Gender : <span id="gender"></span></p>
+        <p>Age : <span id="umur"></span></p>
+        <p>Phone : <span id="telp"></span></p>
+        <p>Email : <span id="mail"></span></p>
+        <p>Instagram : <span id="insta"></span></p>    
+
+        <h1 class="center">List Data Output</h1>
+        <table class="table-form" id="data">
+            <tr>
+                <th>Full Name</th>
+                <th>Nick Name</th>
+                <th>Gender</th>
+                <th>Age</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Instargram</th>
+                <th>Photo</th>
+            </tr>
+        </table>
+    </section>
+
+    <footer>
+        <p>&copy; pilak 2022</p>
+    </footer>
+
+    <script>
+        document.getElementById("submit").onclick=function(){
+            var full = document.getElementById("full");
+            full.innerHTML = document.getElementById("fname").value;
+            
+            var nick = document.getElementById("nick");
+            nick.innerHTML = document.getElementById("nname").value;
+
+            var jk = document.getElementById("gender");
+            jk.innerHTML = document.querySelector('input[name="gender"]:checked').value;
+
+            var umur = document.getElementById("umur");
+            umur.innerHTML = document.getElementById("age").value;
+
+            var telp = document.getElementById("telp");
+            telp.innerHTML = document.getElementById("phone").value;
+
+
+            var mail = document.getElementById("mail");
+            mail.innerHTML = document.getElementById("email").value;
+
+            var insta = document.getElementById("insta");
+            insta.innerHTML = document.getElementById("ig").value;
+
+            var table = document.getElementById("data");
+            var row = table.insertRow(-1);
+            var fname = row.insertCell(0);
+            var nname = row.insertCell(1);
+            var gender = row.insertCell(2);
+            var age = row.insertCell(3);
+            var phone = row.insertCell(4);
+            var email = row.insertCell(5);
+            var ig = row.insertCell(6);
+            var photo = row.insertCell(7);
+
+            fname.innerHTML = document.getElementById("fname").value;
+            nname.innerHTML = document.getElementById("nname").value;
+            gender.innerHTML = document.querySelector('input[name="gender"]:checked').value;
+            age.innerHTML = document.getElementById("age").value;
+            phone.innerHTML = document.getElementById("phone").value;
+            email.innerHTML = document.getElementById("email").value;
+            ig.innerHTML = document.getElementById("ig").value;
+            var file = document.getElementsByName('image')[0].files[0];
+            var src = URL.createObjectURL(file);
+            var img = document.createElement('img');
+            var pp = document.createElement('img');
+            img.src = src;
+            pp.src = src;
+            photo.appendChild(img).style.width="200px";
+            document.getElementById("img").appendChild(pp).style.width="200px";
+
+            return false;
+        }
+    </script>
+</body>
+</html>
