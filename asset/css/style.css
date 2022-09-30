@@ -1,0 +1,70 @@
+*{
+    box-sizing: border-box;
+}
+
+body{
+    background-color: white;
+    padding: 8px;
+}
+
+.navbar{
+    padding: 5px;
+}
+
+.navbar ul{
+    list-style-type: none;
+    padding: 0;
+}
+
+.navbar li{
+    font-size: 18pt;
+    text-align: left;
+    display: inline;
+    margin: 5px;
+}
+
+a{
+    text-decoration: none;
+    color: black;
+}
+
+section{
+    padding: 5px;
+}
+
+.card{
+    box-shadow: 0 4px 8px 0;
+    transition: 0.3s;
+    width: 33%;
+    border-radius: 8px;
+    height: 350px;
+}
+
+article .container{
+    padding: 3px 10px 20px 10px;
+}
+
+.row{
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+    justify-content: space-around;
+}
+
+.row>article, footer{
+    margin: 10px;
+}
+
+.benefit{
+    margin: 2px;
+}
+
+.btn-reg{
+    display: flex;
+    justify-content: center;
+}
+
+.text-center{
+    text-align: center;
+}
+
