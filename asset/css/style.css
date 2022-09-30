@@ -117,3 +117,32 @@ button a{
     display: flex;
     flex-direction: column;
 }
+
+.reg-sec{
+    padding: 50px 5px 25px 5px;
+}
+.form-con{
+    padding: 30px;
+    background-color: #b3d9ff;
+    margin: 0 300px 0 300px;
+}
+
+input, select{
+    width: 100%;
+    padding: 15px;
+    margin: 5px 0 22px 0;
+    display: inline-block;
+    border: none;
+    background-color: #f2f2f2;
+}
+
+form button{
+    width: 100%;
+    background-color: #003566;
+    color: white;
+    font-size: 16pt;
+    border-radius: 8px;
+    border: none;
+    outline: 0;
+    padding: 10px;
+}

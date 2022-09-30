@@ -18,21 +18,32 @@
     </header>
 
     <main>
-        <h1>Register</h1>
-        <form action="">
-            <input type="text" name="nama" id="nama" placeholder="Name"><br><br>
-            <input type="email" name="email" id="mail" placeholder="Email"><br><br>
-            <input type="password" name="pass" id="pass" placeholder="Password"><br><br>
-            <input type="password" name="cpass" id="cpass" placeholder="Password Confirmation"><br><br>
-            <select name="category" id="category">
-                <option value="">Choose the account category</option>
-                <option value="free">Free</option>
-                <option value="personal">Personal</option>
-                <option value="group">Group</option>
-            </select><br><br>
+        <section class="reg-sec">
+            <article class="form-con">
+                <h1>Register</h1>
+                <form action="">
+                    <label for="nama">Name</label>
+                    <input type="text" name="nama" id="nama" placeholder="Enter Your Name"><br><br>
 
-            <button><a href="profile.html">Register</a></button>
-        </form>
+                    <label for="email">Email</label><br>
+                    <input type="email" name="email" id="mail" placeholder="Enter Your Email"><br><br>
+
+                    <label for="pass">Password</label><br>
+                    <input type="password" name="pass" id="pass" placeholder="Enter Your Password"><br><br>
+                    <label for="cpass">Repeat Password</label><br>
+                    <input type="password" name="cpass" id="cpass" placeholder="Repeat Your Password"><br><br>
+                    <label for="category">Account Category</label><br>
+                    <select name="category" id="category">
+                        <option value="">Choose the account category</option>
+                        <option value="free">Free</option>
+                        <option value="personal">Personal</option>
+                        <option value="group">Group</option>
+                    </select><br><br>
+            
+                    <button><a href="profile.html">Register</a></button>
+                </form>
+            </article>
+        </section>
     </main>
 
     <footer class="row">
