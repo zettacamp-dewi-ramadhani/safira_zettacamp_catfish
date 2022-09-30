@@ -13,11 +13,11 @@ body{
 }
 
 h1{
-    font-size: 30pt;
+    font-size: 28pt;
 }
 
 p, li{
-    font-size: 14pt;
+    font-size: 12pt;
 }
 
 header{
@@ -111,4 +111,9 @@ footer a{
 
 button a{
     color: white;
+}
+
+.col{
+    display: flex;
+    flex-direction: column;
 }
