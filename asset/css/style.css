@@ -118,7 +118,7 @@ button a{
     flex-direction: column;
 }
 
-.reg-sec{
+.sec{
     padding: 50px 5px 25px 5px;
 }
 .form-con{
@@ -127,7 +127,7 @@ button a{
     margin: 0 300px 0 300px;
 }
 
-input, select{
+.form-con input, select{
     width: 100%;
     padding: 15px;
     margin: 5px 0 22px 0;
@@ -136,7 +136,7 @@ input, select{
     background-color: #f2f2f2;
 }
 
-form button{
+button{
     width: 100%;
     background-color: #003566;
     color: white;
@@ -145,4 +145,27 @@ form button{
     border: none;
     outline: 0;
     padding: 10px;
+    margin: 10px 0;
+}
+
+.pp{
+    width: 250px;
+}
+
+table{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td,th{
+    border: 1px solid #f2f2f2;
+    padding: 8px;
+}
+
+th{
+    background-color: #cce6ff;
+}
+
+.row .form-con{
+    margin: 0px;
 }
