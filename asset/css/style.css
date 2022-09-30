@@ -43,7 +43,7 @@ a{
 }
 
 section{
-    padding: 120px 5px 120px 5px;
+    padding: 100px 35px;
 }
 
 .content{
@@ -116,6 +116,7 @@ button a{
 .col{
     display: flex;
     flex-direction: column;
+    padding: 10px;
 }
 
 .sec{
@@ -168,4 +169,8 @@ th{
 
 .row .form-con{
     margin: 0px;
+}
+
+.song{
+    padding: 50px;
 }
