@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Day 1 Project 2</title>
+
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+
+        header, section{
+            margin: 10px;
+        }
+
+        header{
+            text-align: center;
+        }
+
+        table{
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th{
+            border: 1px solid;
+            padding: 5px;
+        }
+
+        .first{
+            background-color: green;
+        }
+
+        .second{
+            background-color: red;
+        }
+
+        .third{
+            background-color: blue;
+            color: white;
+        }
+
+        .center{
+            text-align: center;
+        }
+
+        .movie{
+            width: 200px;
+        }
+
+        .song{
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CSS Day 1 #2 - Multiple Table</h1>
+    </header>
+
+    <main>
+        <!-- hobby -->
+        <section>
+            <table>
+                <caption><h2>Hobby</h2></caption>
+                <tr class="first">
+                    <th>Hobby</th>
+                    <th>Detail</th>
+                    <th>Favorites</th>
+                </tr>
+    
+                <tr>
+                    <td><b>Reading</b></td>
+                    <td>I love reading book especially Lexie Xu's novel.</td>
+                    <td><i>
+                        <ul>
+                            <li>Pengurus MOS Harus Mati</li>
+                            <li>Omen</li>
+                            <li>Kutukan Hantu Opera</li>
+                            <li>Sang Penghianat</li>
+                            <li>Rahasia Tergelap</li>
+                            <li>Rahasia Ayu</li>
+                        </ul>
+                    </i></td>
+                </tr>
+    
+                <tr>
+                    <td><b>Listening Music</b></td>
+                    <td>I like to listening music mostly while studying or work and while 
+                        I'm get bored and sing it.</td>
+                    <td>
+                        <ul>
+                            <li>K-pop</li>
+                            <li>Anime song</li>
+                            <li>English song</li>
+                            <li>Movie soundtrack</li>
+                        </ul>
+                    </td>
+                </tr>
+    
+                <tr>
+                    <td><b>Watching Movie</b></td>
+                    <td> I like to watching movie or any video content while I've freetime.</td>
+                    <td>
+                        <ul>
+                            <li>Korea Drama</li>
+                            <li>Anime</li>
+                            <li>Disney</li>
+                            <li>Action</li>
+                            <li>Fiction</li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+        </section>
+
+        <hr>
+
+        <!-- movies -->
+        <section>
+            <table>
+                <caption><h2>Favorites Movie</h2></caption>
+                <tr>
+                    <th>Poster</th>
+                    <th>Title</th>
+                    <th>Synopsis</th>
+                    <th>Duration</th>
+                </tr>
+
+                <tr class="second">
+                    <td>
+                        <img class="center movie" src="https://m.media-amazon.com/images/M/MV5BNzhjZTNkNzUtMmZhYS00ZmQ0LTkyNTQtMTk0MmNiMjM0N2IzXkEyXkFqcGdeQXVyNjUwMTQ4NjE@._V1_.jpg"
+                        alt="Full Score of Fear">
+                    </td>
+                    <td>Detective Conan : Full Score of Fear</td>
+                    <td>
+                        A series murders aimed at musicians occurs, and most of the victims are from 
+                        a famous pianist's music academy
+                    </td>
+                    <td>1h 56m</td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <img class="center movie" src="https://upload.wikimedia.org/wikipedia/en/thumb/0/0f/Detective-Conan-Movie-23.jpg/220px-Detective-Conan-Movie-23.jpg"
+                        alt="The Fist of Blue Sapphire" width="200px">
+                    </td>
+                    <td>Detective Conan : The Fist of Blue Sapphire</td>
+                    <td>
+                       The world's largest sapphire was alleged to have been lost at sea near Singapore
+                       in the late 19th century. When a local billonaire appears to the public with a plan
+                       to retrieve the sapphire, a murder occurs in Marina Bay Sands
+                    </td>
+                    <td>1h 50m</td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <img class="center movie" src="https://m.media-amazon.com/images/M/MV5BZWM1Njk0MDAtYzZiYS00NTE0LTg4OWEtYWFiMmQ1ZDM0MTViXkEyXkFqcGdeQXVyNzEyMDQ1MDA@._V1_FMjpg_UX1000_.jpg"
+                        alt="The Scarlet Bullet" width="200px">
+                    </td>
+                    <td>Detective Conan : The Scarlet Bullet</td>
+                    <td>
+                        At the opening ceremony of the WSG (World Sports Games) Tokyo Games, a sports festival held once 
+                        every four years, it is announced that the world's first vacuum superconducting maglev with a 
+                        maximum speed of 1,000 kilometers per hour will open. While attracting attention from around the 
+                        world, top executives of large companies are kidnapped from the party venue where WSG tournament 
+                        sponsors gather. Conan moves toward a solution and eventually finds a connection with the WSG 
+                        abduction case that occurred 15 years ago in Boston, USA.
+                    </td>
+                    <td>1h 50m</td>
+                </tr>
+            </table>
+        </section>
+
+        <hr>
+        
+        <!-- Songs -->
+        <section>
+            <table>
+                <caption><h2>Favorites Song</h2></caption>
+                <tr>
+                    <th>Cover</th>
+                    <th>Title</th>
+                    <th>Artist</th>
+                    <th>Duration</th>
+                </tr>
+
+                <tr>
+                    <td class="center">
+                        <img class="song" src="https://i.scdn.co/image/ab67616d0000b273e95d9f505f2469cf74727805" alt="Honey" width="100px">
+                    </td>
+                    <td>Honey</td>
+                    <td>Solar</td>
+                    <td>02:47</td>
+                </tr>
+
+                <tr class="third">
+                    <td class="center">
+                        <img class="song" src="data:image/jpeg;base64,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" alt="Born Pink" width="100px">
+                    </td>
+                    <td>Ready For Love</td>
+                    <td>Blackpink</td>
+                    <td>03:04</td>
+                </tr>
+
+                <tr>
+                    <td class="center">
+                        <img class="song" src="https://upload.wikimedia.org/wikipedia/en/5/59/Aespa_-_Girls.png" alt="Girls" width="100px">
+                    </td>
+                    <td>Girl</td>
+                    <td>Aespa</td>
+                    <td>04:00</td>
+                </tr>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy pilak 2022</p>
+    </footer>
+</body>
+</html>
