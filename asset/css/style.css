@@ -1,0 +1,35 @@
+*{
+    box-sizing: border-box;
+    font-family:'Segoe UI', sans-serif ;
+    color: rgb(13, 52, 121);
+}
+
+section{
+    margin: 10px;
+}
+
+.card{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    width: 30%;
+    background-color: aliceblue;
+    padding-top: 8px;
+    border: 1px solid rgb(89, 163, 229);
+}
+
+.container{
+    padding: 2px 15px;
+}
+
+.row{
+    display: flex;
+    flex-direction: row;
+}
+
+.row>article{
+    margin: 10px;
+
+}
+
+.center{
+    text-align: center;
+}
