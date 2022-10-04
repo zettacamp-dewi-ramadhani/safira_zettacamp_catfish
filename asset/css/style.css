@@ -4,10 +4,17 @@
     color: rgb(13, 52, 121);
 }
 
+body{
+    margin: 0;
+}
+
 section{
     margin: 10px;
 }
 
+header{
+    padding: 15px 8px 10px 8px;
+}
 .card{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     width: 30%;
@@ -31,5 +38,15 @@ section{
 }
 
 .center{
+    text-align: center;
+}
+
+footer{
+    padding: 8px;
+    background-color: rgb(44, 104, 156);
+}
+
+footer p{
+    color: white;
     text-align: center;
 }
