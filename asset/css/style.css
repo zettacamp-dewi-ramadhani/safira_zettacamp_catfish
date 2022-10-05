@@ -4,23 +4,40 @@
 
 body{
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family:'Segoe UI', sans-serif;
 }
 
 .card{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     text-align: center;
-    padding: 8px 5px 30px 5px;
+    padding: 8px 15px 30px 15px;
     width: 30%;
     height: 500px;
 }
 
-header{
-    text-align: center;
+p{
+    text-align: justify;
 }
 
 header h1{
     margin-bottom: 0;
+    text-align: center;
+}
+
+footer{
+    padding: 10px;
+    text-align: center;
+    color: white;
+    background-color: black;
+}
+
+footer p{
+    text-align: center;
+}
+
+footer a{
+    margin: 15px;
+    color: white;
 }
 
 .row{
@@ -70,4 +87,64 @@ a{
 p::selection{
     color: white;
     background-color: black;
+}
+
+.details, .navbar{
+    padding: 10px;
+    margin: 10px;
+}
+
+.navbar a{
+    font-size: 20pt;
+    font-weight: bold;
+}
+
+.details .row{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content:space-evenly;
+    align-items: center;
+}
+
+.details .row>article{
+    width: 35rem;
+}
+
+.details img{
+    width: 350px;
+}
+
+.spec{
+    padding: 15px;
+}
+
+dd{
+    padding-bottom: 2rem;
+    padding-top: 1rem;
+}
+
+dl{
+    background-color: #f2f2f2;
+}
+
+.about{
+    padding: 2.5rem;
+}
+
+.about h1{
+    font-size: 2rem;
+    border-bottom: 2px dashed black;
+    padding-bottom: 1rem;
+}
+
+.contact{
+    text-align: center;
+    margin: 2rem;
+    padding: 2rem;
+}
+
+.contact img{
+    width: 3rem;
+    margin: 4px;
 }
