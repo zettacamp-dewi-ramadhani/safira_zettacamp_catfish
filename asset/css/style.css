@@ -224,3 +224,7 @@ li img{
 .row-item>div{
     margin-left: 1rem;
 }
+
+.card-list:hover{
+    outline : 5px solid rgba(0, 0, 0, 0.2);
+}
