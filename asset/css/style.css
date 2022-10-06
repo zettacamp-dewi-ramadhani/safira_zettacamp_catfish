@@ -10,18 +10,35 @@ body{
 .card{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     text-align: center;
-    padding: 8px 15px 30px 15px;
+    padding-left: 15px;
+    padding-right: 15px;
     width: 30%;
     height: 500px;
+}
+
+.pt-1{
+    padding-top: 0.5rem;
+}
+
+.pb-1{
+    padding-bottom: 2rem;
 }
 
 p{
     text-align: justify;
 }
 
-header h1{
+.title{
     margin-bottom: 0;
     text-align: center;
+    font-size: 2.5rem;
+    margin-top: 2rem;
+}
+
+.sticky{
+    position: sticky;
+    top: 0;
+    background-color: white;
 }
 
 footer{
@@ -56,6 +73,14 @@ footer a{
 .second{
     margin-top: 1rem;
     margin-bottom: 1rem;    
+}
+
+.mt-1{
+    margin-top: 1rem;
+}
+
+.mb-1{
+    margin-bottom: 1rem;
 }
 
 .third{
@@ -147,4 +172,55 @@ dl{
 .contact img{
     width: 3rem;
     margin: 4px;
+}
+
+.scroll-con{
+    overflow-y: scroll;
+    height: 450px;
+}
+
+.card-list{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    /* padding-left: 15px;
+    padding-right: 15px; */
+    width: 40%;
+}
+
+.row-list{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.list-header{
+    text-align: center;
+}
+
+li:nth-child(odd){
+    background-color: #f2f2f2;
+}
+
+.card-list ul{
+    padding: 0;
+}
+
+li{
+    list-style-type: none;
+}
+
+li img{
+    width: 50px;
+    margin: 10px;
+}
+
+.row-item{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.row-item>div{
+    margin-left: 1rem;
 }
