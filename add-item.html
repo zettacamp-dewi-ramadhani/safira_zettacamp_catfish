@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="asset/css/style.css">
+    <title>Task CSS Day 6</title>
+</head>
+<body>
+    <header>
+        <div class="header">
+            <div class="brand">
+                <a style="padding: 1rem; font-size: 1.2rem;" href="index.html">Chocorange</a>
+            </div>
+            <nav>
+                <a href="shoping-list.html">Shopping List</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section>
+            <a href="shoping-list.html">&larr; Back</a>
+        </section>
+
+        <section>
+            <h1>Add Item</h1>
+            <form action="">
+                <div class="form">
+                    <div style="text-align: justify; width: 50%;">
+                        <label for="name">Product Name</label><br>
+                        <input type="text" id="name" name="name" placeholder="Enter the product name ..." required><br><br>
+                        <label for="price">Price</label><br>
+                        <input type="text" id="price" name="price" placeholder="Enter the product price (Rp)" required><br><br>
+                    </div>
+                    <div class="file">
+                        <input type="file" name="img" id="img" required accept="image/jpg, image/png"><br><br>
+                    </div>
+                </div>
+                <input class="btn" type="submit">
+            </form>
+        </section>
+
+        <section>
+            <h1 style="text-align: center;">Item Lists</h1>
+            <div class="flex-container">
+                <article class="card">
+                    <img src="asset/img/photo.png" alt="">
+                    <h2>Product Name</h2>
+                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cupiditate quis repellendus illum quo enim! Maiores velit necessitatibus nihil, rem incidunt ea, sint magni aperiam, accusantium quisquam vel? Nisi, cum eum.</p>
+                    <div class="price">
+                        <a href="">Product Price</a>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="asset/img/photo.png" alt="">
+                    <h2>Product Name</h2>
+                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cupiditate quis repellendus illum quo enim! Maiores velit necessitatibus nihil, rem incidunt ea, sint magni aperiam, accusantium quisquam vel? Nisi, cum eum.</p>
+                    <div class="price">
+                        <a href="">Product Price</a>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="asset/img/photo.png" alt="">
+                    <h2>Product Name</h2>
+                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cupiditate quis repellendus illum quo enim! Maiores velit necessitatibus nihil, rem incidunt ea, sint magni aperiam, accusantium quisquam vel? Nisi, cum eum.</p>
+                    <div class="price">
+                        <a href="">Product Price</a>
+                    </div>
+                </article>
+        </section>
+    </main>
+
+    <footer>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <p>&copy Chocorange 2022</p>
+    </footer>
+</body>
+</html>

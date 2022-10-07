@@ -1,0 +1,231 @@
+*{
+    box-sizing: border-box;
+}
+
+body{
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+}
+
+a{
+    text-decoration: none;
+    color: black;
+}
+
+nav{
+    padding: 1rem;
+    font-size: 1.2rem;
+    display: inline-block;
+    text-align: right;
+    width: calc(100%-50px);
+}
+
+nav a{
+    margin: 0.5rem;
+}
+
+header{
+    background-color: rgb(197, 230, 255);
+    padding: 2px 0.5rem;
+}
+
+.brand{
+    display: inline-block;
+}
+
+.dropdown{
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content{
+    display: none;
+    position: absolute;
+    min-width: 150px;
+    background-color: aliceblue;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content a{
+    padding: 5px 8px;
+    display: block;
+    text-align: justify;
+}
+
+.dropdown:hover .dropdown-content{
+    display: block;
+    margin-top: 16px;
+}
+
+section{
+    padding: 1rem;
+}
+
+h1{
+    border-bottom: 2px dashed rgb(197, 230, 255);
+    padding: 0.5rem;
+}
+
+footer{
+    background-color: rgb(179, 220, 255);
+    padding: 1.5rem;
+    text-align: center;
+}
+
+footer a{
+    margin: 0 0.5rem;
+}
+
+.flex-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    text-align: center;
+}
+
+.form{
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+}
+
+.form>div{
+    margin:1rem;
+}
+
+.file{
+    width: 50%;
+    outline: 1px dashed aliceblue;
+    position: relative;
+    top: 100px;
+    right: 20px;
+    text-align: center;
+}
+
+.pop{
+    align-items: center;
+}
+
+.pop .card{
+    width: 25vw;
+}
+
+.home{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.contact{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.shop{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    border-bottom: 2px dashed rgb(197, 230, 255);
+}
+
+.card{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    width: 27vw;
+    padding: 0.5rem 1rem 2rem 1rem;
+    background-color: aliceblue;
+}
+
+.card img{
+    width: 200px;
+}
+
+.card p {
+    text-align: justify;
+}
+
+.flex-container>.card{
+    margin: 1rem;
+}
+
+.home>article, .contact>article{
+    width:50%;
+    margin:1rem;
+}
+
+.price{
+    background-color: rgb(197, 230, 255);;
+    width: 100%;
+    height: 50px;
+}
+
+.btn{
+    background-color: rgb(197, 230, 255);;
+    padding: 1rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.price:hover, .btn:hover{
+    background-color: rgb(137, 200, 255);
+}
+
+.price a{
+    vertical-align: -12px;
+}
+
+.btn a{
+    padding: 0 2rem;
+}
+
+input[type=text],input[type=email],textarea{
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    resize: vertical;
+    width: 100%;
+}
+
+.form-contact{
+    border: 2px dashed rgb(137, 200, 255);
+    padding: 0 1rem 1rem 1rem;
+}
+
+.sosmed{
+    text-align: center;
+}
+
+.sosmed img{
+    width: 2rem;
+}
+
+.about{
+    padding: 2.5rem;
+}
+
+@media (max-width:800px){
+    .flex-container, .home, .shop{
+        flex-direction: column;
+    }
+
+    .card, .pop, .header, img{
+        width: 100%;
+    }
+}
+
