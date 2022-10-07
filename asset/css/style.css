@@ -61,3 +61,12 @@ footer a{
     color: white;
     margin: 1rem;
 }
+
+.btn{
+    background-color:rgb(196, 196, 196);
+    border: none;
+    padding: 1rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 50%;
+}
