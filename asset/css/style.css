@@ -1,0 +1,63 @@
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin :0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+section{
+    padding: 20px;
+}
+
+.flex-container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    text-align: center;
+}
+
+.card{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0,0.2);
+    padding: 0.5rem 1rem 2rem 1rem;
+    width: 27vw;
+}
+
+.card img{
+    width: 200px;
+}
+
+.card p{
+    text-align: justify;
+}
+
+.flex-container>.card{
+    margin: 1rem;
+}
+
+.title{
+    text-align: center;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    padding: 1rem;
+    font-size: 2rem;
+}
+
+footer{
+    padding: 1rem;
+    text-align: center;
+    color: white;
+    background-color: black;
+}
+
+a{
+    text-decoration: none;
+    color: black;
+}
+
+footer a{
+    color: white;
+    margin: 1rem;
+}
