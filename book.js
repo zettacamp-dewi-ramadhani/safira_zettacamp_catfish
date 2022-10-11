@@ -1,11 +1,11 @@
 let bookName = "Book Name";
-const disc = 20/100;
+const disc = 12/100;
 const tax = 10/100;
 var price = 100000;
 var pad;
 var pat;
 
-let ver1 = (disc == 0.2);
+let ver1 = (disc == 0.12);
 let ver2 = (tax == 0.1);
 
 
@@ -16,9 +16,9 @@ function purchasing(book, price, discount, tax){
     }
     data = "Book : " + book + "\n" +
             "Price : Rp" + price + "\n" +
-            "Discount :" + discount*100 + "%" + "\n" +
-            "Price After Discount: Rp" + pad + "\n" +
-            "Tax : " + tax*100 + "%" + "\n" +
+            "Discount : " + price*discount + " (" + discount*100 + "%)" + "\n" +
+            "Price After Discount : Rp" + pad + "\n" +
+            "Tax : " + pad*tax + " (" + tax*100 + "%)" + "\n" +
             "Total: Rp" + pat;
     return data;
 }
