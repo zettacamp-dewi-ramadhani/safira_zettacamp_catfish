@@ -1,5 +1,4 @@
-let book = "Book Name";
-var desc = "Book Description";
+let bookName = "Book Name";
 const disc = 20/100;
 const tax = 10/100;
 var price = 100000;
@@ -24,4 +23,4 @@ function purchasing(book, price, discount, tax){
     return data;
 }
 
-console.log(purchasing(book, price, disc, tax));
+console.log(purchasing(bookName, price, disc, tax));
