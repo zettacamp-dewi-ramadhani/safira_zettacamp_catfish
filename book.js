@@ -6,7 +6,7 @@ var pad;
 var pat;
 
 let ver1 = (disc == 0.2);
-let ver2 = (disc == 0.2);
+let ver2 = (tax == 0.1);
 
 
 function purchasing(book, price, discount, tax){
