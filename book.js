@@ -9,23 +9,19 @@ var pat;
 let ver1 = (disc == 0.2);
 let ver2 = (disc == 0.2);
 
-// price after discount
-function discount(price){
-    let result1 = price*(1-disc);
-    if(ver1 == true){
-        return result1;
+
+function purchasing(book, price, discount, tax){
+    if(ver1 == true && ver2 == true){
+        pad = price*(1-disc);
+        pat = pad+(pad*tax);
     }
+    data = "Book : " + book + "\n" +
+            "Price : Rp" + price + "\n" +
+            "Discount :" + discount*100 + "%" + "\n" +
+            "Price After Discount: Rp" + pad + "\n" +
+            "Tax : " + tax*100 + "%" + "\n" +
+            "Total: Rp" + pat;
+    return data;
 }
 
-// price after tax
-function taxing(price){
-    let result2 = price+(price*tax);
-    if(ver2 == true){
-        return result2;
-    }
-}
-
-pad = discount(price);
-pat = taxing(pad);
-
-console.log(book,desc,price,pad,pat);
+console.log(purchasing(book, price, disc, tax));
