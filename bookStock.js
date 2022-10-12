@@ -36,8 +36,14 @@ function purchasing(name, price, stock, purchased, disc, tax, toc){
                 credit.price = creditPrice[i];
                 due.push(credit);
             }
-
-            console.log(due);
+            console.log("----------------------------------");
+            const [doc, ...up] = due;
+            console.log("Due of Credit :");
+            console.log(doc);
+            console.log("----------------------------------");
+            console.log("Upcoming Due :")
+            console.log(up);
+            console.log("----------------------------------");
 
             stock=stock-1;
             console.log("Stock :" + stock);
