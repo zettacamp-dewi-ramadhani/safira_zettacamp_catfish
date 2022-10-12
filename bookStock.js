@@ -1,15 +1,21 @@
 var bookName = "Book A";
-let bookPrice = 100000;
-const bookStock = 10;
+// let bookPrice = 100000;
+const bookStock = 1;
 const bookPurchased = 5;
 
 const disc = 15/100;
 const tax = 10/100;
+// const toc = 5;
 
-function purchasing(name, price, stock, purchased, disc, tax){
+var creditPrice = [];
+var due = [];
+let credit;
+
+
+function purchasing(name, price, stock, purchased, disc, tax, toc){
     if(stock!=0){
         console.log("The book is available\n");
-        for(i=0; i<=purchased; i++){
+        for(i=0; i<=stock; i++){
             console.log("----------- Purchasing #" + (i+1) + "-----------\n");
             console.log("Book : " + name);
             console.log("Price : " + price);
@@ -20,6 +26,18 @@ function purchasing(name, price, stock, purchased, disc, tax){
             console.log("Tax : " + pad*tax + " (" + tax*100 + "%)");
             pat = pad+(pad*tax);
             console.log("Total : Rp" + pat);
+
+            
+
+            for(let i=0; i<toc; i++){
+                credit = {}
+                credit.month = i+1;
+                creditPrice.push(pat/toc);
+                credit.price = creditPrice[i];
+                due.push(credit);
+            }
+
+            console.log(due);
 
             stock=stock-1;
             console.log("Stock :" + stock);
@@ -40,4 +58,4 @@ function purchasing(name, price, stock, purchased, disc, tax){
     }
 }
 
-purchasing(bookName, bookPrice, bookStock, bookPurchased, disc, tax);
+purchasing(bookName, 120000, bookStock, bookPurchased, disc, tax, 6);
