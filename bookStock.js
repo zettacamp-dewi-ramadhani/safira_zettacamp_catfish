@@ -10,6 +10,7 @@ const tax = 10/100;
 var creditPrice = [];
 var due = [];
 let credit;
+var poc = 0;
 
 
 function purchasing(name, price, stock, purchased, disc, tax, toc){
@@ -27,15 +28,15 @@ function purchasing(name, price, stock, purchased, disc, tax, toc){
             pat = pad+(pad*tax);
             console.log("Total : Rp" + pat);
 
-            
-
             for(let i=0; i<toc; i++){
                 credit = {}
                 credit.month = i+1;
-                creditPrice.push(pat/toc);
+                creditPrice.push(pat/toc+(pat/toc*(poc/100)));
                 credit.price = creditPrice[i];
-                due.push(credit);
+                due.push(credit);  
+                poc+=10;              
             }
+
             console.log("----------------------------------");
             const [doc, ...up] = due;
             console.log("Due of Credit :");
@@ -64,4 +65,4 @@ function purchasing(name, price, stock, purchased, disc, tax, toc){
     }
 }
 
-purchasing(bookName, 120000, bookStock, bookPurchased, disc, tax, 6);
+purchasing(bookName, 128000, bookStock, bookPurchased, disc, tax, 4);
