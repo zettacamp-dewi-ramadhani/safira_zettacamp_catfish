@@ -7,13 +7,20 @@ let songList = [
         "genre" : "Pop",
         "duration" : "3.50"
     },
+    {
+        "titile" : "Overpass Graffiti",
+        "artist" : "Ed Sheeran",
+        "album" : "Equal",
+        "genre" : "Pop",
+        "duration" : "3.56"
+    },
     // 2
     {
         "titile" : "Lovesick Girls",
         "artist" : "Blackpink",
         "album" : "The Album",
         "genre" : "K-pop",
-        "duration" : "40.12"
+        "duration" : "4.12"
     },
     // 3
     {
@@ -45,7 +52,7 @@ let songList = [
         "artist" : "TWICE",
         "album" : "Eyes Wide Open",
         "genre" : "K-pop",
-        "duration" : "3.25"
+        "duration" : "30.25"
     },
     // 7
     {
@@ -61,7 +68,7 @@ let songList = [
         "artist" : "Alesso, Tove Lo",
         "album" : "Forever",
         "genre" : "Dance",
-        "duration" : "3.30",
+        "duration" : "30.30",
     },
     // 9
     {
@@ -78,6 +85,20 @@ let songList = [
         "album" : "Born Pink",
         "genre" : "K-pop",
         "duration" : "3.04"
+    },
+    {
+        "titile" : "More & More",
+        "artist" : "TWICE",
+        "album" : "More & More",
+        "genre" : "K-pop",
+        "duration" : "3.19"
+    },
+    {
+        "titile" : "XOXO",
+        "artist" : "Jeon Somi",
+        "album" : "XOXO",
+        "genre" : "K-pop",
+        "duration" : "3.27"
     },
     // 11
     {
@@ -132,7 +153,8 @@ function playlist(){
     }
 }
 
-// artist("Blackpink");
+artist("Blackpink");
 console.log("\n---------------Song List Based of Genre---------------");
 console.log(genreGroup);
-// playlist()
+console.log("\n---------------Playlist Less than 1 hour---------------");
+playlist()
