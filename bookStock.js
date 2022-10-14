@@ -1,3 +1,6 @@
+const express = require('express')
+const app = express()
+
 var bookName = "Book A";
 // let bookPrice = 100000;
 const bookStock = 1;
@@ -12,8 +15,15 @@ var due = [];
 let credit;
 var poc = 0;
 
+app.get('/', function(req, res){
+    const auth = req.headers["authorization"].replace("Basic ", "");
+    const text = Buffer.from(auth, "base64").toString("ascii");
 
-function purchasing(name, price, stock, purchased, disc, tax, toc){
+    const uname = text.split(":")[0];
+    const pass = text.split(":")[1];
+    
+    if(uname == "safira" && pass == "pass"){
+        function purchasing(name, price, stock, purchased, disc, tax, toc){
     if(stock!=0){
         console.log("The book is available\n");
         for(i=0; i<=stock; i++){
@@ -36,6 +46,7 @@ function purchasing(name, price, stock, purchased, disc, tax, toc){
                 due.push(credit);  
                 poc+=10;              
             }
+            res.send(due);
 
             console.log("----------------------------------");
             const [doc, ...up] = due;
@@ -64,5 +75,13 @@ function purchasing(name, price, stock, purchased, disc, tax, toc){
         console.log("The book is out of stock");
     }
 }
+        // res.send(
+            purchasing(bookName, 128000, bookStock, bookPurchased, disc, tax, 4);
+    }else{
+        return res.json("Access Denied");
+    }
+})
 
-purchasing(bookName, 128000, bookStock, bookPurchased, disc, tax, 4);
+
+
+app.listen(3000)
