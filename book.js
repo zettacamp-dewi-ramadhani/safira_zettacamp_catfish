@@ -93,13 +93,29 @@ function getFile(file){
 });
 }
 
-const readFileAwait = async filename =>{
-    const result = await getFile(filename);
+async function readFileAwait(file){
+    console.log("Process Start")
+    const dataPromise = new Promise((res,rej)=>{
+        if(file === './myText.txt'){
+            res(getFile(file));
+        }else{
+            rej(console.log("File Error"));
+        }
+    });
+    const result = await dataPromise.then((data)=>{
+        return data;
+    }).catch((e)=>{
+        e = "Process Stop"
+        console.log(e);
+    }).finally((data)=>{
+        console.log("All Done");
+    });
     return result;
 }
 
 
 function readFile(file){
+    console.log("Process Start")
     const dataPromise = new Promise((res,rej)=>{
         if(file === './myText.txt'){
             res(getFile(file));
@@ -110,7 +126,7 @@ function readFile(file){
     const result = dataPromise.then((data)=>{
         return data;
     }).catch((e)=>{
-        e = "Stop the Process"
+        e = "Process Stop"
         console.log(e);
     }).finally((data)=>{
         console.log("All Done");
@@ -140,7 +156,7 @@ app.get('/without-await', (req, res)=>{
     const pass = text.split(":")[1];
     
     if(uname == "uname" && pass == "pass"){
-        res.send(readFile('data'));
+        res.send(readFile('./myText.txt'));
     }else{
         res.send("Access Denied");
     }
