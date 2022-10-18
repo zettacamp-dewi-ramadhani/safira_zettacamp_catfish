@@ -74,7 +74,7 @@ async function purchasing(book, disc, tax){
     }
 }
 
-function getFile(file){
+const getFile = (file)=>{
     fs.readFile(file, 'utf8', (err, data)=>{
     if(err){
         throw err;
@@ -83,25 +83,32 @@ function getFile(file){
     console.log(file);
 });
 }
+eventEmitter.on('Aftertext', getFile);
+const result = eventEmitter.emit('Aftertext', './myText.txt');
 
-const readFileAwait = async (file)=>{
-    console.log("Process Start")
-    const dataPromise = new Promise((res,rej)=>{
-        if(file === './myText.txt'){
-            res(getFile(file));
-        }else{
-            rej(console.log("File Error"));
-        }
+const readFileAwait = async ()=>{
+    console.log("Process Start With Await")
+    const dataPromiseAwait = new Promise((res,rej)=>{
+        res(result);
     });
-    const result = await dataPromise.then((data)=>{
+    // setTimeout(()=>res(getFile(file)), 3000);
+        // if(file === './myText.txt'){
+        //     res(getFile(file));
+        // }else{
+            //     rej(console.log("File Error"));
+            // }
+    // console.log(dataPromiseAwait);
+    //const data = 
+    await dataPromiseAwait.then((data)=>{
         return data;
     }).catch((e)=>{
         e = "Process Stop"
         console.log(e);
-    }).finally((data)=>{
-        console.log("All Done");
     });
-    return result;
+    // .finally((data)=>{
+    //     console.log("All Done");
+    // });
+    // return data;
 }
 
 
@@ -133,11 +140,11 @@ app.get('/with-await', (req, res)=>{
     const pass = text.split(":")[1];
     
     if(uname == "uname" && pass == "pass"){
-        // res.send(readFileAwait('./myText.txt'));
-        eventEmitter.on('Aftertext', readFileAwait);
-        const result = eventEmitter.emit('Aftertext', './myText.txt');
-        res.send(result);
-    }else{
+        res.send(readFileAwait());
+    //     eventEmitter.on('Aftertext', readFileAwait);
+    //     const result = eventEmitter.emit('Aftertext', './myText.txt');
+    //     res.send(result);
+    // }else{
         res.send("Access Denied");
     }
 });
