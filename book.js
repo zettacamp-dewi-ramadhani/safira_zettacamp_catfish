@@ -1,7 +1,8 @@
-const { rejects } = require('assert');
 const express = require('express');
 const app = express();
 const fs = require('fs');
+const events = require('events');
+let eventEmitter = new events.EventEmitter();
 
 let myBook = [
     {
@@ -83,7 +84,7 @@ function getFile(file){
 });
 }
 
-async function readFileAwait(file){
+const readFileAwait = async (file)=>{
     console.log("Process Start")
     const dataPromise = new Promise((res,rej)=>{
         if(file === './myText.txt'){
@@ -104,7 +105,7 @@ async function readFileAwait(file){
 }
 
 
-function readFile(file){
+const readFile = (file) =>{
     console.log("Process Start")
     const dataPromise = new Promise((res,rej)=>{
         if(file === './myText.txt'){
@@ -132,7 +133,10 @@ app.get('/with-await', (req, res)=>{
     const pass = text.split(":")[1];
     
     if(uname == "uname" && pass == "pass"){
-        res.send(readFileAwait('./myText.txt'));
+        // res.send(readFileAwait('./myText.txt'));
+        eventEmitter.on('Aftertext', readFileAwait);
+        const result = eventEmitter.emit('Aftertext', './myText.txt');
+        res.send(result);
     }else{
         res.send("Access Denied");
     }
@@ -146,7 +150,10 @@ app.get('/without-await', (req, res)=>{
     const pass = text.split(":")[1];
     
     if(uname == "uname" && pass == "pass"){
-        res.send(readFile('./myText.txt'));
+        // res.send(readFile('./myText.txt'));
+        eventEmitter.on('Aftertext', readFile);
+        const result = eventEmitter.emit('Aftertext', './myText.txt');
+        res.send(result);
     }else{
         res.send("Access Denied");
     }
