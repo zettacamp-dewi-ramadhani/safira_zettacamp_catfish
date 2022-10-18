@@ -16,7 +16,7 @@ let myBook = [
     }
 ];
 
-app.post('/', (req, res)=>{
+app.get('/', async (req, res)=>{
     const auth = req.headers["authorization"].replace("Basic ", "");
     const text = Buffer.from(auth, "base64").toString("ascii");
         
@@ -27,15 +27,20 @@ app.post('/', (req, res)=>{
         // res.json(purchasing(myBook[0]));
         // console.log(purchasing(myBook[0]));
         // purchasing(myBook[0]);
-        res.json(credit(5));
+        try{
+            let result = await credit('b');
+            res.send(result);
+        }catch{
+            res.send("Error, check again");
+        }
     }else{
-        res.json("Access Denied");
+        res.send("Access Denied");
     }
 });
 
 app.listen(4000);
 
-function purchasing(book, disc, tax){
+async function purchasing(book, disc, tax){
     pad = book.price*(1-disc);
     book.price = pad+(pad*tax);
     return book;
@@ -54,23 +59,24 @@ function purchasing(book, disc, tax){
     let data = []
 
     if(book.credit === "Credit Available"){
-        console.log(book);
-        setTimeout(()=>{
-            for (i=0; i<toc; i++){
-                credit = {};
-                credit.month = i+1;
-                price = book.price/toc+(book.price/toc*(poc/100));
-                creditPrice.push(price);
-                credit.price = creditPrice[i];
-                due.push(credit);
-                poc+=10;
-            }
-            // data.push(book);
-            // const result = data.concat(due);
-            console.log(due);
-        }, 3000);
-        console.log("Due Credit")
+        // console.log(book);
+        // setTimeout(()=>{
+        // }, 3000);
+        for (i=0; i<toc; i++){
+            credit = {};
+            credit.month = i+1;
+            price = book.price/toc+(book.price/toc*(poc/100));
+            creditPrice.push(price);
+            credit.price = creditPrice[i];
+            due.push(credit);
+            poc+=10;
+        }
+        data.push(book);
+        // console.log(data);
+        const result = data.concat(due);
+        return result;
+        // console.log("Due Credit")
     }else{
-        console.log(book);
+        return book;
     }
 }
