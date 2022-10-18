@@ -26,9 +26,6 @@ app.get('/', async (req, res)=>{
     const pass = text.split(":")[1];
     
     if(uname == "uname" && pass == "pass"){
-        // res.json(purchasing(myBook[0]));
-        // console.log(purchasing(myBook[0]));
-        // purchasing(myBook[0]);
         try{
             let result = await credit('b');
             res.send(result);
@@ -46,10 +43,6 @@ async function purchasing(book, disc, tax){
     pad = book.price*(1-disc);
     book.price = pad+(pad*tax);
     return book;
-    // let purchased = new Promise(resolve =>{
-    //     resolve(book);
-    // });
-    // return purchased;
 }
 
  async function credit(toc){
@@ -61,9 +54,6 @@ async function purchasing(book, disc, tax){
     let data = []
 
     if(book.credit === "Credit Available"){
-        // console.log(book);
-        // setTimeout(()=>{
-        // }, 3000);
         for (i=0; i<toc; i++){
             credit = {};
             credit.month = i+1;
