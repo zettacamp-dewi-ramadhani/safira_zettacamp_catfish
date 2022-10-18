@@ -1,5 +1,7 @@
+const { rejects } = require('assert');
 const express = require('express');
 const app = express();
+const fs = require('fs');
 
 let myBook = [
     {
@@ -38,7 +40,7 @@ app.get('/', async (req, res)=>{
     }
 });
 
-app.listen(4000);
+app.listen(3000);
 
 async function purchasing(book, disc, tax){
     pad = book.price*(1-disc);
@@ -80,3 +82,46 @@ async function purchasing(book, disc, tax){
         return book;
     }
 }
+
+function getFile(file){
+    fs.readFile(file, 'utf8', (err, data)=>{
+    if(err){
+        throw err;
+    }
+    const file = data;
+    console.log(file);
+});
+}
+
+const readFileAwait = async filename =>{
+    const result = await getFile(filename);
+    return result;
+}
+
+app.get('/with-await', (req, res)=>{
+    const auth = req.headers["authorization"].replace("Basic ", "");
+    const text = Buffer.from(auth, "base64").toString("ascii");
+        
+    const uname = text.split(":")[0];
+    const pass = text.split(":")[1];
+    
+    if(uname == "uname" && pass == "pass"){
+        res.send(readFileAwait('./myText.txt'));
+    }else{
+        res.send("Access Denied");
+    }
+});
+
+app.get('/without-await', (req, res)=>{
+    const auth = req.headers["authorization"].replace("Basic ", "");
+    const text = Buffer.from(auth, "base64").toString("ascii");
+        
+    const uname = text.split(":")[0];
+    const pass = text.split(":")[1];
+    
+    if(uname == "uname" && pass == "pass"){
+        res.send(readFile('./myText.txt'));
+    }else{
+        res.send("Access Denied");
+    }
+});
