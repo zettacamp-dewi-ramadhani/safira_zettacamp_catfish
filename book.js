@@ -98,6 +98,26 @@ const readFileAwait = async filename =>{
     return result;
 }
 
+
+function readFile(file){
+    const dataPromise = new Promise((res,rej)=>{
+        if(file === './myText.txt'){
+            res(getFile(file));
+        }else{
+            rej(console.log("File Error"));
+        }
+    });
+    const result = dataPromise.then((data)=>{
+        return data;
+    }).catch((e)=>{
+        e = "Stop the Process"
+        console.log(e);
+    }).finally((data)=>{
+        console.log("All Done");
+    });
+    return result;
+}
+
 app.get('/with-await', (req, res)=>{
     const auth = req.headers["authorization"].replace("Basic ", "");
     const text = Buffer.from(auth, "base64").toString("ascii");
@@ -120,7 +140,7 @@ app.get('/without-await', (req, res)=>{
     const pass = text.split(":")[1];
     
     if(uname == "uname" && pass == "pass"){
-        res.send(readFile('./myText.txt'));
+        res.send(readFile('data'));
     }else{
         res.send("Access Denied");
     }
