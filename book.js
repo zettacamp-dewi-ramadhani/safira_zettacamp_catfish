@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const fs = require('fs');
+const fsp = require('fs').promise;
 const events = require('events');
 let eventEmitter = new events.EventEmitter();
 
@@ -83,33 +84,50 @@ const getFile = (file)=>{
     console.log(file);
 });
 }
-eventEmitter.on('Aftertext', getFile);
-const result = eventEmitter.emit('Aftertext', './myText.txt');
 
-const readFileAwait = async ()=>{
-    console.log("Process Start With Await")
-    const dataPromiseAwait = new Promise((res,rej)=>{
-        res(result);
-    });
-    // setTimeout(()=>res(getFile(file)), 3000);
-        // if(file === './myText.txt'){
-        //     res(getFile(file));
-        // }else{
-            //     rej(console.log("File Error"));
-            // }
-    // console.log(dataPromiseAwait);
-    //const data = 
-    await dataPromiseAwait.then((data)=>{
-        return data;
-    }).catch((e)=>{
-        e = "Process Stop"
-        console.log(e);
-    });
-    // .finally((data)=>{
-    //     console.log("All Done");
+// const promiseAwait = ((file)=>{
+//     new Promise((res, rej)=>{
+//         res(getFile(file));
+//     });
+// });
+
+// async function readFileAwait(file){
+//     console.log("Process Start With Await");
+//     const result = await fsp.readFile(file);
+//     return Buffer.from(result);
+    
+    // const result = await promise.then((data)=>{
+    //     return data;
+    // }).catch((e)=>{
+    //     e = "Process Stop";
+    //     console.log(e);
     // });
-    // return data;
+    // return result;
+// }
+
+function dataPromiseAwait(file){ new Promise((res,rej)=>{
+    if(file === './myText.txt'){
+        setTimeout(()=>res(getFile(file)), 3000);
+    }else{
+        rej(console.log("File Error"));
+    }
+});
 }
+
+const readFileAwait = async (file) =>{
+    console.log("Process Start With Await")
+    // console.log(dataPromiseAwait);
+    const data = await dataPromiseAwait(file)
+    // data.then((data)=>{
+    //     return data;
+    // }).catch((e)=>{
+    //     e = "Process Stop"
+    //     console.log(e);
+    // })
+    // .finally((data)=>{
+        return data;
+    // });
+};
 
 
 const readFile = (file) =>{
@@ -133,20 +151,20 @@ const readFile = (file) =>{
 }
 
 app.get('/with-await', (req, res)=>{
-    const auth = req.headers["authorization"].replace("Basic ", "");
-    const text = Buffer.from(auth, "base64").toString("ascii");
+    // const auth = req.headers["authorization"].replace("Basic ", "");
+    // const text = Buffer.from(auth, "base64").toString("ascii");
         
-    const uname = text.split(":")[0];
-    const pass = text.split(":")[1];
+    // const uname = text.split(":")[0];
+    // const pass = text.split(":")[1];
     
-    if(uname == "uname" && pass == "pass"){
-        res.send(readFileAwait());
-    //     eventEmitter.on('Aftertext', readFileAwait);
-    //     const result = eventEmitter.emit('Aftertext', './myText.txt');
-    //     res.send(result);
+    // if(uname == "uname" && pass == "pass"){
+        // res.send(readFileAwait('./myText.txt'));
+        eventEmitter.on('Aftertext', readFileAwait);
+        const result = eventEmitter.emit('Aftertext', './myText.txt');
+        res.send(result);
     // }else{
-        res.send("Access Denied");
-    }
+    //     res.send("Access Denied");
+    // }
 });
 
 app.get('/without-await', (req, res)=>{
