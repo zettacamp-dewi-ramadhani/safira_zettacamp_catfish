@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const fs = require('fs');
-const fsp = require('fs').promise;
+// const fsp = require('fs').promise;
 const events = require('events');
 let eventEmitter = new events.EventEmitter();
 
@@ -15,7 +15,19 @@ let myBook = [
     {
         name : "Book B",
         author : "hjkl",
+        price : 150000,
+        credit : "Credit Available"
+    },
+    {
+        name : "Book C",
+        author : "mno",
         price : 200000,
+        credit : "Credit Unavailable"
+    },
+    {
+        name : "Book D",
+        author : "pqrs",
+        price : 250000,
         credit : "Credit Available"
     }
 ];
@@ -29,7 +41,7 @@ app.get('/', async (req, res)=>{
     
     if(uname == "uname" && pass == "pass"){
         try{
-            let result = await credit('b');
+            let result = await credit(4);
             res.send(result);
         }catch{
             res.send("Error, check again");
@@ -41,13 +53,13 @@ app.get('/', async (req, res)=>{
 
 app.listen(3000);
 
-async function purchasing(book, disc, tax){
+function purchasing(book, disc, tax){
     pad = book.price*(1-disc);
     book.price = pad+(pad*tax);
     return book;
 }
 
- async function credit(toc){
+async function credit(toc){
     let book = await purchasing(myBook[1], 0.12, 0.1);
     var creditPrice = [];
     var due = [];
@@ -69,7 +81,7 @@ async function purchasing(book, disc, tax){
         // console.log(data);
         const result = data.concat(due);
         return result;
-        // console.log("Due Credit")
+        // console.log(result);
     }else{
         return book;
     }
@@ -151,35 +163,37 @@ const readFile = (file) =>{
 }
 
 app.get('/with-await', (req, res)=>{
-    // const auth = req.headers["authorization"].replace("Basic ", "");
-    // const text = Buffer.from(auth, "base64").toString("ascii");
-        
-    // const uname = text.split(":")[0];
-    // const pass = text.split(":")[1];
-    
-    // if(uname == "uname" && pass == "pass"){
-        // res.send(readFileAwait('./myText.txt'));
-        eventEmitter.on('Aftertext', readFileAwait);
-        const result = eventEmitter.emit('Aftertext', './myText.txt');
-        res.send(result);
-    // }else{
-    //     res.send("Access Denied");
-    // }
+    // res.send(readFileAwait('./myText.txt'));
+    eventEmitter.on('Aftertext', readFileAwait);
+    const result = eventEmitter.emit('Aftertext', './myText.txt');
+    res.send(result);
 });
 
 app.get('/without-await', (req, res)=>{
-    const auth = req.headers["authorization"].replace("Basic ", "");
-    const text = Buffer.from(auth, "base64").toString("ascii");
-        
-    const uname = text.split(":")[0];
-    const pass = text.split(":")[1];
-    
-    if(uname == "uname" && pass == "pass"){
-        // res.send(readFile('./myText.txt'));
-        eventEmitter.on('Aftertext', readFile);
-        const result = eventEmitter.emit('Aftertext', './myText.txt');
-        res.send(result);
-    }else{
-        res.send("Access Denied");
-    }
+    // res.send(readFile('./myText.txt'));
+    eventEmitter.on('Aftertext', readFile);
+    const result = eventEmitter.emit('Aftertext', './myText.txt');
+    res.send(result);
 });
+
+app.get('/set-map', (req, res)=>{
+    let obj = setAndMap(myBook)
+    res.send(obj);
+
+});
+
+function setAndMap(x){
+    let set = new Set(x);
+    let [...data] = set;
+    let obj = {};
+    // return data;
+
+    let map = new Map();
+    for(i=0; i<data.length; i++){
+        map.set(i+1, data[i]);
+    }
+    map.forEach((v, k)=>{
+        obj[k] = v;
+    })
+    return obj;
+}
