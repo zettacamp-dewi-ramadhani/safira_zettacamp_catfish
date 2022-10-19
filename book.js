@@ -183,7 +183,8 @@ app.get('/set-map', (req, res)=>{
 });
 
 function setAndMap(x){
-    let set = new Set(x);
+    let set = new Set();
+    set.add(x);
     let [...data] = set;
     let obj = {};
     // return data;
