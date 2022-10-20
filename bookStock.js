@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const modules = require('module');
 
 var bookName = "Book A";
 // let bookPrice = 100000;
@@ -14,6 +15,11 @@ var creditPrice = [];
 var due = [];
 let credit;
 var poc = 0;
+
+function test(){
+    console.log('test');
+}
+modules.export = test();
 
 app.get('/', function(req, res){
     const auth = req.headers["authorization"].replace("Basic ", "");

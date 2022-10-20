@@ -5,32 +5,7 @@ const fs = require('fs');
 const events = require('events');
 let eventEmitter = new events.EventEmitter();
 
-let myBook = [
-    {
-        name : "Book A",
-        author : "asdfg",
-        price : 100000,
-        credit : "Credit Unavailable"
-    },
-    {
-        name : "Book B",
-        author : "hjkl",
-        price : 150000,
-        credit : "Credit Available"
-    },
-    {
-        name : "Book C",
-        author : "mno",
-        price : 200000,
-        credit : "Credit Unavailable"
-    },
-    {
-        name : "Book D",
-        author : "pqrs",
-        price : 250000,
-        credit : "Credit Available"
-    }
-];
+
 
 app.get('/', async (req, res)=>{
     const auth = req.headers["authorization"].replace("Basic ", "");
@@ -39,7 +14,7 @@ app.get('/', async (req, res)=>{
     const uname = text.split(":")[0];
     const pass = text.split(":")[1];
     
-    if(uname == "uname" && pass == "pass"){
+    if(uname == "data" && pass == "pass"){
         try{
             let result = await credit(4);
             res.send(result);
