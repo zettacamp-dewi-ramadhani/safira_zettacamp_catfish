@@ -5,6 +5,11 @@ const bodyParser = require('body-parser');
 const tokenSecret = 'secret';
 const multer = require('multer');
 const forms = multer();
+const user = [{
+    id : 1,
+    username : 'safira',
+    password : 'zetta'
+}];
 
 app.use(bodyParser.json());
 app.use(forms.array());
@@ -12,46 +17,58 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.post('/',(req, res)=>{
     const uname = req.body.username;
-    console.log(uname);
     const pass = req.body.password;
-    console.log(pass);
-
-    const token = jwt.sign({
-        username : uname, password: pass},
-        tokenSecret,{expiresIn: '1h'});
-    res.json(token);
+    
+    if(uname === user[0].username && pass === user[0].password){
+        const token = jwt.sign({
+            id : user[0].id},
+            tokenSecret,{expiresIn: '1h'}
+        );
+        res.json(token);
+    }else{
+        res.send({message: 'User not found'});
+    }
 });
+
+
 
 const authJwt = (req, res, next)=>{
     const auth = req.headers.authorization;
-    const access = auth.split(' ')[1];
-    if(access == null){
-        return res.sendStatus(401);
+    if(auth === undefined){
+        return res.send({message: 'Authorization is empty'});
     }else{
-        jwt.verify(access, tokenSecret, (err, user)=>{
-            if(err){
-                return res.sendStatus(403);
-            }else{
-                return next();
-            }
-        })
+        const access = auth.split(' ')[1];
+        const ver = jwt.verify(access, tokenSecret);
+        const users = user.find(({id})=> id === ver.id );
+        req.user = users;
+        next();
     }
 }
 
 app.get('/artist', authJwt, (req,res)=>{
-    let result = artist("Blackpink")
-    // console.log(result);
-    res.send(result);
+    try{
+        let result = artist("Blackpink");
+        res.send(result);
+    }catch(e){
+        res.sendStatus(401);
+    }
 });
 
 app.get('/genre', authJwt, (req,res)=>{
-    res.send(genreGroup);
+    try{
+        res.send(genreGroup);
+    }catch(e){
+        res.sendStatus(401);
+    }
 });
 
 app.get('/playlist', authJwt, async (req,res)=>{
-    let result = await playlist();
-    // console.log(result);
-    res.send(result);
+    try{
+        let result = await playlist();
+        res.send(result);
+    }catch(e){
+        res.sendStatus(401);
+    }
 })
 
 app.listen(3000);
