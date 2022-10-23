@@ -30,8 +30,6 @@ app.post('/',(req, res)=>{
     }
 });
 
-
-
 const authJwt = (req, res, next)=>{
     const auth = req.headers.authorization;
     if(auth === undefined){
@@ -223,8 +221,8 @@ let randomArray = (x)=>{
         arr.push(x[randomIndex]);
         x.splice(randomIndex, 1);
     }
-    x = arr;
-    return x;
+    // x = arr;
+    return arr;
 }
 
 // playlist less than 1 hour
