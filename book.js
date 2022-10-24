@@ -5,28 +5,80 @@ const fs = require('fs');
 const events = require('events');
 let eventEmitter = new events.EventEmitter();
 
+const user = [{
+    id : 1,
+    username : 'safira',
+    password : 'pass'
+}];
 
-
-app.get('/', async (req, res)=>{
+const auth = (req, res, next)=>{
     const auth = req.headers["authorization"].replace("Basic ", "");
     const text = Buffer.from(auth, "base64").toString("ascii");
-        
+
     const uname = text.split(":")[0];
     const pass = text.split(":")[1];
-    
-    if(uname == "data" && pass == "pass"){
+
+    if(uname == user[0].username && pass == user[0].password){
         try{
-            let result = await credit(4);
-            res.send(result);
+            // id : user[0].id;
+            return next();
         }catch{
             res.send("Error, check again");
         }
     }else{
         res.send("Access Denied");
     }
+}
+
+app.get('/book-purchased',auth, async (req, res)=>{  
+    try{
+        let result = await credit(4, myBook[0]);
+        res.send(result);
+    }catch{
+        res.send("Error, check again");
+    }
+});
+
+app.get('/set-map',auth, async (req, res)=>{  
+    try{
+        let result = await setMap(myBook[0]);
+        res.send(result);
+    }catch{
+        res.send("Error, check again");
+    }
+});
+
+app.get('/with-await', (req, res)=>{
+    // res.send(readFileAwait('./myText.txt'));
+    eventEmitter.on('Aftertext', readFileAwait);
+    const result = eventEmitter.emit('Aftertext', './myText.txt');
+    res.send(result);
+});
+
+app.get('/without-await', (req, res)=>{
+    // res.send(readFile('./myText.txt'));
+    eventEmitter.on('Aftertext', readFile);
+    const result = eventEmitter.emit('Aftertext', './myText.txt');
+    res.send(result);
 });
 
 app.listen(3000);
+
+myBook = [
+    {
+        name : 'Book A',
+        price : 100000,
+        stock : 2,
+        purchased : 10,
+        credit : false
+    },{
+        name : 'Book B',
+        price : 200000,
+        stock : 2,
+        purchased : 10,
+        credit : true
+    }
+]
 
 function purchasing(book, disc, tax){
     pad = book.price*(1-disc);
@@ -34,15 +86,15 @@ function purchasing(book, disc, tax){
     return book;
 }
 
-async function credit(toc){
-    let book = await purchasing(myBook[1], 0.12, 0.1);
+async function credit(toc,x){
+    let book = await purchasing(x, 0.12, 0.1);
     var creditPrice = [];
     var due = [];
     let credit;
     let poc = 0;
     let data = []
 
-    if(book.credit === "Credit Available"){
+    if(book.credit === true){
         for (i=0; i<toc; i++){
             credit = {};
             credit.month = i+1;
@@ -62,6 +114,33 @@ async function credit(toc){
     }
 }
 
+async function setMap(x){
+    const data = await credit(5, x);
+    const set = new Set();
+    const map = new Map();
+    let obj = {};
+    
+    if(data.credit === true){
+        let [book, ...due] = data;
+        set.add(book);
+        set.add(due);
+
+        map.set('Book Detail', book);
+        map.set('Term Of Credit', due);
+        map.forEach((v,k)=>{
+            obj[k] = v;
+        });
+        return obj;
+    }else{
+        map.set('Book Detail', data);
+        map.set('Term Of Credit', 'Not Available');
+        map.forEach((v,k)=>{
+            obj[k] = v;
+        });
+        return obj;
+    }
+}
+
 const getFile = (file)=>{
     fs.readFile(file, 'utf8', (err, data)=>{
     if(err){
@@ -71,26 +150,6 @@ const getFile = (file)=>{
     console.log(file);
 });
 }
-
-// const promiseAwait = ((file)=>{
-//     new Promise((res, rej)=>{
-//         res(getFile(file));
-//     });
-// });
-
-// async function readFileAwait(file){
-//     console.log("Process Start With Await");
-//     const result = await fsp.readFile(file);
-//     return Buffer.from(result);
-    
-    // const result = await promise.then((data)=>{
-    //     return data;
-    // }).catch((e)=>{
-    //     e = "Process Stop";
-    //     console.log(e);
-    // });
-    // return result;
-// }
 
 function dataPromiseAwait(file){ new Promise((res,rej)=>{
     if(file === './myText.txt'){
@@ -135,41 +194,4 @@ const readFile = (file) =>{
         console.log("All Done");
     });
     return result;
-}
-
-app.get('/with-await', (req, res)=>{
-    // res.send(readFileAwait('./myText.txt'));
-    eventEmitter.on('Aftertext', readFileAwait);
-    const result = eventEmitter.emit('Aftertext', './myText.txt');
-    res.send(result);
-});
-
-app.get('/without-await', (req, res)=>{
-    // res.send(readFile('./myText.txt'));
-    eventEmitter.on('Aftertext', readFile);
-    const result = eventEmitter.emit('Aftertext', './myText.txt');
-    res.send(result);
-});
-
-app.get('/set-map', (req, res)=>{
-    let obj = setAndMap(myBook)
-    res.send(obj);
-
-});
-
-function setAndMap(x){
-    let set = new Set();
-    set.add(x);
-    let [...data] = set;
-    let obj = {};
-    // return data;
-
-    let map = new Map();
-    for(i=0; i<data.length; i++){
-        map.set(i+1, data[i]);
-    }
-    map.forEach((v, k)=>{
-        obj[k] = v;
-    })
-    return obj;
 }
