@@ -98,24 +98,20 @@ app.get('/without-await', (req, res)=>{
     res.send(result);
 });
 
-app.post('/insert-one', auth, (req, res)=>{
-    book.insertOne({
-        _id : 1,
-        title : "Obsesi",
-        author : "Lexie Xu",
-        date_published : "2010",
-        price : 40000,
-        created : "",
-        updated : ""
-    });
-
-    (err, result)=>{
-        if(err){
-            res.send({message: err})
-        }else{
-            res.send(result);
-        }
-    }
+app.get('/insert-one', auth, (req, res)=>{
+    console.log('done')
+    // book.insertOne({
+    //     _id : 1,
+    //     title : "Obsesi",
+    //     author : "Lexie Xu",
+    //     date_published : "2010",
+    //     price : 40000,
+    //     created : "",
+    //     updated : ""
+    // },(err)=>{
+    //     console.log(err);
+    // });
+    // res.send('Done');
 });
 
 app.listen(3000);
