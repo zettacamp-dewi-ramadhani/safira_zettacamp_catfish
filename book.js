@@ -1,12 +1,19 @@
 const express = require('express');
 const app = express();
 const fs = require('fs');
+// const fsp = require('fs').promise;
+const events = require('events');
+let eventEmitter = new events.EventEmitter();
+const bodyParser = require('body-parser');
+
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost:27017/zettacamp', {useNewUrlParser: true, useUnifiedTopology: true})
+// connect
+mongoose.connect("mongodb://localhost:27017/zettacamp", {useNewUrlParser: true, useUnifiedTopology: true})
 .then(()=>console.log('connect'))
 .catch((err)=>console.log(err));
 
+// schema
 const bookSchema = new mongoose.Schema({
     title : {type: String},
     author : {type: String},
@@ -18,11 +25,37 @@ const bookSchema = new mongoose.Schema({
 
 const Book = mongoose.model('books', bookSchema);
 
+async function insertData(){
+    const data = Book({
+        title : "Obsesi",
+        author : "Lexie Xu",
+        date_published : "2010",
+        price : 40000,
+    });
+    await data.save();
+}
+// insertData();
+
+function deleteData(){
+    Book.deleteOne({tittle : "Obsesi"}, (err)=>{
+        if(err){
+            console.log(err)
+        }else{
+            console.log("Done");
+        }
+    })
+}
+
+// deleteData();
+
+
 const user = [{
     id : 1,
     username : 'safira',
     password : 'pass'
 }];
+
+app.use(bodyParser.raw);
 
 const auth = (req, res, next)=>{
     const auth = req.headers["authorization"].replace("Basic ", "");
@@ -52,7 +85,7 @@ app.get('/book-purchased',auth, async (req, res)=>{
     }
 });
 
-app.get('/set-map',auth, async (req, res)=>{  
+app.get('/set-map', async (req, res)=>{  
     try{
         let result = await setMap(myBook[0]);
         res.send(result);
@@ -61,43 +94,33 @@ app.get('/set-map',auth, async (req, res)=>{
     }
 });
 
+// app.get('/with-await', (req, res)=>{
+//     // res.send(readFileAwait('./myText.txt'));
+//     eventEmitter.on('Aftertext', readFileAwait);
+//     const result = eventEmitter.emit('Aftertext', './myText.txt');
+//     res.send(result);
+// });
+
+// app.get('/without-await', (req, res)=>{
+//     // res.send(readFile('./myText.txt'));
+//     eventEmitter.on('Aftertext', readFile);
+//     const result = eventEmitter.emit('Aftertext', './myText.txt');
+//     res.send(result);
+// });
+
 app.post('/insert', auth, (req, res)=>{
-    let data = Book.insertMany([{
-        title : "Hyouka",
-        author : "Honobu Yonezawa",
-        date_published : "2014",
-        price : 75000
-            
-    },{
-        name : "Filosofi Kopi",
-	    author : "Dewi Lestari",
-	    date_published : "2006",
-	    price : 36000
-    },{
-        title : "Perahu Kertas",
-        author : "Dewi Lestari",
-        date_published : "2003",
-        price : 80000
-            
-    },{
-        name : "Another",
-	    author : "Yukito Ayatsuji",
-	    date_published : "2009",
-	    price : 80000
-    },{
-        title : "Garis Waktu",
-        author : "Fiersa Berari",
+    let data = new Book({
+        title : "Omen",
+        author : "Lexie Xu",
         date_published : "2016",
-        price : 68000
-            
-    },{
-        name : "11:11",
-	    author : "Fiersa Besari",
-	    date_published : "2018",
-	    price : 80000
-    }])
-    // await data;
-    res.send(data);
+        price : 48000,
+        created : "",
+        updated : ""
+    })
+    data.save();
+    // console.log(data)
+    res.send({message: 'halo'});
+    // return;
 });
 
 app.get('/read', auth, async (req, res)=>{
@@ -105,20 +128,25 @@ app.get('/read', auth, async (req, res)=>{
     res.send(result);
 })
 
-app.get('/update', auth, async (req, res)=>{
-    let data = Book.updateOne({_id: '63579767e989d201a4415d79'}, {price : 40000, updated : ""});
-    await data;
-    let result = await Book.find({
-        price : 40000
-    });
-    res.send(result);
+app.get('/update', auth, (req, res)=>{
+    Book.updateOne({_id: 10}, {price : 180000, updated : ""}, (err)=>{
+        if(err){
+            res.send(err);
+        }else{
+            res.send('Done');
+        }
+    })
 })
 
 app.get('/delete', auth, async (req, res)=>{
-    let result = Book.deleteMany();
-    await result;
-    res.send('done');
-});
+    Book.deleteOne({tittle : "Aku Tahu Kapan Kamu Mati"}, (err)=>{
+        if(err){
+            res.send({message: err});
+        }else{
+            res.send("Done");
+        }
+    })
+})
 
 app.listen(3000);
 
@@ -138,12 +166,14 @@ myBook = [
     }
 ]
 
+// purchasing
 function purchasing(book, disc, tax){
     pad = book.price*(1-disc);
     book.price = pad+(pad*tax);
     return book;
 }
 
+// credit
 async function credit(toc,x){
     let book = await purchasing(x, 0.12, 0.1);
     var creditPrice = [];
@@ -172,6 +202,7 @@ async function credit(toc,x){
     }
 }
 
+// set & map
 async function setMap(x){
     const data = await credit(5, x);
     const set = new Set();
@@ -197,4 +228,62 @@ async function setMap(x){
         });
         return obj;
     }
+}
+
+// get file
+const getFile = (file)=>{
+    fs.readFile(file, 'utf8', (err, data)=>{
+    if(err){
+        throw err;
+    }
+    const file = data;
+    console.log(file);
+});
+}
+
+// promise
+function dataPromiseAwait(file){ new Promise((res,rej)=>{
+    if(file === './myText.txt'){
+        setTimeout(()=>res(getFile(file)), 3000);
+    }else{
+        rej(console.log("File Error"));
+    }
+});
+}
+
+// read file with await
+const readFileAwait = async (file) =>{
+    console.log("Process Start With Await")
+    // console.log(dataPromiseAwait);
+    const data = await dataPromiseAwait(file)
+    // data.then((data)=>{
+    //     return data;
+    // }).catch((e)=>{
+    //     e = "Process Stop"
+    //     console.log(e);
+    // })
+    // .finally((data)=>{
+        return data;
+    // });
+};
+
+// read file without await
+const readFile = (file) =>{
+    console.log("Process Start")
+    const dataPromise = new Promise((res,rej)=>{
+        if(file === './myText.txt'){
+            res(getFile(file));
+        }else{
+            rej(console.log("File Error"));
+        }
+    });
+    const result = dataPromise.then((data)=>{
+        return data;
+    }).catch((e)=>{
+        e = "Process Stop"
+        console.log(e);
+    }).finally((data)=>{
+        console.log("All Done");
+    });
+    return result;
 }
