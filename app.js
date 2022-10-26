@@ -90,7 +90,7 @@ app.post('/insert', auth, (req, res)=>{
         price : 75000
             
     },{
-        name : "Filosofi Kopi",
+        title : "Filosofi Kopi",
 	    author : "Dewi Lestari",
 	    date_published : "2006",
 	    price : 36000
@@ -101,7 +101,7 @@ app.post('/insert', auth, (req, res)=>{
         price : 80000
             
     },{
-        name : "Another",
+        title : "Another",
 	    author : "Yukito Ayatsuji",
 	    date_published : "2009",
 	    price : 80000
@@ -112,7 +112,7 @@ app.post('/insert', auth, (req, res)=>{
         price : 68000
             
     },{
-        name : "11:11",
+        title : "11:11",
 	    author : "Fiersa Besari",
 	    date_published : "2018",
 	    price : 80000
