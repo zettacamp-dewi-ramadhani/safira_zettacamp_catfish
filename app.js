@@ -21,7 +21,7 @@ const Book = mongoose.model('books', bookSchema);
 
 const shelfSchema = new mongoose.Schema({
     name : {type : String},
-    book_ids : [{type: mongoose.ObjectId}]
+    book_id : [{type: mongoose.ObjectId}]
 });
 
 const Shelf = mongoose.model('bookshelves', shelfSchema);
