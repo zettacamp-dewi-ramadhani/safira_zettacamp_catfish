@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
 mongoose.connect('mongodb://localhost:27017/zettacamp', {useNewUrlParser: true, useUnifiedTopology: true})
 .then(()=>console.log('connect'))
@@ -18,11 +19,21 @@ const bookSchema = new mongoose.Schema({
 
 const Book = mongoose.model('books', bookSchema);
 
+const shelfSchema = new mongoose.Schema({
+    name : {type : String},
+    book_ids : [{type: mongoose.ObjectId}]
+});
+
+const Shelf = mongoose.model('bookshelves', shelfSchema);
+
 const user = [{
     id : 1,
     username : 'safira',
     password : 'pass'
 }];
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}))
 
 const auth = (req, res, next)=>{
     const auth = req.headers["authorization"].replace("Basic ", "");
@@ -119,6 +130,46 @@ app.get('/delete', auth, async (req, res)=>{
     await result;
     res.send('done');
 });
+
+app.post('/insert-book', (req, res)=>{
+    let data = Shelf.insertMany([{
+        name : 'sastra',
+        book_id : ["6357e72c1363b0078c6ed427", "63587882066298a4ea63ff3c"]
+        // name : req.body.name,
+        // book_id : [req.body.book_id]
+            
+    }]);
+    res.send(data);
+})
+
+app.get('/delete-book', auth, async (req, res)=>{
+    let result = Shelf.deleteMany();
+    // let result = Shelf.deleteOne({_id: '6357ecc767b3611bc415fc89'});
+    await result;
+    res.send('done');
+});
+
+app.get('/find-book', auth, async (req, res)=>{
+    let result = await Shelf.find({
+        book_id : {
+            $elemMatch : {$in :'6357e72c1363b0078c6ed427'}
+        }
+    })
+    res.send(result);
+});
+
+app.get('/update-book', auth, async (req, res)=>{
+    let data = Shelf.updateOne({_id:'6358947de3e29c287c038e65'}, {
+        $push : {book_id: '6357e72c1363b0078c6ed424'}
+    });
+    await data;
+    let result = await Shelf.find({
+        book_id : {
+            $elemMatch : {$in :'6357e72c1363b0078c6ed424'}
+        }
+    });
+    res.send(result);
+})
 
 app.listen(3000);
 
