@@ -141,42 +141,43 @@ app.get('/delete', auth, async (req, res)=>{
     res.send('done');
 });
 
-app.post('/insert-book', (req, res)=>{
+app.post('/insert-book', async (req, res)=>{
     let data = Shelf.insertMany([{
         name : 'sastra',
         book_ids : [{
-            book_id : "6357e72c1363b0078c6ed427",
+            book_id : "6358cb2b79e5a818ccf5ca9f",
             added_date : Date.now(),
             stock : 10
         },{
-            book_id : '63587882066298a4ea63ff3c',
+            book_id : '6358cb2b79e5a818ccf5caa0',
             added_date : Date.now(),
             stock : 5
         }],
         date : [{
-            date : '26 Okotber 2022',
-            time : '11:20 AM'
+            date : '25 Oktober 2022',
+            time : '2.31 PM'
+        }]
+    },{
+        name : 'mystery',
+        book_ids : [{
+            book_id : "6358cb2b79e5a818ccf5ca9a",
+            added_date : Date.now(),
+            stock : 16
         },{
-            name : 'mystery',
-            book_ids : [{
-                book_id : "6357e5685d0a7c2120409807",
-                added_date : Date.now(),
-                stock : 16
-            },{
-                book_id : '63587882066298a4ea63ff3c',
-                added_date : Date.now(),
-                stock : 5
-            }],
-            date : [{
-                date : '26 Okotber 2022',
-                time : '11:20 AM'
-            }]
+            book_id : '6358cb2b79e5a818ccf5caa3',
+            added_date : Date.now(),
+            stock : 5
+        }],
+        date : [{
+            date : '26 Oktober 2022',
+            time : '2.31 PM'
         }]
         // name : req.body.name,
-        // book_id : [req.body.book_id]
-            
+        // book_id : [req.body.book_id]  
     }]);
-    res.send({messsage: data});
+    await data;
+    let result = await Shelf.find();
+    res.send(result);
 })
 
 app.get('/delete-book', auth, async (req, res)=>{
@@ -189,24 +190,24 @@ app.get('/delete-book', auth, async (req, res)=>{
 app.get('/find-book', auth, async (req, res)=>{
     let result = await Shelf.find({
         book_ids : {
-            $elemMatch : {book_id :{$eq :'6357e72c1363b0078c6ed427'}}
+            $elemMatch : {book_id :{$eq :'6358cb2b79e5a818ccf5ca9f'}}
         }
     })
     res.send(result);
 });
 
 app.get('/update-book', auth, async (req, res)=>{
-    let data = Shelf.updateOne({_id:'6358947de3e29c287c038e65'}, {
-        $push : {book_id: '6357e72c1363b0078c6ed424'}
-    });
+    let data = Shelf.updateMany({ },
+        { $set: { "date.$[elem].time" : '3.12', updated: Date.now() } },
+        { arrayFilters: [ { "elem.date": { $eq: "26 Oktober 2022" } } ] });
     await data;
     let result = await Shelf.find({
-        book_id : {
-            $elemMatch : {$in :'6357e72c1363b0078c6ed424'}
+        date: {
+            $elemMatch : {date :{$eq : '26 Oktober 2022'}}
         }
-    });
+    })
     res.send(result);
-})
+});
 
 app.listen(3000);
 
