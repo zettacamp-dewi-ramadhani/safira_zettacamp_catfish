@@ -62,14 +62,20 @@ app.get('/set-map',auth, async (req, res)=>{
 });
 
 app.post('/insert', auth, (req, res)=>{
-    let data = Book.insertMany([{
+    let data = Book.insertMany([
+    {
+        title : "Omen",
+	    author : "Lexie Xu",
+	    date_published : "2012",
+	    price : 47000,
+    },{
         title : "Hyouka",
         author : "Honobu Yonezawa",
         date_published : "2014",
         price : 75000
             
     },{
-        name : "Filosofi Kopi",
+        title : "Filosofi Kopi",
 	    author : "Dewi Lestari",
 	    date_published : "2006",
 	    price : 36000
@@ -80,7 +86,7 @@ app.post('/insert', auth, (req, res)=>{
         price : 80000
             
     },{
-        name : "Another",
+        title : "Another",
 	    author : "Yukito Ayatsuji",
 	    date_published : "2009",
 	    price : 80000
@@ -91,11 +97,26 @@ app.post('/insert', auth, (req, res)=>{
         price : 68000
             
     },{
-        name : "11:11",
+        title : "11:11",
 	    author : "Fiersa Besari",
 	    date_published : "2018",
 	    price : 80000
-    }])
+    },{
+        title : "Bumi",
+	    author : "Tere Liye",
+	    date_published : "2014",
+	    price : 82000
+    },{
+        title : "Tentang Kamu",
+	    author : "Tere Liye",
+	    date_published : "2016",
+	    price : 69000
+    },{
+        title : "Obsesi",
+	    author : "Lexie Xu",
+	    date_published : "2010",
+	    price : 48000
+    },])
     // await data;
     res.send(data);
 });
