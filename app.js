@@ -21,7 +21,17 @@ const Book = mongoose.model('books', bookSchema);
 
 const shelfSchema = new mongoose.Schema({
     name : {type : String},
-    book_ids : [{type: mongoose.ObjectId}]
+    book_ids : [{
+        book_id : {type: mongoose.ObjectId},
+        added_date : {type: Date},
+        stock : {type: Number}
+    }],
+    date : [{
+        date : {type: String},
+        time : {type: String}
+    }],
+    created : {type: Date, default : Date.now},
+    updated : {type: Date, default : Date.now}
 });
 
 const Shelf = mongoose.model('bookshelves', shelfSchema);
@@ -134,12 +144,39 @@ app.get('/delete', auth, async (req, res)=>{
 app.post('/insert-book', (req, res)=>{
     let data = Shelf.insertMany([{
         name : 'sastra',
-        book_id : ["6357e72c1363b0078c6ed427", "63587882066298a4ea63ff3c"]
+        book_ids : [{
+            book_id : "6357e72c1363b0078c6ed427",
+            added_date : Date.now(),
+            stock : 10
+        },{
+            book_id : '63587882066298a4ea63ff3c',
+            added_date : Date.now(),
+            stock : 5
+        }],
+        date : [{
+            date : '26 Okotber 2022',
+            time : '11:20 AM'
+        },{
+            name : 'mystery',
+            book_ids : [{
+                book_id : "6357e5685d0a7c2120409807",
+                added_date : Date.now(),
+                stock : 16
+            },{
+                book_id : '63587882066298a4ea63ff3c',
+                added_date : Date.now(),
+                stock : 5
+            }],
+            date : [{
+                date : '26 Okotber 2022',
+                time : '11:20 AM'
+            }]
+        }]
         // name : req.body.name,
         // book_id : [req.body.book_id]
             
     }]);
-    res.send(data);
+    res.send({messsage: data});
 })
 
 app.get('/delete-book', auth, async (req, res)=>{
@@ -151,8 +188,8 @@ app.get('/delete-book', auth, async (req, res)=>{
 
 app.get('/find-book', auth, async (req, res)=>{
     let result = await Shelf.find({
-        book_id : {
-            $elemMatch : {$in :'6357e72c1363b0078c6ed427'}
+        book_ids : {
+            $elemMatch : {book_id :{$eq :'6357e72c1363b0078c6ed427'}}
         }
     })
     res.send(result);
