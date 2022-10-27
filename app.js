@@ -22,11 +22,14 @@ const Book = mongoose.model('books', bookSchema);
 const shelfSchema = new mongoose.Schema({
     name : {type : String},
     book_ids : [{
-        book_id : {type: mongoose.ObjectId},
-        added_date : {type: Date},
+        book_id : {
+            type: mongoose.Schema.ObjectId,
+            ref : 'books'
+        },
+        added_date : {type: Date, default : Date.now},
         stock : {type: Number}
     }],
-    date : [{
+    datetime : [{
         date : {type: String},
         time : {type: String}
     }],
@@ -42,8 +45,7 @@ const user = [{
     password : 'pass'
 }];
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}))
+app.use(express.json())
 
 const auth = (req, res, next)=>{
     const auth = req.headers["authorization"].replace("Basic ", "");
@@ -84,38 +86,10 @@ app.get('/set-map',auth, async (req, res)=>{
 
 app.post('/insert', auth, (req, res)=>{
     let data = Book.insertMany([{
-        title : "Hyouka",
-        author : "Honobu Yonezawa",
-        date_published : "2014",
-        price : 75000
-            
-    },{
-        title : "Filosofi Kopi",
-	    author : "Dewi Lestari",
-	    date_published : "2006",
-	    price : 36000
-    },{
-        title : "Perahu Kertas",
-        author : "Dewi Lestari",
-        date_published : "2003",
-        price : 80000
-            
-    },{
-        title : "Another",
-	    author : "Yukito Ayatsuji",
-	    date_published : "2009",
-	    price : 80000
-    },{
-        title : "Garis Waktu",
-        author : "Fiersa Berari",
-        date_published : "2016",
-        price : 68000
-            
-    },{
-        title : "11:11",
-	    author : "Fiersa Besari",
-	    date_published : "2018",
-	    price : 80000
+        title : req.body.title,
+        author : req.body.author,
+        date_published : req.body.data_published,
+        price : req.body.price
     }])
     // await data;
     res.send(data);
@@ -127,7 +101,7 @@ app.get('/read', auth, async (req, res)=>{
 })
 
 app.get('/update', auth, async (req, res)=>{
-    let data = Book.updateOne({_id: '63579767e989d201a4415d79'}, {price : 40000, updated : ""});
+    let data = Book.updateOne({_id: req.body.id}, {price : req.body.price, updated : req.body.updated});
     await data;
     let result = await Book.find({
         price : 40000
@@ -142,47 +116,17 @@ app.get('/delete', auth, async (req, res)=>{
 });
 
 app.post('/insert-book', async (req, res)=>{
-    let data = Shelf.insertMany([{
-        name : 'sastra',
-        book_ids : [{
-            book_id : "6358cb2b79e5a818ccf5ca9f",
-            added_date : Date.now(),
-            stock : 10
-        },{
-            book_id : '6358cb2b79e5a818ccf5caa0',
-            added_date : Date.now(),
-            stock : 5
-        }],
-        date : [{
-            date : '25 Oktober 2022',
-            time : '2.31 PM'
-        }]
-    },{
-        name : 'mystery',
-        book_ids : [{
-            book_id : "6358cb2b79e5a818ccf5ca9a",
-            added_date : Date.now(),
-            stock : 16
-        },{
-            book_id : '6358cb2b79e5a818ccf5caa3',
-            added_date : Date.now(),
-            stock : 5
-        }],
-        date : [{
-            date : '26 Oktober 2022',
-            time : '2.31 PM'
-        }]
-        // name : req.body.name,
-        // book_id : [req.body.book_id]  
-    }]);
-    await data;
-    let result = await Shelf.find();
-    res.send(result);
+    let data = new Shelf({
+        name : req.body.name,
+        book_ids : req.body.book_ids,        
+        datetime : req.body.datetime        
+    });
+    await data.save() 
+    res.send(data);
 })
 
 app.get('/delete-book', auth, async (req, res)=>{
     let result = Shelf.deleteMany();
-    // let result = Shelf.deleteOne({_id: '6357ecc767b3611bc415fc89'});
     await result;
     res.send('done');
 });
@@ -190,7 +134,7 @@ app.get('/delete-book', auth, async (req, res)=>{
 app.get('/find-book', auth, async (req, res)=>{
     let result = await Shelf.find({
         book_ids : {
-            $elemMatch : {book_id :{$eq :'6358cb2b79e5a818ccf5ca9f'}}
+            $elemMatch : {book_id :{$eq : req.body.book_id}}
         }
     })
     res.send(result);
@@ -198,12 +142,12 @@ app.get('/find-book', auth, async (req, res)=>{
 
 app.get('/update-book', auth, async (req, res)=>{
     let data = Shelf.updateMany({ },
-        { $set: { "date.$[elem].time" : '3.12', updated: Date.now() } },
-        { arrayFilters: [ { "elem.date": { $eq: "26 Oktober 2022" } } ] });
+        { $set: { "date.$[elem].time" : req.body.date[0].time } },
+        { arrayFilters: [ { "elem.date": { $eq: req.body.date[0].date } } ] });
     await data;
     let result = await Shelf.find({
         date: {
-            $elemMatch : {date :{$eq : '26 Oktober 2022'}}
+            $elemMatch : {date :{$eq : req.body.date[0].time}} 
         }
     })
     res.send(result);
