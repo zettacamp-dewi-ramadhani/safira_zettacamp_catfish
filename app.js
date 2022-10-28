@@ -153,6 +153,25 @@ app.get('/update-book', auth, async (req, res)=>{
     res.send(result);
 });
 
+app.get('/aggregate', auth, async (req, res)=>{
+    let data = await Shelf.aggregate(([
+        {
+            $addFields : {
+                total_stock : {
+                    $sum : req.body.criteria_1
+                }
+            }
+        },{
+            $project : {
+                book_ids : req.body.criteria_2
+            }
+        },{
+            $unwind : req.body.criteria_3
+        }
+    ]))
+    res.send(data);
+})
+
 app.listen(3000);
 
 myBook = [
