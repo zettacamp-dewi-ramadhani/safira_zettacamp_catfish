@@ -142,12 +142,12 @@ app.get('/find-book', auth, async (req, res)=>{
 
 app.get('/update-book', auth, async (req, res)=>{
     let data = Shelf.updateMany({ },
-        { $set: { "date.$[elem].time" : req.body.date[0].time } },
-        { arrayFilters: [ { "elem.date": { $eq: req.body.date[0].date } } ] });
+        { $set: { "datetime.$[elem].time" : req.body.date.time } },
+        { arrayFilters: [ { "elem.date": { $eq: req.body.date.date } } ] });
     await data;
     let result = await Shelf.find({
         date: {
-            $elemMatch : {date :{$eq : req.body.date[0].time}} 
+            $elemMatch : {datetime :{$eq : req.body.date[0].time}} 
         }
     })
     res.send(result);
@@ -169,6 +169,32 @@ app.get('/aggregate', auth, async (req, res)=>{
             $unwind : req.body.criteria_3
         }
     ]))
+    res.send(data);
+});
+
+app.get('/aggregate-book', auth, async (req, res)=>{
+    let data = await Book.aggregate([{
+        $match : {author : req.body.author}
+    },{
+        $sort : {title :req.body.sort_by}
+    },{
+        $addFields : {
+            published : {$concat: [req.body.name , "-", req.body.city]}
+        }
+    }]);
+    res.send(data);
+})
+
+app.get('/join-data', auth, async (req, res)=>{
+    let data = await Shelf.aggregate( [{
+            $lookup:{
+                from: req.body.from,
+                localField: req.body.local,
+                foreignField: req.body.foreign,
+                as: req.body.as
+            }
+        }
+    ]);
     res.send(data);
 })
 
