@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const tokenSecret = 'secret';
 const multer = require('multer');
 const forms = multer();
+const mongoose = require('mongoose');
 const user = [{
     id : 1,
     username : 'safira',
@@ -14,6 +15,19 @@ const user = [{
 app.use(bodyParser.json());
 app.use(forms.array());
 app.use(bodyParser.urlencoded({extended: true}));
+
+mongoose.connect('mongodb://localhost:27017/zettacamp', {useNewUrlParser: true})
+.then(()=>console.log("Connected")).catch((err)=>console.log(err));
+
+const songSchema = new mongoose.Schema({
+    title : {type : String},
+    artist : {type : String},
+    album : {type : String},
+    genre : {type : String},
+    duration : {type : String}
+});
+
+const Song = mongoose.model('songs', songSchema);
 
 app.post('/',(req, res)=>{
     const uname = req.body.username;
@@ -67,9 +81,27 @@ app.get('/playlist', authJwt, async (req,res)=>{
     }catch(e){
         res.sendStatus(401);
     }
-})
+});
 
-app.listen(3000);
+app.post('/insert-song', authJwt, async(req,res)=>{
+    let song = req.body;
+    let result = await insertSong(song.title, song.artist, song.album,song.genre, song.duration);
+    res.send(result);
+});
+
+app.post('/delete-song', authJwt, async(req,res)=>{
+    let song = req.body;
+    let result = await deleteSong(song.id);
+    res.send(result);
+});
+
+app.post('/update-song', authJwt, async(req,res)=>{
+    let song = req.body;
+    let result = await updateSong(song.title, song.duration);
+    res.send(result);
+});
+
+app.listen(4000);
 
 let songList = [
     // 1
@@ -193,6 +225,41 @@ let songList = [
         "duration" : "5.18",
     }
 ];
+
+const insertSong = async (songTitle, songArtist, songAlbum, songGenre, songDuration) =>{
+    let data = new Song({
+        title : songTitle,
+        artist : songArtist,
+        album : songAlbum,
+        genre : songGenre,
+        duration : songDuration
+    })
+    await data.save();
+    return data;
+}
+
+const deleteSong = async (songId) =>{
+    let data = Song.deleteOne({
+        _id : songId
+    });
+    await data;
+    let result = await Song.find();
+    return result;
+}
+
+const updateSong = async (songTitle, songDuration) =>{
+    let data = Song.updateOne({
+        title : songTitle
+    },{
+        $set :{
+        duration : songDuration}
+    })
+    await data;
+    let result = await Song.find({
+        duration : songDuration
+    });
+    return result;
+}
 
 // group based artist
 function artist(artist){
