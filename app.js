@@ -198,6 +198,41 @@ app.get('/join-data', auth, async (req, res)=>{
     res.send(data);
 })
 
+app.get('/pagination', auth, async (req, res)=>{
+    let result = await Shelf.aggregate([{
+        $facet : {
+            data : [{
+                $unwind : req.body.data
+            },{
+                $project : {
+                    book_ids : req.body.value
+                }
+            },{
+                $lookup:{
+                    from: req.body.from,
+                    localField: req.body.local,
+                    foreignField: req.body.foreign,
+                    as: req.body.as
+                }
+            },{
+                $skip : req.body.page       
+            },{
+                $limit : req.body.limit
+            }]
+        }
+    }])
+    res.send(result);
+})
+
+app.get('/group', auth, async (req, res)=>{
+    let data = await Shelf.aggregate( [ { 
+        $group : { 
+            _id : req.body.group 
+        } 
+    } ] )
+    res.send(data);
+})
+
 app.listen(3000);
 
 myBook = [
