@@ -1,43 +1,37 @@
 const express = require('express');
 const app = express();
-const fs = require('fs');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+// const mongoose = require('mongoose');
+const {ApolloServer} = require('apollo-server-express')
+const {typeDefs} = require('./Schema/TypeDefs')
+const {resolvers} = require('./Schema/Resolvers')
 
-mongoose.connect('mongodb://localhost:27017/zettacamp', {useNewUrlParser: true, useUnifiedTopology: true})
-.then(()=>console.log('connect'))
-.catch((err)=>console.log(err));
-
-const bookSchema = new mongoose.Schema({
-    title : {type: String},
-    author : {type: String},
-    date_published : {type: String},
-    price : {type: Number},
-    created : {type: Date, default : Date.now},
-    updated : {type: Date, default : Date.now}
+const server = new ApolloServer({typeDefs, resolvers});
+server.start().then(res=>{
+    server.applyMiddleware({app});
+    app.listen(3000, () => 
+        console.log(`Server running on port 3000`)
+    );
 });
 
-const Book = mongoose.model('books', bookSchema);
+// const shelfSchema = new mongoose.Schema({
+//     name : {type : String},
+//     book_ids : [{
+//         book_id : {
+//             type: mongoose.Schema.ObjectId,
+//             ref : 'books'
+//         },
+//         added_date : {type: Date, default : Date.now},
+//         stock : {type: Number}
+//     }],
+//     datetime : [{
+//         date : {type: String},
+//         time : {type: String}
+//     }],
+//     created : {type: Date, default : Date.now},
+//     updated : {type: Date, default : Date.now}
+// });
 
-const shelfSchema = new mongoose.Schema({
-    name : {type : String},
-    book_ids : [{
-        book_id : {
-            type: mongoose.Schema.ObjectId,
-            ref : 'books'
-        },
-        added_date : {type: Date, default : Date.now},
-        stock : {type: Number}
-    }],
-    datetime : [{
-        date : {type: String},
-        time : {type: String}
-    }],
-    created : {type: Date, default : Date.now},
-    updated : {type: Date, default : Date.now}
-});
-
-const Shelf = mongoose.model('bookshelves', shelfSchema);
+// const Shelf = mongoose.model('bookshelves', shelfSchema);
 
 const user = [{
     id : 1,
@@ -95,10 +89,9 @@ app.post('/insert', auth, (req, res)=>{
     res.send(data);
 });
 
-app.get('/read', auth, async (req, res)=>{
-    let result = await Book.find()
-    res.send(result);
-})
+// app.get('/read', auth, async (req, res)=>{
+    
+// })
 
 app.get('/update', auth, async (req, res)=>{
     let data = Book.updateOne({_id: req.body.id}, {price : req.body.price, updated : req.body.updated});
@@ -232,8 +225,6 @@ app.get('/group', auth, async (req, res)=>{
     } ] )
     res.send(data);
 })
-
-app.listen(3000);
 
 myBook = [
     {
