@@ -27,7 +27,24 @@ const songSchema = new mongoose.Schema({
     duration : {type : String}
 });
 
+const playlistSchema = new mongoose.Schema({
+    playlist : {type : String},
+    song_ids : [{
+        song_id : {
+            type: mongoose.Schema.ObjectId,
+            ref : 'songs'
+        },
+        added_date : {
+            type : Date,
+            default : Date.now()
+        }
+    }],
+    created_at : {type : Date, default : Date.now()},
+    updated_at : {type : Date, default : Date.now()}
+})
+
 const Song = mongoose.model('songs', songSchema);
+const SongPlaylist = mongoose.model('playlists', playlistSchema);
 
 app.post('/',(req, res)=>{
     const uname = req.body.username;
@@ -75,6 +92,7 @@ app.get('/genre', authJwt, (req,res)=>{
 });
 
 app.get('/playlist', authJwt, async (req,res)=>{
+    // let list = req.body
     try{
         let result = await playlist();
         res.send(result);
@@ -86,6 +104,12 @@ app.get('/playlist', authJwt, async (req,res)=>{
 app.post('/insert-song', authJwt, async(req,res)=>{
     let song = req.body;
     let result = await insertSong(song.title, song.artist, song.album,song.genre, song.duration);
+    res.send(result);
+});
+
+app.post('/insert-playlist', authJwt, async(req,res)=>{
+    let list = req.body;
+    let result = await insertPlaylist(list.name, list.song_ids);
     res.send(result);
 });
 
@@ -101,12 +125,24 @@ app.post('/update-song', authJwt, async(req,res)=>{
     res.send(result);
 });
 
+app.post('/get-song', authJwt, async(req, res)=>{
+    let data = req.body
+    let result = await getAllSong(data.skip, data.limit, data.time);
+    res.send(result);
+});
+
+app.post('/get-playlist', authJwt, async(req, res)=>{
+    let data = req.body
+    let result = await getPlaylist(data.song, data.skip, data.limit, data.from, data.local, data.foreign, data.as);
+    res.send(result);
+});
+
 app.listen(4000);
 
 let songList = [
     // 1
     {
-        "titile" : "Bad Habits",
+        "title" : "Bad Habits",
         "artist" : "Ed Sheeran",
         "album" : "Equal",
         "genre" : "Pop",
@@ -114,7 +150,7 @@ let songList = [
     },
     //2
     {
-        "titile" : "Overpass Graffiti",
+        "title" : "Overpass Graffiti",
         "artist" : "Ed Sheeran",
         "album" : "Equal",
         "genre" : "Pop",
@@ -122,7 +158,7 @@ let songList = [
     },
     // 3
     {
-        "titile" : "Lovesick Girls",
+        "title" : "Lovesick Girls",
         "artist" : "Blackpink",
         "album" : "The Album",
         "genre" : "K-pop",
@@ -130,7 +166,7 @@ let songList = [
     },
     // 4
     {
-        "titile" : "Grand Escape",
+        "title" : "Grand Escape",
         "artist" : "RADWIMPS, Toko Miura",
         "album" : "Tenki no Ko (complete version)",
         "genre" : "J-Pop",
@@ -138,7 +174,7 @@ let songList = [
     },
     // 5
     {
-        "titile" : "Clarity",
+        "title" : "Clarity",
         "artist" : "Zedd, Foxes",
         "album" : "Clarity",
         "genre" : "Dance",
@@ -146,7 +182,7 @@ let songList = [
     },
     // 6
     {
-        "titile" : "Firework",
+        "title" : "Firework",
         "artist" : "Katy Perry",
         "album" : "Teenage Dream",
         "genre" : "Pop",
@@ -154,7 +190,7 @@ let songList = [
     },
     // 7
     {
-        "titile" : "I Can't Stop Me",
+        "title" : "I Can't Stop Me",
         "artist" : "TWICE",
         "album" : "Eyes Wide Open",
         "genre" : "K-pop",
@@ -162,7 +198,7 @@ let songList = [
     },
     // 8
     {
-        "titile" : "Pretender",
+        "title" : "Pretender",
         "artist" : "Hige DANdism",
         "album" : "Traveler",
         "genre" : "J-Pop",
@@ -170,7 +206,7 @@ let songList = [
     },
     // 9
     {
-        "titile" : "Heroes (we could be)",
+        "title" : "Heroes (we could be)",
         "artist" : "Alesso, Tove Lo",
         "album" : "Forever",
         "genre" : "Dance",
@@ -178,7 +214,7 @@ let songList = [
     },
     // 10
     {
-        "titile" : "Unconditionally",
+        "title" : "Unconditionally",
         "artist" : "Katy Perry",
         "album" : "PRISM",
         "genre" : "Pop",
@@ -186,7 +222,7 @@ let songList = [
     },
     // 11
     {
-        "titile" : "Ready For Love",
+        "title" : "Ready For Love",
         "artist" : "Blackpink",
         "album" : "Born Pink",
         "genre" : "K-pop",
@@ -194,7 +230,7 @@ let songList = [
     },
     // 12
     {
-        "titile" : "More & More",
+        "title" : "More & More",
         "artist" : "TWICE",
         "album" : "More & More",
         "genre" : "K-pop",
@@ -202,7 +238,7 @@ let songList = [
     },
     //13
     {
-        "titile" : "XOXO",
+        "title" : "XOXO",
         "artist" : "Jeon Somi",
         "album" : "XOXO",
         "genre" : "K-pop",
@@ -210,7 +246,7 @@ let songList = [
     },
     // 14
     {
-        "titile" : "Celebration",
+        "title" : "Celebration",
         "artist" : "RADWIMPS, Toko Miura",
         "album" : "Tenki no Ko (complete version)",
         "genre" : "J-Pop",
@@ -218,7 +254,7 @@ let songList = [
     },
     // 15
     {
-        "titile" : "Coin",
+        "title" : "Coin",
         "artist" : "IU",
         "album" : "Lilac",
         "genre" : "K-pop",
@@ -233,6 +269,15 @@ const insertSong = async (songTitle, songArtist, songAlbum, songGenre, songDurat
         album : songAlbum,
         genre : songGenre,
         duration : songDuration
+    })
+    await data.save();
+    return data;
+};
+
+const insertPlaylist = async (playlistName, playlistSong) =>{
+    let data = new SongPlaylist({
+        playlist : playlistName,
+        song_ids : playlistSong
     })
     await data.save();
     return data;
@@ -259,6 +304,70 @@ const updateSong = async (songTitle, songDuration) =>{
         duration : songDuration
     });
     return result;
+}
+
+const readSong = async()=>{
+    let data = await Song.find();
+    return data;
+}
+
+const getAllSong = async(skipData, limitData, timeData)=>{
+    let data = await Song.aggregate([{
+        $facet :{
+            song : [{
+                $match : {
+                    duration : {$gte : timeData}
+                }
+            },{
+                $skip : skipData
+            },{
+                $limit : limitData
+            }],
+            countData : [{
+                $group : {
+                    _id: null,
+                    count: {
+                        $sum :1
+                    }
+                }
+            }]
+        }
+    }])
+    return data;
+}
+
+const getPlaylist = async(songData, skipData, limitData, fromData, localData, foreignData, asData)=>{
+    let data = await SongPlaylist.aggregate([{
+        $facet :{
+            song : [{
+                $unwind: songData
+            },{
+                $project : {
+                    song_ids : 1
+                }
+            },{
+                $lookup : {
+                    from : fromData,
+                    localField : localData,
+                    foreignField : foreignData,
+                    as : asData
+                }
+            },{
+                $skip : skipData
+            },{
+                $limit : limitData
+            }],
+            countData : [{
+                $group : {
+                    _id: null,
+                    count: {
+                        $sum : 1
+                    }
+                }
+            }]
+        }
+    }])
+    return data;
 }
 
 // group based artist
@@ -296,11 +405,10 @@ let randomArray = (x)=>{
 async function playlist(){
     let songIndex = 0;
     let temp=0;
-    let set = new Set();
-    let map = new Map();
-    let obj = {};
+    let list = []
 
-    let song = await randomArray(songList);
+    let data = await readSong();
+    let song = await randomArray(data);
     // return song[0];
 
     for (let i = 0; i < song.length; i++) {
@@ -314,18 +422,9 @@ async function playlist(){
     }
 
     for (let i = 0; i < songIndex; i++) {
-        // return song;
-        set.add(song[i]);            
+        list.push(song[i]);         
     }
-    // return set;
-    
-    let [...data] = set;
-    for(i=0; i<data.length; i++){
-        map.set(i+1, data[i]);
-    }
-
-    map.forEach((v,k)=>{
-        obj[k] = v;
-    });
-    return obj;
+    return list;
+    // let result = await insertPlaylist(name,list)
+    // return result;
 }
