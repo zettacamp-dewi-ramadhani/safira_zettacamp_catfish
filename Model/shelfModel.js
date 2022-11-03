@@ -1,4 +1,4 @@
-const {db, mongoose} = require('../db');
+const {db, mongoose} = require('../Controller/db');
 
 const shelfSchema = new mongoose.Schema({
         name : {type : String},

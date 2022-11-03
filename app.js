@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-// const mongoose = require('mongoose');
 const {ApolloServer} = require('apollo-server-express')
 const {typeDefs} = require('./Schema/TypeDefs')
 const {resolvers} = require('./Schema/Resolvers')
@@ -12,26 +11,6 @@ server.start().then(res=>{
         console.log(`Server running on port 3000`)
     );
 });
-
-// const shelfSchema = new mongoose.Schema({
-//     name : {type : String},
-//     book_ids : [{
-//         book_id : {
-//             type: mongoose.Schema.ObjectId,
-//             ref : 'books'
-//         },
-//         added_date : {type: Date, default : Date.now},
-//         stock : {type: Number}
-//     }],
-//     datetime : [{
-//         date : {type: String},
-//         time : {type: String}
-//     }],
-//     created : {type: Date, default : Date.now},
-//     updated : {type: Date, default : Date.now}
-// });
-
-// const Shelf = mongoose.model('bookshelves', shelfSchema);
 
 const user = [{
     id : 1,
@@ -88,10 +67,6 @@ app.post('/insert', auth, (req, res)=>{
     // await data;
     res.send(data);
 });
-
-// app.get('/read', auth, async (req, res)=>{
-    
-// })
 
 app.get('/update', auth, async (req, res)=>{
     let data = Book.updateOne({_id: req.body.id}, {price : req.body.price, updated : req.body.updated});
@@ -241,40 +216,6 @@ myBook = [
         credit : true
     }
 ]
-
-function purchasing(book, disc, tax){
-    pad = book.price*(1-disc);
-    book.price = pad+(pad*tax);
-    return book;
-}
-
-async function credit(toc,x){
-    let book = await purchasing(x, 0.12, 0.1);
-    var creditPrice = [];
-    var due = [];
-    let credit;
-    let poc = 0;
-    let data = []
-
-    if(book.credit === true){
-        for (i=0; i<toc; i++){
-            credit = {};
-            credit.month = i+1;
-            price = book.price/toc+(book.price/toc*(poc/100));
-            creditPrice.push(price);
-            credit.price = creditPrice[i];
-            due.push(credit);
-            poc+=10;
-        }
-        data.push(book);
-        // console.log(data);
-        const result = data.concat(due);
-        return result;
-        // console.log(result);
-    }else{
-        return book;
-    }
-}
 
 async function setMap(x){
     const data = await credit(5, x);

@@ -1,18 +1,25 @@
+const {getAllBooks, getAllShelf} = require('../Controller/function');
 const Book = require('../Model/bookModel');
-const Shelf = require('../Model/shelfModel');
 
 const resolvers = {
     Query : {
-        async getAllBooks(){
-            let result = await Book.find();
-            return result;
-        },
+        getAllBooks,
+        getAllShelf
+    },
 
-        async getAllShelf(){
-            let result =  await Shelf.find();
-            return result;
+    Mutation : {
+        insertBook: async(parent, {input: {title,author,date_published,price}})=>{
+            let data = new Book({
+                title : title,
+                author : author,
+                date_published : date_published,
+                price : price,
+                created : new Date().toISOString(),
+                updated : new Date().toISOString()
+            });
+            const res = await data.save();
+            return "ok";
         }
-         
     }
 }
 
