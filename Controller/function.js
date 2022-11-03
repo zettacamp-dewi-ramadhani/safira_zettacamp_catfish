@@ -74,15 +74,15 @@ const insertBook = async(parent, {input: {title,author,date_published,price}})=>
 }
 
 const updateTitleBook = async(parent, {input: {id, title}})=>{
-    let data = Book.updateOne({
+    let data = await Book.findByIdAndUpdate({
         _id: id
     },{$set :{
         title : title,
         updated : new Date().toISOString()
     }});
-    await data;
-    const res = "done"
-    return {res};
+    // await data;
+    console.log(data)
+    return data;
 }
 
 const deleteBook = async(parent, {input : {title}})=>{
