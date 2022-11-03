@@ -60,16 +60,37 @@ async function setMap(x){
     }
 }
 
-const insertBooks = async(dataTitle, dataAuthor, dataDate, dataPrice)=>{
+const insertBook = async(parent, {input: {title,author,date_published,price}})=>{
     let data = new Book({
-        title : dataTitle,
-        author : dataAuthor,
-        date_published : dataDate,
-        price : dataPrice
+        title : title,
+        author : author,
+        date_published : date_published,
+        price : price,
+        created : new Date().toISOString(),
+        updated : new Date().toISOString()
     });
-    await data.save();
-    console.log(data)
-    return data
+    const res = await data.save();
+    return res;
+}
+
+const updateTitleBook = async(parent, {input: {id, title}})=>{
+    let data = Book.updateOne({
+        _id: id
+    },{$set :{
+        title : title,
+        updated : new Date().toISOString()
+    }});
+    await data;
+    const res = "done"
+    return {res};
+}
+
+const deleteBook = async(parent, {input : {title}})=>{
+    let data = Book.deleteOne({
+        title : title
+    })
+    await data;
+    return data;
 }
 
 const getAllBooks = async()=>{
@@ -82,8 +103,20 @@ const getAllShelf = async() =>{
     return result;
 }
 
+const paginationBook = async(parent, {input : {page, limit}})=>{
+    let result = await Book.aggregate([{
+        $skip : page*limit   
+    },{
+        $limit : limit
+    }])
+    return result;
+}
+
 module.exports = {
     getAllBooks,
     getAllShelf,
-    insertBooks
+    insertBook,
+    updateTitleBook,
+    deleteBook,
+    paginationBook
 }

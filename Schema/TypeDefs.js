@@ -2,6 +2,7 @@ const {gql} = require('apollo-server-express');
 
 const typeDefs = gql`
     type Books {
+        id : ID,
         title : String,
         author : String,
         date_published : String,
@@ -55,17 +56,31 @@ const typeDefs = gql`
         discount : Int,
         credit : [dataCredit]
     }
+    
+    input pagination{
+        page : Int,
+        limit : Int
+    }
 
     type Query {
         getAllBooks : [Books],
-        getAllShelf : [Shelf]
+        getAllShelf : [Shelf],
+        paginationBook(input: pagination) : [Books]
     }
-    type tes{
-        message: String
+    input titleBook{
+        id : ID,
+        title: String
     }
+
+    input deleteBooks{
+        title: String
+    }
+
     type Mutation {
         insertPurchasing(input: dataPurchasing) : Purchasing,
-        insertBook(input: dataBooks) : tes
+        insertBook(input: dataBooks) : Books,
+        updateTitleBook(input : titleBook): Books,
+        deleteBook(input : deleteBooks): Books
     }
 `
 
