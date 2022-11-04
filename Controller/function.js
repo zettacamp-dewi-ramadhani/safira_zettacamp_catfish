@@ -80,16 +80,16 @@ const updateTitleBook = async(parent, {input: {id, title}})=>{
         title : title,
         updated : new Date().toISOString()
     }});
-    // await data;
-    console.log(data)
+    // console.log(data)
     return data;
 }
 
-const deleteBook = async(parent, {input : {title}})=>{
-    let data = Book.deleteOne({
-        title : title
+const deleteBook = async(parent, {input : {id}})=>{
+    let data = await Book.findByIdAndDelete({
+        _id : id
     })
-    await data;
+    // await data;
+    console.log(data);
     return data;
 }
 
