@@ -1,6 +1,7 @@
 const {gql} = require('apollo-server-express');
 
-const typeDefs = gql`
+const typeDefs = gql
+`
     type User {
         id : ID,
         username : String,
@@ -76,7 +77,6 @@ const typeDefs = gql`
     }
 
     type Query {
-        account()
         getAllBooks : [Books],
         getAllShelf(input: pagination) : [Shelf],
         paginationBook(input: pagination) : [Books]

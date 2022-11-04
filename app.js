@@ -4,8 +4,19 @@ const {ApolloServer} = require('apollo-server-express')
 const {typeDefs} = require('./Schema/TypeDefs')
 const {resolvers} = require('./Schema/Resolvers')
 const shelfLoader = require('./Controller/dataloader')
+const {applyMiddleware} = require('graphql-middleware')
+const {makeExecutableSchema} = require('@graphql-tools/schema')
+const authUser = require('./Controller/auth')
 
+// const schema = makeExecutableSchema({
+//     typeDefs, 
+//     resolvers
+// })
+
+// const middleware = [authUser]
+// schemaWithMiddleware = applyMiddleware(schema, ...middleware)
 const server = new ApolloServer({
+    // schema : schemaWithMiddleware,
     typeDefs, 
     resolvers,
     context: function({

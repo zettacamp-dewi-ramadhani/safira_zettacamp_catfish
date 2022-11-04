@@ -113,7 +113,7 @@ const getBooklistDataLoader = async (parent, args, ctx)=>{
     // console.log(parent)
     if(parent.book_id){
         const result = await ctx.shelfLoader.load(parent.book_id);
-        console.log(result)
+        // console.log(result)
         return result
     }
 }
