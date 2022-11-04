@@ -4,8 +4,10 @@ const {
     insertBook,
     updateTitleBook,
     deleteBook,
-    paginationBook
+    paginationBook,
+    getBooklistDataLoader
 } = require('../Controller/function');
+console.log(getBooklistDataLoader)
 
 
 const resolvers = {
@@ -19,6 +21,10 @@ const resolvers = {
         insertBook,
         updateTitleBook,
         deleteBook
+    },
+
+    Detail_Shelf : {
+        book_id : getBooklistDataLoader
     }
 }
 

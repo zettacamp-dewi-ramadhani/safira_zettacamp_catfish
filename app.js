@@ -3,8 +3,20 @@ const app = express();
 const {ApolloServer} = require('apollo-server-express')
 const {typeDefs} = require('./Schema/TypeDefs')
 const {resolvers} = require('./Schema/Resolvers')
+const shelfLoader = require('./Controller/dataloader')
 
-const server = new ApolloServer({typeDefs, resolvers});
+const server = new ApolloServer({
+    typeDefs, 
+    resolvers,
+    context: function({
+        req
+    }){
+        req: req;
+        return{
+            shelfLoader
+        }
+    }
+});
 server.start().then(res=>{
     server.applyMiddleware({app});
     app.listen(3000, () => 

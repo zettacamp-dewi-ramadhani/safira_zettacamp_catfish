@@ -1,5 +1,6 @@
 const Book = require('../Model/bookModel');
 const Shelf = require('../Model/shelfModel');
+// const shelfLoader = require('../Controller/dataloader')
 
 function purchasing(book, disc, tax){
     pad = book.price*(1-disc);
@@ -98,9 +99,23 @@ const getAllBooks = async()=>{
     return result;
 }
 
-const getAllShelf = async() =>{
-    let result =  await Shelf.find();
+const getAllShelf = async(parent, {input: {page,limit}}) =>{
+    let result = await Shelf.aggregate([{
+        $skip : page*limit   
+    },{
+        $limit : limit
+    }]);
+    // console.log(result)
     return result;
+}
+
+const getBooklistDataLoader = async (parent, args, ctx)=>{
+    // console.log(parent)
+    if(parent.book_id){
+        const result = await ctx.shelfLoader.load(parent.book_id);
+        console.log(result)
+        return result
+    }
 }
 
 const paginationBook = async(parent, {input : {page, limit}})=>{
@@ -118,5 +133,6 @@ module.exports = {
     insertBook,
     updateTitleBook,
     deleteBook,
-    paginationBook
+    paginationBook,
+    getBooklistDataLoader
 }

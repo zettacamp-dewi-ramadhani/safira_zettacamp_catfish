@@ -1,14 +1,10 @@
 const {gql} = require('apollo-server-express');
 
 const typeDefs = gql`
-    type Books {
-        _id : ID,
-        title : String,
-        author : String,
-        date_published : String,
-        price : Int,
-        created : String,
-        updated : String
+    type User {
+        id : ID,
+        username : String,
+        password : String
     }
 
     input dataBooks {
@@ -18,16 +14,33 @@ const typeDefs = gql`
         price : Int
     }
 
+    type Books {
+        _id : ID,
+        title : String,
+        author : String,
+        date_published : String,
+        price : Int,
+        created : String,
+        updated : String
+    }
+    
     type Detail_Shelf {
-        book_id : ID,
+        book_id : Books,
         added_date : String,
         stock : Int
 
     }
 
+    type Datetime {
+        date : String,
+        time : String
+    }
+
     type Shelf {
+        _id : ID,
         name : String,
         book_ids : [Detail_Shelf],
+        datetime : [Datetime],
         created : String,
         updated : String
     }
@@ -63,8 +76,9 @@ const typeDefs = gql`
     }
 
     type Query {
+        account()
         getAllBooks : [Books],
-        getAllShelf : [Shelf],
+        getAllShelf(input: pagination) : [Shelf],
         paginationBook(input: pagination) : [Books]
     }
     input titleBook{
