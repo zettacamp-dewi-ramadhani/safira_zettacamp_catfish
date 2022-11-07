@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const tokenSecret = 'secret';
 const multer = require('multer');
 const forms = multer();
-const mongoose = require('mongoose');
+
 const user = [{
     id : 1,
     username : 'safira',
@@ -16,8 +16,7 @@ app.use(bodyParser.json());
 app.use(forms.array());
 app.use(bodyParser.urlencoded({extended: true}));
 
-mongoose.connect('mongodb://localhost:27017/zettacamp', {useNewUrlParser: true})
-.then(()=>console.log("Connected")).catch((err)=>console.log(err));
+
 
 const songSchema = new mongoose.Schema({
     title : {type : String},
