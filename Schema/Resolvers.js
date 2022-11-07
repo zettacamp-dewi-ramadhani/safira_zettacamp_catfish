@@ -7,7 +7,8 @@ const {
     paginationBook,
     getBooklistDataLoader
 } = require('../Controller/function');
-console.log(getBooklistDataLoader)
+
+const {signUp} = require('../Controller/auth');
 
 
 const resolvers = {
@@ -18,6 +19,7 @@ const resolvers = {
     },
 
     Mutation : {
+        signUp,
         insertBook,
         updateTitleBook,
         deleteBook

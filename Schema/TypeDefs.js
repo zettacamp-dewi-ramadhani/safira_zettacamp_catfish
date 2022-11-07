@@ -2,8 +2,18 @@ const {gql} = require('apollo-server-express');
 
 const typeDefs = gql
 `
-    type User {
-        id : ID,
+    type Users {
+        _id : ID,
+        username : String,
+        password : String
+    }
+
+    type AuthLoad {
+        token : String,
+        user : Users
+    }
+
+    input AuthInput {
         username : String,
         password : String
     }
@@ -76,11 +86,6 @@ const typeDefs = gql
         limit : Int
     }
 
-    type Query {
-        getAllBooks : [Books],
-        getAllShelf(input: pagination) : [Shelf],
-        paginationBook(input: pagination) : [Books]
-    }
     input titleBook{
         _id : ID,
         title: String
@@ -90,7 +95,14 @@ const typeDefs = gql
         _id: ID
     }
 
+    type Query {
+        getAllBooks : [Books],
+        getAllShelf(input: pagination) : [Shelf],
+        paginationBook(input: pagination) : [Books]
+    }
+    
     type Mutation {
+        signUp(input : AuthInput) : AuthLoad,
         insertPurchasing(input: dataPurchasing) : Purchasing,
         insertBook(input: dataBooks) : Books,
         updateTitleBook(input : titleBook): Books,

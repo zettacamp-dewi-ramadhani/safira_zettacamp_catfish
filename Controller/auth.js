@@ -1,22 +1,47 @@
 const jwt = require('jsonwebtoken');
-const users = [{
-    id : 1,
-    username : 'safira',
-    password : 'zetta'
-}];
+const User = require('../Model/userModel');
+const secret = 'zetta'
 
-const authUser = async (resolver, parent, args, ctx)=>{
-    const token = ctx.req.header('Authorization');
+const signUp = async (parent, {input: {username, password}})=>{
+    let user = new User({
+        username : username,
+        password : password
+    });
+    await user.save();
+    // return res;
 
-    if(!token){
-        throw new Error("Token is required");
+    const token = jwt.sign({userId : user._id}, secret);
+    console.log(token)
+    return {
+        token,
+        user : {
+            _id : user._id,
+            username : user.username
+        }
+    }
+}
+// const users = [{
+//     id : 1,
+//     username : 'safira',
+//     password : 'zetta'
+// }];
+
+const authJwt = async (resolver, parent, args, ctx)=>{
+    const auth = ctx.req.header('Authorization');
+
+    if(auth===undefined){
+        return {message : "Unauthorized"}
     }else{
         const access = token.split(' ')[1];
-        const ver = jwt.verify(access, "fira");
-        const user = users.find(({id})=>id===ver.id);
-        ctx.users = user;
+        const ver = jwt.verify(access, secret);
+        const user = await User.find({
+            _id : {
+                $in : ver._id
+            }
+        });
+        // ctx.User = user;
+        return resolver()
     }
-    return resolver()
 }
 
-module.exports = authUser
+module.exports = {signUp, authJwt}

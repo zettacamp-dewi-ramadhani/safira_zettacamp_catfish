@@ -1,6 +1,6 @@
 const Book = require('../Model/bookModel');
 const Shelf = require('../Model/shelfModel');
-// const shelfLoader = require('../Controller/dataloader')
+const {authJwt} = require('./auth');
 
 function purchasing(book, disc, tax){
     pad = book.price*(1-disc);
@@ -95,6 +95,7 @@ const deleteBook = async(parent, {input : {id}})=>{
 }
 
 const getAllBooks = async()=>{
+    await authJwt;
     let result = await Book.find();
     return result;
 }
