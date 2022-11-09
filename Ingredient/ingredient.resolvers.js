@@ -63,9 +63,58 @@ const getAllIngredients = async(parent, {filter})=>{
         return result;
     }
 }
-const getOneIngredient = ()=>{}
-const updateIngredient = ()=>{}
-const deleteIngredient = ()=>{}
+
+const getOneIngredient = async(parent,{filter})=>{
+    if(!filter){
+        console.log("Nothing to show");
+    }else{
+        const {id} = filter;
+        let result = await Ingredient.findOne({
+            _id : id
+        });
+        return result;
+    }
+}
+
+const updateIngredient = async(parent, {input})=>{
+    if(!input){
+        console.log("Nothing to update")
+    }else{
+        const {id, newStock} = input;
+        let data = await Ingredient.findByIdAndUpdate({
+            _id : id
+        },{
+            $set : {
+                stock : newStock
+            }
+        },{
+            new : true
+        });
+        return data;
+    }
+}
+
+const deleteIngredient = async(parent, {input},ctx)=>{
+    try{
+        if(!input){
+            throw new Error('input the data first')
+        }else{
+            const {id, status} = input;
+            let result = await Ingredient.findByIdAndUpdate({
+                _id : id
+            },{
+                $set : {
+                    status : status
+                }
+            },{
+                new : true
+            })
+            return result
+        }
+    }catch(err){
+        throw new Error('Error delete : ${err.message}');
+    }
+}
 
 const IngredientResolvers = {
     Query : {

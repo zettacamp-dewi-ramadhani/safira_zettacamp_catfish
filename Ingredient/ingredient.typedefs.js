@@ -34,6 +34,7 @@ const IngredientTypeDefs = gql`
     }
 
     input DataUpdate {
+        id : ID,
         newStock : Int
     }
 
