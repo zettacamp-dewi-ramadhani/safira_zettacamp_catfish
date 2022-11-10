@@ -25,7 +25,9 @@ module.exports ={
         getAllUsers : authJwt,
         getOneUser : authJwt,
         getAllIngredients : authJwt,
-        getOneIngredient : authJwt
+        getOneIngredient : authJwt,
+        getAllRecipes : authJwt,
+        getOneRecipe : authJwt
     },
 
     Mutation : {
@@ -33,6 +35,9 @@ module.exports ={
         deleteUser : authJwt,
         insertIngredient : authJwt,
         updateIngredient : authJwt,
-        deleteIngredient : authJwt
+        deleteIngredient : authJwt,
+        createRecipe : authJwt,
+        updateRecipe : authJwt,
+        deleteRecipe : authJwt
     }
 }
