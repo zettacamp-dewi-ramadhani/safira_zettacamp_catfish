@@ -20,6 +20,10 @@ const getAllIngredients = async(parent, {filter})=>{
     const {name, stock, paging} = filter;
     if(!name && !stock){
         let result = await Ingredient.aggregate([{
+            $match : {
+                status : 'active'
+            }
+        },{
             $skip : paging.page * paging.limit
         },{
             $limit : paging.limit
@@ -28,6 +32,10 @@ const getAllIngredients = async(parent, {filter})=>{
     }else if(name && !stock){
         let result = await Ingredient.aggregate([{
             $match : {
+                status : 'active'
+            }
+        },{
+            $in : {
                 name : name
             }
         },{

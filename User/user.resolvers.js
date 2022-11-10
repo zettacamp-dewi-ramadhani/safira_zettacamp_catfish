@@ -48,6 +48,10 @@ const getAllUsers = async(parent,{filter})=>{
     const {email, first_name, last_name, paging} = filter;
     if(!email && !first_name && !last_name){
         let result = await User.aggregate([{
+            $match : {
+                status : 'active'
+            }
+        },{
             $skip : paging.page * paging.limit
         },{
             $limit : paging.limit
@@ -56,6 +60,10 @@ const getAllUsers = async(parent,{filter})=>{
     }else{
         let result = await User.aggregate([{
             $match : {
+                status : 'active'
+            }
+        },{
+            $in : {
                 email : email,
                 first_name : first_name,
                 last_name : last_name
