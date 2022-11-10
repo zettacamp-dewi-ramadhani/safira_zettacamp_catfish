@@ -65,7 +65,25 @@ const getOneRecipe = async(parent, {filter})=>{
     }
 }
 
-const updateRecipe = ()=>{}
+const updateRecipe = async(parent, {input})=>{
+    if(!input){
+        console.log('No data');
+    }else{
+        const {id, newName, newIngredient} = input;
+        let data = await Recipe.findByIdAndUpdate({
+            _id : id
+        },{
+            $set : {
+                recipe_name : newName,
+                ingredients : newIngredient
+            }
+        },{
+            new : true
+        });
+        return data;
+    }
+}
+
 const deleteRecipe = ()=>{}
 
 const RecipeResolvers = {

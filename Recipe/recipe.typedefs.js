@@ -42,6 +42,12 @@ const RecipeTypeDefs = gql`
         id : ID
     }
 
+    input DataUpdate {
+        id : ID,
+        newName : String,
+        newIngredient : [Detail]
+    }
+
     type Query {
         getAllRecipes(filter : DataFilter) : [Recipes],
         getOneRecipe(filter : OneDataFilter) : Recipes
@@ -49,7 +55,7 @@ const RecipeTypeDefs = gql`
 
     type Mutation {
         createRecipe(input : DataInput) : Recipes,
-        updateRecipe : Recipes,
+        updateRecipe(input : DataUpdate) : Recipes,
         deleteRecipe : Recipes
     }
 `
