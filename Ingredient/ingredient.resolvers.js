@@ -1,6 +1,4 @@
 const Ingredient = require('./ingredient.model');
-const {ApolloError} = require('apollo-server-errors');
-
 
 const insertIngredient = async(parent, {input})=>{
     if(!input){
@@ -32,10 +30,7 @@ const getAllIngredients = async(parent, {filter})=>{
     }else if(name && !stock){
         let result = await Ingredient.aggregate([{
             $match : {
-                status : 'active'
-            }
-        },{
-            $in : {
+                status : 'active',
                 name : name
             }
         },{
