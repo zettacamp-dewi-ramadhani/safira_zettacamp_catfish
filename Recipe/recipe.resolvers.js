@@ -30,7 +30,6 @@ const getAllRecipes = async(parent, {filter})=>{
             },{
                 $limit : paging.limit
             }]);
-            console.log(result)
             return result;
         }else{
             let result = await Recipe.aggregate([{
@@ -84,7 +83,23 @@ const updateRecipe = async(parent, {input})=>{
     }
 }
 
-const deleteRecipe = ()=>{}
+const deleteRecipe = async(parent, {input})=>{
+    if(!input){
+        console.log('No Input Data')
+    }else{
+        const {id, status} = input
+        let result = await Recipe.findByIdAndUpdate({
+            _id : id
+        },{
+            $set : {
+                status : status
+            }
+        },{
+            new : true
+        });
+        return result;
+    }
+}
 
 const RecipeResolvers = {
     Query : {
