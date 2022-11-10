@@ -1,4 +1,6 @@
 const Ingredient = require('./ingredient.model');
+const {ApolloError} = require('apollo-server-errors');
+
 
 const insertIngredient = async(parent, {input})=>{
     if(!input){
@@ -95,9 +97,8 @@ const updateIngredient = async(parent, {input})=>{
 }
 
 const deleteIngredient = async(parent, {input},ctx)=>{
-    try{
         if(!input){
-            throw new Error('input the data first')
+            throw new ApolloError('Input the data first')
         }else{
             const {id, status} = input;
             let result = await Ingredient.findByIdAndUpdate({
@@ -111,9 +112,6 @@ const deleteIngredient = async(parent, {input},ctx)=>{
             })
             return result
         }
-    }catch(err){
-        throw new Error('Error delete : ${err.message}');
-    }
 }
 
 const IngredientResolvers = {

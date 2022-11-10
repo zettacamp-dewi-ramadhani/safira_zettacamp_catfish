@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
-const {gql, ApolloServer, ApolloError} = require('apollo-server-express');
+const {gql, ApolloServer} = require('apollo-server-express');
+
 const {merge} = require('lodash');
 // const {makeExecutableSchema} = require('@graphql-tools/schema');
 const {makeExecutableSchema} = require('graphql-tools');
@@ -30,6 +31,7 @@ const resolvers = merge(
     UserResolvers,
     IngredientResolvers
 );
+
 const auth = merge(authJwt);
 
 const executableSchema = makeExecutableSchema({
@@ -37,12 +39,12 @@ const executableSchema = makeExecutableSchema({
     resolvers
 })
 
-const protectedSchema = applyMiddleware(executableSchema, auth);
+const protectedSchema = applyMiddleware(executableSchema, authJwt);
 
 const server = new ApolloServer({
     schema : protectedSchema,
-    typeDefs,
-    resolvers,
+    // typeDefs,
+    // resolvers,
     context : function({
         req
     }){
