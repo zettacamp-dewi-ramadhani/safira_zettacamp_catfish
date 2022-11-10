@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const {gql, ApolloServer} = require('apollo-server-express');
+const {gql, ApolloServer, ApolloError} = require('apollo-server-express');
 
 const {merge} = require('lodash');
 // const {makeExecutableSchema} = require('@graphql-tools/schema');
@@ -10,9 +10,13 @@ const {applyMiddleware} = require('graphql-middleware');
 
 const {UserTypeDefs} = require('./User/user.typedefs');
 const {IngredientTypeDefs} = require('./Ingredient/ingredient.typedefs');
+const {RecipeTypeDefs} = require('./Recipe/recipe.typedefs');
 
 const {UserResolvers} = require('./User/user.resolvers');
 const {IngredientResolvers} = require('./Ingredient/ingredient.resolvers');
+const {RecipeResolvers} = require('./Recipe/recipe.resolvers');
+
+const recipeLoader = require('./Recipe/recipe.loader');
 
 const authJwt = require('./Controller/auth');
 
@@ -24,12 +28,14 @@ const typeDef = gql`
 const typeDefs = [
     typeDef,
     UserTypeDefs,
-    IngredientTypeDefs
+    IngredientTypeDefs,
+    RecipeTypeDefs
 ]
 
 const resolvers = merge(
     UserResolvers,
-    IngredientResolvers
+    IngredientResolvers,
+    RecipeResolvers
 );
 
 const auth = merge(authJwt);
@@ -50,7 +56,9 @@ const server = new ApolloServer({
     }){
         req;
         return{
-            req
+            req,
+            recipeLoader,
+            ApolloError
         }
     }
 })
