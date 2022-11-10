@@ -39,12 +39,12 @@ const executableSchema = makeExecutableSchema({
     resolvers
 })
 
-const protectedSchema = applyMiddleware(executableSchema, authJwt);
+const protectedSchema = applyMiddleware(executableSchema, auth);
 
 const server = new ApolloServer({
     schema : protectedSchema,
-    // typeDefs,
-    // resolvers,
+    typeDefs,
+    resolvers,
     context : function({
         req
     }){
