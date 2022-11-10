@@ -53,7 +53,18 @@ const getRecipeLoader = async(parent, args, ctx)=>{
         return result;
     }
 }
-const getOneRecipe = ()=>{}
+const getOneRecipe = async(parent, {filter})=>{
+    if(!filter){
+        console.log('No data match')
+    }else{
+        const {id} = filter;
+        let result = await Recipe.findOne({
+            _id : id
+        });
+        return result;
+    }
+}
+
 const updateRecipe = ()=>{}
 const deleteRecipe = ()=>{}
 
