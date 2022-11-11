@@ -62,8 +62,7 @@ const UserTypeDefs = gql`
 
     type Query{
         getAllUsers(filter: UserFilter ) : [Users],
-        getOneUser(filter : OneUserFilter) : Users,
-        authError : String
+        getOneUser(filter : OneUserFilter) : Users
     }
 
     type Mutation {
