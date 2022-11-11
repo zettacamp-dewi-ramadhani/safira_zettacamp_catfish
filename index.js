@@ -19,6 +19,7 @@ const {RecipeResolvers} = require('./Recipe/recipe.resolvers');
 const {TransactionResolvers} = require('./Transaction/transaction.resolvers');
 
 const recipeLoader = require('./Recipe/recipe.loader');
+const {dataUserLoader, dataRecipeLoader} = require('./Transaction/transaction.loader');
 
 const authJwt = require('./Controller/auth');
 
@@ -62,6 +63,8 @@ const server = new ApolloServer({
         return{
             req,
             recipeLoader,
+            dataUserLoader,
+            dataRecipeLoader,
             ApolloError
         }
     }
