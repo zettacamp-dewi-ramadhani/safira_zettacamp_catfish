@@ -21,6 +21,8 @@ const dateScalar = new GraphQLScalarType({
     }
 });
 
+moment.locale('id-ID');
+
 const reduceIngredientStock  = async (menu)=>{
     for(const recipe of menu){
         recipeData = await Recipe.findOne({
@@ -88,14 +90,13 @@ const createTransaction = async(parent,{input},ctx)=>{
         console.log('Nothing to input')
     }else{
         const userId = ctx.user[0]._id;
-        const {menu, order_date} = input;
+        const {menu} = input;
         let validate = await validateStockIngredient(menu);
         if(validate === true){
             let data = new Transaction({
                 user_id : userId,
                 menu : menu,
-                order_date : 'success',
-                order_date : order_date
+                order_status : 'success'
             });
             await data.save();
             return data;    
@@ -103,8 +104,7 @@ const createTransaction = async(parent,{input},ctx)=>{
             let data = new Transaction({
                 user_id : userId,
                 menu : menu,
-                order_status : 'failed',
-                order_date : order_date
+                order_status : 'failed'
             });
             await data.save();
             return data;
@@ -116,7 +116,7 @@ const getAllTransactions = async(parent, {filter_transaction, pagination}, ctx)=
     let aggregateQuery = [];
     let result = [];
 
-    
+    if(filter_transaction){
     if(filter_transaction.user_lname){
         const search = new RegExp(filter_transaction.user_lname, 'i');
         result = await Transaction.aggregate([{
@@ -148,8 +148,6 @@ const getAllTransactions = async(parent, {filter_transaction, pagination}, ctx)=
                 }
             }])
         }
-
-    if(filter_transaction){
         let indexMatch = aggregateQuery.push({
             $match : {
                 $and : []
@@ -184,7 +182,8 @@ const getAllTransactions = async(parent, {filter_transaction, pagination}, ctx)=
         })
     }
 
-    filter_transaction || pagination ? result = await Transaction.aggregate(aggregateQuery) : result = await Transaction.find().toArray()
+    filter_transaction || pagination ? result = await Transaction.aggregate(aggregateQuery) : result = await Transaction.find().toArray();
+    console.log(moment(result[0].order_date).format('LL'))
     return result;
 }
 

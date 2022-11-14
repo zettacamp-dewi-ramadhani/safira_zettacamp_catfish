@@ -1,4 +1,5 @@
 const {db, mongoose} = require('../Controller/database');
+const moment = require('moment')
 
 const transactionSchema = new mongoose.Schema({
     user_id : {
@@ -22,8 +23,8 @@ const transactionSchema = new mongoose.Schema({
         default : 'success'
     },
     order_date : {
-        type : Date,
-        default : Date.now()
+        type : String,
+        default : moment(new Date()).locale('id-ID').format('LL')
     },
     status : {
         type: String,

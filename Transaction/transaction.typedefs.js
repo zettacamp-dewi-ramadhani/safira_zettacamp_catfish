@@ -35,8 +35,7 @@ const TransactionTypeDefs = gql`
 
     input DataInput {
         menu : [Detail],
-        order_status : Order,
-        order_date : String
+        order_status : Order
     }
 
     input Detail {
@@ -49,7 +48,7 @@ const TransactionTypeDefs = gql`
         user_lname : String,
         recipe_name : String,
         order_status : Order,
-        # order_date : String
+        order_date : String
     }
 
     input OneDataFilter {
