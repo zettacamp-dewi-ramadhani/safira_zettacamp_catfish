@@ -1,15 +1,14 @@
 const {gql} = require('apollo-server-express');
-const {GraphQLScalarType} = require('graphql');
 
 const TransactionTypeDefs = gql`
-    scalar Date
+    # scalar Date
 
     type Transactions {
         _id : ID,
         user_id : Users,
         menu : [Detail_Menu],
         order_status : Order,
-        order_date : Date,
+        order_date : String,
         status : Status
     }
 
@@ -36,7 +35,8 @@ const TransactionTypeDefs = gql`
 
     input DataInput {
         menu : [Detail],
-        order_status : Order
+        order_status : Order,
+        order_date : String
     }
 
     input Detail {
@@ -52,14 +52,18 @@ const TransactionTypeDefs = gql`
         # order_date : String
     }
 
+    input OneDataFilter {
+        id : ID
+    }
+
     input Paging {
         page : Int,
         limit : Int
     }
 
     type Query {
-        getAllTransactions(filter : DataFilter, pagination : Paging) : [Transactions],
-        getOneTransactions : Transactions
+        getAllTransactions(filter_transaction : DataFilter, pagination : Paging) : [Transactions],
+        getOneTransactions(filter_transaction : OneDataFilter) : Transactions
     }
 
     type Mutation {

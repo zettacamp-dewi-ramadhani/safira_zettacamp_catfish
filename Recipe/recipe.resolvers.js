@@ -13,37 +13,42 @@ const createRecipe = async(parent, {input})=>{
         return data;
     }
 }
-const getAllRecipes = async(parent, {filter})=>{
-    if(!filter){
-        console.log('Set the filter')
-    }else{
-        const {recipe_name, paging} = filter;
-        if(!recipe_name){
-            let result = await Recipe.aggregate([{
-                $match :{
-                    status : 'active'
-                }
-            },{
-                $skip : paging.page * paging.limit
-            },{
-                $limit : paging.limit
-            }]);
-            return result;
-        }else{
-            let result = await Recipe.aggregate([{
-                $match :{
-                    status : 'active',
-                    recipe_name : recipe_name
-                }
-            },{
-                $skip : paging.page * paging.limit
-            },{
-                $limit : paging.limit
-            }]);
-            return result;
+const getAllRecipes = async(parent, {filter, paging})=>{
+    let aggregateQuery = [];
+    if(filter){
+        let indexMatch = aggregateQuery.push({
+            $match : {
+                $and : []
+            }
+        }) - 1;
+        
+        if(filter.recipe_name){
+            const search = new RegExp(filter.recipe_name, 'i');
+            aggregateQuery[indexMatch].$match.$and.push({
+                recipe_name : search,
+                status : 'active'
+            })
         }
     }
+
+    if(paging){
+        const {limit, page} = paging;
+        aggregateQuery.push({
+            $match : {
+                status : 'active'
+            }
+        },{
+            $skip : page*limit
+        },{
+            $limit : limit
+        })
+    }
+
+    let result = [];
+    filter || paging ? result = await Recipe.aggregate(aggregateQuery) : result = await Recipe.find().toArray();
+    return result
 }
+
 const getRecipeLoader = async(parent, args, ctx)=>{
     if(parent.ingredient_id){
         const result = await ctx.recipeLoader.load(parent.ingredient_id);

@@ -24,8 +24,7 @@ const RecipeTypeDefs = gql`
     }
 
     input DataFilter {
-        recipe_name : String,
-        paging : Paging
+        recipe_name : String
     }
 
     input Detail {
@@ -54,7 +53,7 @@ const RecipeTypeDefs = gql`
     }
 
     type Query {
-        getAllRecipes(filter : DataFilter) : [Recipes],
+        getAllRecipes(filter : DataFilter, paging : Paging) : [Recipes],
         getOneRecipe(filter : OneDataFilter) : Recipes
     }
 
