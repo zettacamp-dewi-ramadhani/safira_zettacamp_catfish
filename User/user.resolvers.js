@@ -2,21 +2,32 @@ const User = require('./user.model');
 const jwt = require('jsonwebtoken');
 const tokenSecret = 'secretZettaCamp'
 
-const signUp = async (parent, {input: {email, password, first_name, last_name}})=>{
-    let user = new User({
-        email : email,
-        password : password,
-        first_name : first_name,
-        last_name : last_name,
-    });
-
-    await user.save();
-    return {
-        _id : user._id,
-        email : user.email,
-        first_name : user.first_name,
-        last_name : user.last_name,
-        status : user.status
+const signUp = async (parent, {input})=>{
+    try{
+        if(!input){
+            throw new Error('No data to input')
+        }else{
+            const {email, password, first_name, last_name, role} = input
+            let user = new User({
+                email : email,
+                password : password,
+                first_name : first_name,
+                last_name : last_name,
+                role : role
+            });
+    
+            await user.save();
+            return {
+                _id : user._id,
+                email : user.email,
+                first_name : user.first_name,
+                last_name : user.last_name,
+                role : user.role,
+                status : user.status
+            }
+        }
+    }catch(err){
+        throw new Error('Sign Up Error : ${err.message}')
     }
 }
 
@@ -25,15 +36,18 @@ const login = async (parent, {input : {email, password}})=>{
         email : email,
         password : password
     });
-    console.log(user.status)
     if(!user){
-        return console.log("Error")
+        throw new Error('Login Error');
     }else if(user.status === "deleted"){
-        console.log("This user is deleted")
+        throw new Error('User not found');
     }else{
         const token = jwt.sign({
-            userId : user._id
-        },tokenSecret);
+            id : user._id,
+            email : user.email,
+            role : user.role
+        },tokenSecret,{
+            expiresIn : '1h'
+        });
         return {
             token,
             user : {

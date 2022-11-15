@@ -6,12 +6,18 @@ const UserTypeDefs = gql`
         email : String,
         first_name : String,
         last_name : String,
+        role : Role,
         status : Status
     }
 
     enum Status {
         active,
         deleted
+    }
+
+    enum Role {
+        admin, 
+        user
     }
 
     type AuthLoad {
@@ -28,7 +34,8 @@ const UserTypeDefs = gql`
         email : String,
         password : String,
         first_name : String,
-        last_name : String
+        last_name : String,
+        role : Role
     }
 
     input Paging {

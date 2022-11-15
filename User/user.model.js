@@ -14,6 +14,11 @@ const userSchema = new mongoose.Schema({
 
     first_name : {type: String},
     last_name : {type: String},
+    role : {
+        type : String,
+        enum : ['admin', 'user'],
+        default : 'user'
+    },
     status : {
         type: String,
         enum : ['active', 'deleted'],
