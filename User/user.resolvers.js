@@ -1,30 +1,34 @@
 const User = require('./user.model');
 const jwt = require('jsonwebtoken');
-const tokenSecret = 'secretZettaCamp'
+const tokenSecret = 'secretZettaCamp';
+const bcrypt = require('bcryptjs');
+
+const getTypeLoader = async(parent, args, ctx)=>{
+    if(parent.type_id){
+        const result = await ctx.userTypeLoader.load(parent.type_id);
+        return result;
+    }
+}
 
 const signUp = async (parent, {input})=>{
     try{
         if(!input){
             throw new Error('No data to input')
         }else{
-            const {email, password, first_name, last_name, role} = input
+            const {email, password, first_name, last_name, user_type} = input
+            const encryptedPass = await bcrypt.hash(password, 10);
+            console.log(encryptedPass)
+
             let user = new User({
                 email : email,
-                password : password,
+                password : encryptedPass,
                 first_name : first_name,
                 last_name : last_name,
-                role : role
+                user_type : user_type
             });
     
             await user.save();
-            return {
-                _id : user._id,
-                email : user.email,
-                first_name : user.first_name,
-                last_name : user.last_name,
-                role : user.role,
-                status : user.status
-            }
+            return user;
         }
     }catch(err){
         throw new Error('Sign Up Error : ${err.message}')
@@ -33,18 +37,16 @@ const signUp = async (parent, {input})=>{
 
 const login = async (parent, {input : {email, password}})=>{
     let user = await User.findOne({
-        email : email,
-        password : password
+        email : email
     });
-    if(!user){
+    const decryptedPass = await bcrypt.compare(password, user.password)
+    if(user.status === "deleted"){
         throw new Error('Login Error');
-    }else if(user.status === "deleted"){
-        throw new Error('User not found');
-    }else{
+    }else if(user && decryptedPass){
         const token = jwt.sign({
             id : user._id,
             email : user.email,
-            role : user.role
+            role : user.user_type
         },tokenSecret,{
             expiresIn : '1h'
         });
@@ -52,9 +54,12 @@ const login = async (parent, {input : {email, password}})=>{
             token,
             user : {
                 _id : user._id,
-                email : user.email
+                email : user.email,
+                role : user.user_type
             }
         }
+    }else{
+        throw new Error('User not found');
     }
 }
 
@@ -164,6 +169,10 @@ const UserResolvers = {
         login,
         updateUser,
         deleteUser
+    },
+
+    UserType_Detail : {
+        type_id : getTypeLoader
     }
 }
 

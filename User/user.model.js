@@ -14,11 +14,12 @@ const userSchema = new mongoose.Schema({
 
     first_name : {type: String},
     last_name : {type: String},
-    role : {
-        type : String,
-        enum : ['admin', 'user'],
-        default : 'user'
-    },
+    user_type : [{
+        type_id : {
+            type: mongoose.Schema.ObjectId,
+            ref : 'permissions'
+        }
+    }],
     status : {
         type: String,
         enum : ['active', 'deleted'],

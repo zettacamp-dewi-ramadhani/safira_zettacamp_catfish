@@ -26,8 +26,8 @@ module.exports ={
         getOneUser : authJwt,
         getAllIngredients : authJwt,
         getOneIngredient : authJwt,
-        getAllRecipes : authJwt,
-        getOneRecipe : authJwt,
+        // getAllRecipes : authJwt,
+        // getOneRecipe : authJwt,
         getAllTransactions : authJwt,
         getOneTransactions : authJwt
     },
