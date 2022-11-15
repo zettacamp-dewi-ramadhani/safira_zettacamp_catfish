@@ -15,10 +15,8 @@ const userSchema = new mongoose.Schema({
     first_name : {type: String},
     last_name : {type: String},
     user_type : [{
-        type_id : {
-            type: mongoose.Schema.ObjectId,
-            ref : 'permissions'
-        }
+        name : {type: String},
+        view : {type: Boolean}
     }],
     status : {
         type: String,

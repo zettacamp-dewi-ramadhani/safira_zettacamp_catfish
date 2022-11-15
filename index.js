@@ -4,7 +4,7 @@ const {gql, ApolloServer, ApolloError} = require('apollo-server-express');
 
 const {merge} = require('lodash');
 // const {makeExecutableSchema} = require('@graphql-tools/schema');
-const {makeExecutableSchema} = require('graphql-tools');
+const {makeExecutableSchema} = require('@graphql-tools/schema');
 const {applyMiddleware} = require('graphql-middleware');
 
 
@@ -22,6 +22,7 @@ const {PermissionResolvers} = require('./Permission/permission.resolvers');
 
 const recipeLoader = require('./Recipe/recipe.loader');
 const {dataUserLoader, dataRecipeLoader} = require('./Transaction/transaction.loader');
+const userTypeLoader = require('./User/user.loader');
 
 const authJwt = require('./Controller/auth');
 

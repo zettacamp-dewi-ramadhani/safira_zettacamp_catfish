@@ -14,7 +14,10 @@ const createPermission = async(parent, {input})=>{
     }
 }
 
-const getAllPermission = ()=>{}
+const getAllPermission = async(parent, args, ctx)=>{
+    const result = await Permission.find();
+    return result;
+}
 const updatePermission = ()=>{}
 const deletePermission = ()=>{}
 

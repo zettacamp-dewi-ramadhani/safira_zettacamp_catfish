@@ -1,7 +1,7 @@
 const User = require('./user.model');
 const jwt = require('jsonwebtoken');
 const tokenSecret = 'secretZettaCamp';
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
 const getTypeLoader = async(parent, args, ctx)=>{
     if(parent.type_id){
@@ -11,35 +11,72 @@ const getTypeLoader = async(parent, args, ctx)=>{
 }
 
 const signUp = async (parent, {input})=>{
-    try{
+    // try{
         if(!input){
             throw new Error('No data to input')
         }else{
-            const {email, password, first_name, last_name, user_type} = input
+            const {email, password, first_name, last_name, role} = input
             const encryptedPass = await bcrypt.hash(password, 10);
-            console.log(encryptedPass)
+
+            let generalPermit = [{
+                name : "Menu",
+                view : true
+            },{
+                name : "About",
+                view : true
+            },{
+                name : "Cart",
+                view : true
+            },{
+                name : "Login",
+                view : false
+            }]
+
+            let usertype = [];
+            if(role === 'admin'){
+                usertype.push(
+                    ...generalPermit,{
+                        name : "Menu Management",
+                        view : true
+                    },{
+                        name : "Stock Management",
+                        view : true
+                    }
+                )
+            }else if (role === 'user'){
+                usertype.push(
+                    ...generalPermit,{
+                        name : "Menu Management",
+                        view : false
+                    },{
+                        name : "Stock Management",
+                        view : false
+                    }
+                )
+            }
 
             let user = new User({
                 email : email,
                 password : encryptedPass,
                 first_name : first_name,
                 last_name : last_name,
-                user_type : user_type
+                user_type : usertype
             });
     
             await user.save();
             return user;
         }
-    }catch(err){
-        throw new Error('Sign Up Error : ${err.message}')
-    }
+    // }catch(err){
+    //     throw new Error('Sign Up Error')
+    // }
 }
 
 const login = async (parent, {input : {email, password}})=>{
     let user = await User.findOne({
         email : email
     });
-    const decryptedPass = await bcrypt.compare(password, user.password)
+    
+    const decryptedPass = await bcrypt.compare(password, user.password);
     if(user.status === "deleted"){
         throw new Error('Login Error');
     }else if(user && decryptedPass){
@@ -169,10 +206,6 @@ const UserResolvers = {
         login,
         updateUser,
         deleteUser
-    },
-
-    UserType_Detail : {
-        type_id : getTypeLoader
     }
 }
 
