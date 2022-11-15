@@ -75,15 +75,14 @@ const login = async (parent, {input : {email, password}})=>{
     let user = await User.findOne({
         email : email
     });
-    
+
     const decryptedPass = await bcrypt.compare(password, user.password);
     if(user.status === "deleted"){
         throw new Error('Login Error');
     }else if(user && decryptedPass){
         const token = jwt.sign({
             id : user._id,
-            email : user.email,
-            role : user.user_type
+            email : user.email
         },tokenSecret,{
             expiresIn : '1h'
         });
@@ -92,7 +91,7 @@ const login = async (parent, {input : {email, password}})=>{
             user : {
                 _id : user._id,
                 email : user.email,
-                role : user.user_type
+                user_type : user.user_type
             }
         }
     }else{
