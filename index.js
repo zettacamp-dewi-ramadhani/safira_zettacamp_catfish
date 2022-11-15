@@ -22,7 +22,6 @@ const {PermissionResolvers} = require('./Permission/permission.resolvers');
 
 const recipeLoader = require('./Recipe/recipe.loader');
 const {dataUserLoader, dataRecipeLoader} = require('./Transaction/transaction.loader');
-const userTypeLoader = require('./User/user.loader');
 
 const authJwt = require('./Controller/auth');
 
@@ -69,9 +68,7 @@ const server = new ApolloServer({
             req,
             recipeLoader,
             dataUserLoader,
-            dataRecipeLoader,
-            userTypeLoader,
-            ApolloError
+            dataRecipeLoader
         }
     }
 })

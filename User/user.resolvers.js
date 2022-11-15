@@ -3,15 +3,8 @@ const jwt = require('jsonwebtoken');
 const tokenSecret = 'secretZettaCamp';
 const bcrypt = require('bcrypt');
 
-const getTypeLoader = async(parent, args, ctx)=>{
-    if(parent.type_id){
-        const result = await ctx.userTypeLoader.load(parent.type_id);
-        return result;
-    }
-}
-
 const signUp = async (parent, {input})=>{
-    // try{
+    try{
         if(!input){
             throw new Error('No data to input')
         }else{
@@ -66,9 +59,9 @@ const signUp = async (parent, {input})=>{
             await user.save();
             return user;
         }
-    // }catch(err){
-    //     throw new Error('Sign Up Error')
-    // }
+    }catch(err){
+        throw new Error('Sign Up Error')
+    }
 }
 
 const login = async (parent, {input : {email, password}})=>{
@@ -99,37 +92,86 @@ const login = async (parent, {input : {email, password}})=>{
     }
 }
 
-const getAllUsers = async(parent,{filter})=>{
-    const {email, first_name, last_name, paging} = filter;
-    if(!email && !first_name && !last_name){
-        let result = await User.aggregate([{
+const getAllUsers = async(parent,{filter,paging})=>{
+    let aggregateQuery = [];
+    if(filter){
+        let indexMatch = aggregateQuery.push({
             $match : {
+                $and : []
+            }
+        }) - 1;
+        
+        if(filter.email){
+            const search = new RegExp(filter.email, 'i');
+            aggregateQuery[indexMatch].$match.$and.push({
+                email : search,
                 status : 'active'
-            }
-        },{
-            $skip : paging.page * paging.limit
-        },{
-            $limit : paging.limit
-        }]);
-        return result;
-    }else{
-        let result = await User.aggregate([{
-            $match : {
+            })
+        }
+
+        if(filter.first_name){
+            const search = new RegExp(filter.first_name, 'i');
+            aggregateQuery[indexMatch].$match.$and.push({
+                first_name : search,
                 status : 'active'
-            }
-        },{
-            $in : {
-                email : email,
-                first_name : first_name,
-                last_name : last_name
-            }
-        },{
-            $skip : paging.page * paging.limit
-        },{
-            $limit : paging.limit
-        }])
-        return result;
+            })
+        }
+
+        if(filter.last_name){
+            const search = new RegExp(filter.last_name, 'i');
+            aggregateQuery[indexMatch].$match.$and.push({
+                last_name : search,
+                status : 'active'
+            })
+        }
     }
+    if(paging){
+        const {limit, page} = paging;
+        aggregateQuery.push({
+            $match : {
+                status : 'active'
+            }
+        },{
+            $skip : page*limit
+        },{
+            $limit : limit
+        })
+    }
+
+    let result = [];
+    filter || paging ? result = await User.aggregate(aggregateQuery) : result = await User.find().toArray();
+    return result
+
+    // const {email, first_name, last_name} = filter;
+    // if(!email && !first_name && !last_name){
+    //     let result = await User.aggregate([{
+    //         $match : {
+    //             status : 'active'
+    //         }
+    //     },{
+    //         $skip : paging.page * paging.limit
+    //     },{
+    //         $limit : paging.limit
+    //     }]);
+    //     return result;
+    // }else{
+    //     let result = await User.aggregate([{
+    //         $match : {
+    //             status : 'active'
+    //         }
+    //     },{
+    //         $in : {
+    //             email : email,
+    //             first_name : first_name,
+    //             last_name : last_name
+    //         }
+    //     },{
+    //         $skip : paging.page * paging.limit
+    //     },{
+    //         $limit : paging.limit
+    //     }])
+    //     return result;
+    // }
 }
 
 const getOneUser = async(parent, {filter})=>{
@@ -155,7 +197,7 @@ const getOneUser = async(parent, {filter})=>{
 
 const updateUser = async(parent, {input}, ctx)=>{
     if(!input){
-        return console.log("Nothing to Update");
+        throw new Error('No data to update');
     }else{
         const {
             newEmail,
@@ -163,10 +205,11 @@ const updateUser = async(parent, {input}, ctx)=>{
             newFirst_name,
             newLast_name
         } = input;
-        const userId = ctx.user[0]._id
+        const userId = ctx.user[0]._id;
+        const encryptedPass = await bcrypt.hash(newPassword, 10);
         let data = await User.findByIdAndUpdate(userId,{
             email : newEmail,
-            password : newPassword,
+            password : encryptedPass,
             first_name : newFirst_name,
             last_name : newLast_name
         },{
@@ -178,7 +221,7 @@ const updateUser = async(parent, {input}, ctx)=>{
 
 const deleteUser = async(parent,{input}, ctx)=>{
     if(!input){
-        console.log("Nothing to update");
+        throw new Error("Nothing to update")
     }else{
         const {id, status} = input;
         let result = await User.findByIdAndUpdate({

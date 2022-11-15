@@ -52,7 +52,6 @@ const UserTypeDefs = gql`
         email : String,
         first_name : String,
         last_name : String,
-        paging : Paging
     }
 
     input OneUserFilter{
@@ -73,7 +72,7 @@ const UserTypeDefs = gql`
     }
 
     type Query{
-        getAllUsers(filter: UserFilter ) : [Users],
+        getAllUsers(filter: UserFilter, paging : Paging ) : [Users],
         getOneUser(filter : OneUserFilter) : Users
     }
 
