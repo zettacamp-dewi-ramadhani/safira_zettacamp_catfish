@@ -36,9 +36,7 @@ const getAllIngredients = async(parent, {filter, paging})=>{
                 throw new Error ('Filter stock must greater then 0')
             }else{
                 aggregateQuery[indexMatch].$match.$and.push({
-                    stock : {
-                    $gte : filter.stock
-                },
+                    stock : filter.stock,
                     status: 'active',
                 })
             }
@@ -89,11 +87,20 @@ const updateIngredient = async(parent, {input})=>{
     }
 }
 
+const validateDelete = async(id)=>{
+    const result = await Recipe.find({
+        "ingredients.ingredient_id" : id
+    });
+    return result
+}
+
 const deleteIngredient = async(parent, {input},ctx)=>{
-        if(!input){
-            throw new ApolloError('Input the data first')
-        }else{
-            const {id, status} = input;
+    if(!input){
+        throw new Error('Input the data first')
+    }else{
+        const {id, status} = input;
+        const validate = await validateDelete(id);
+        if(validate == 0){
             let result = await Ingredient.findByIdAndUpdate({
                 _id : id
             },{
@@ -104,9 +111,11 @@ const deleteIngredient = async(parent, {input},ctx)=>{
                 new : true
             })
             return result
+        }else{
+            throw new Error('The Ingredients already use in recipes');
         }
+    }
 }
-
 const IngredientResolvers = {
     Query : {
         getAllIngredients,
