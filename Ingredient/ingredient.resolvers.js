@@ -1,4 +1,5 @@
 const Ingredient = require('./ingredient.model');
+const Recipe = require('../Recipe/recipe.model')
 
 const insertIngredient = async(parent, {input})=>{
     if(!input){
