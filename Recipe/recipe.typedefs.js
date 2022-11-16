@@ -35,6 +35,7 @@ const RecipeTypeDefs = gql`
     input DataInput {
         recipe_name : String,
         ingredients : [Detail]
+        price : Int
     }
 
     input OneDataFilter{
