@@ -99,14 +99,14 @@ const deleteIngredient = async(parent, {input},ctx)=>{
     if(!input){
         throw new Error('Input the data first')
     }else{
-        const {id, status} = input;
+        const {id} = input;
         const validate = await validateDelete(id);
         if(validate == 0){
             let result = await Ingredient.findByIdAndUpdate({
                 _id : id
             },{
                 $set : {
-                    status : status
+                    status : "deleted"
                 }
             },{
                 new : true

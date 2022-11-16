@@ -38,8 +38,7 @@ const IngredientTypeDefs = gql`
     }
 
     input DataDelete{
-        id : ID,
-        status : Status
+        id : ID
     }
 
     type Query {
