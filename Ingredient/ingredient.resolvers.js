@@ -30,23 +30,24 @@ const getAllIngredients = async(parent, {filter, paging})=>{
                 status: 'active',
             })
         }
-        if(filter.stock>0){
-            aggregateQuery[indexMatch].$match.$and.push({
-                stock : filter.stock,
-                status: 'active',
-            })
-        } else {
-            throw new Error ('Filter stock must greater then 0')
+
+        if(filter.stock){
+            if(filter.stock === 0) {
+                throw new Error ('Filter stock must greater then 0')
+            }else{
+                aggregateQuery[indexMatch].$match.$and.push({
+                    stock : {
+                    $gte : filter.stock
+                },
+                    status: 'active',
+                })
+            }
         }
     }
 
     if(paging){
         const {limit, page} = paging;
         aggregateQuery.push({
-            $match : {
-                status : 'active'
-            }
-        },{
             $skip : page*limit
         },{
             $limit : limit
@@ -55,58 +56,8 @@ const getAllIngredients = async(parent, {filter, paging})=>{
 
     let result = [];
     filter || paging ? result = await Ingredient.aggregate(aggregateQuery) : result = await Ingredient.find().toArray();
+    console.log(result)
     return result
-    // if(!name && !stock){
-    //     let result = await Ingredient.aggregate([{
-    //         $match : {
-    //             status : 'active'
-    //         }
-    //     },{
-    //         $skip : paging.page * paging.limit
-    //     },{
-    //         $limit : paging.limit
-    //     }]);
-    //     return result;
-    // }else if(name && !stock){
-    //     let result = await Ingredient.aggregate([{
-    //         $match : {
-    //             status : 'active',
-    //             name : name
-    //         }
-    //     },{
-    //         $skip : paging.page * paging.limit
-    //     },{
-    //         $limit : paging.limit
-    //     }])
-    //     return result;
-    // }else if(!name && stock>0){
-    //     let result = await Ingredient.aggregate([{
-    //         $match : {
-    //             stock  : {
-    //                 $gte : stock
-    //             }
-    //         }
-    //     },{
-    //         $skip : paging.page * paging.limit
-    //     },{
-    //         $limit : paging.limit
-    //     }]);
-    //     return result;
-    // }else if(name && stock>0){
-    //     let result = await Ingredient.aggregate([{
-    //         $match : {
-    //             name : name,
-    //             stock  : {
-    //                 $gte : stock
-    //             }
-    //         }
-    //     },{
-    //         $skip : paging.page * paging.limit
-    //     },{
-    //         $limit : paging.limit
-    //     }]);
-    //     return result;
-    // }
 }
 
 const getOneIngredient = async(parent,{filter})=>{
