@@ -4,10 +4,11 @@ const createRecipe = async(parent, {input})=>{
     if(!input){
         console.log('Nothing to input')
     }else{
-        const {recipe_name, ingredients} = input;    
+        const {recipe_name, ingredients, price} = input;    
         let data = new Recipe({
             recipe_name : recipe_name,
-            ingredients : ingredients
+            ingredients : ingredients,
+            price : price
         });
         await data.save();
         return data;
