@@ -56,57 +56,6 @@ const getAllIngredients = async(parent, {filter, paging})=>{
     let result = [];
     filter || paging ? result = await Ingredient.aggregate(aggregateQuery) : result = await Ingredient.find().toArray();
     return result
-    // if(!name && !stock){
-    //     let result = await Ingredient.aggregate([{
-    //         $match : {
-    //             status : 'active'
-    //         }
-    //     },{
-    //         $skip : paging.page * paging.limit
-    //     },{
-    //         $limit : paging.limit
-    //     }]);
-    //     return result;
-    // }else if(name && !stock){
-    //     let result = await Ingredient.aggregate([{
-    //         $match : {
-    //             status : 'active',
-    //             name : name
-    //         }
-    //     },{
-    //         $skip : paging.page * paging.limit
-    //     },{
-    //         $limit : paging.limit
-    //     }])
-    //     return result;
-    // }else if(!name && stock>0){
-    //     let result = await Ingredient.aggregate([{
-    //         $match : {
-    //             stock  : {
-    //                 $gte : stock
-    //             }
-    //         }
-    //     },{
-    //         $skip : paging.page * paging.limit
-    //     },{
-    //         $limit : paging.limit
-    //     }]);
-    //     return result;
-    // }else if(name && stock>0){
-    //     let result = await Ingredient.aggregate([{
-    //         $match : {
-    //             name : name,
-    //             stock  : {
-    //                 $gte : stock
-    //             }
-    //         }
-    //     },{
-    //         $skip : paging.page * paging.limit
-    //     },{
-    //         $limit : paging.limit
-    //     }]);
-    //     return result;
-    // }
 }
 
 const getOneIngredient = async(parent,{filter})=>{
