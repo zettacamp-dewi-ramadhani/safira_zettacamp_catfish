@@ -50,25 +50,9 @@ const getAllIngredients = async(parent, {filter, paging})=>{
     if(paging){
         const {limit, page} = paging;
         aggregateQuery.push({
-            $facet :{
-                page : [{
-                    $skip : page*limit
-                },{
-                    $limit : limit
-                },{
-                    $match : {
-                        "status" : "active"
-                    }
-                }],
-                countData : [{
-                    $group : {
-                        _id: null,
-                        count: {
-                            $sum :1
-                        }
-                    }
-                }]
-            }
+            $skip : page*limit
+        },{
+            $limit : limit
         })
     }
 
