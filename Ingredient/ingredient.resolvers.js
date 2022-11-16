@@ -31,15 +31,12 @@ const getAllIngredients = async(parent, {filter, paging})=>{
                 status: 'active',
             })
         }
-if(filter.stock){
-            const search = new RegExp(filter.stock, 'i')
-            if(search === 0) {
+if(filter.stock>=0){
+            if(filter.stock === 0) {
                 throw new Error ('Filter stock must greater then 0')
             }else{
                 aggregateQuery[indexMatch].$match.$and.push({
-                    stock : {
-                    $gte : search
-                },
+                    stock : filter.stock,
                     status: 'active',
                 })
             }
