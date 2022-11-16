@@ -14,59 +14,99 @@ const insertIngredient = async(parent, {input})=>{
     }
 }
 
-const getAllIngredients = async(parent, {filter})=>{
-    const {name, stock, paging} = filter;
-    if(!name && !stock){
-        let result = await Ingredient.aggregate([{
+const getAllIngredients = async(parent, {filter, paging})=>{
+    let aggregateQuery = [];
+    if(filter){
+        let indexMatch = aggregateQuery.push({
+            $match : {
+                $and : []
+            }
+        }) - 1;
+        
+        if(filter.name){
+            const search = new RegExp(filter.name, 'i');
+            aggregateQuery[indexMatch].$match.$and.push({
+                name : search,
+                status: 'active',
+            })
+        }
+        if(filter.stock>0){
+            aggregateQuery[indexMatch].$match.$and.push({
+                stock : filter.stock,
+                status: 'active',
+            })
+        } else {
+            throw new Error ('Filter stock must greater then 0')
+        }
+    }
+
+    if(paging){
+        const {limit, page} = paging;
+        aggregateQuery.push({
             $match : {
                 status : 'active'
             }
         },{
-            $skip : paging.page * paging.limit
+            $skip : page*limit
         },{
-            $limit : paging.limit
-        }]);
-        return result;
-    }else if(name && !stock){
-        let result = await Ingredient.aggregate([{
-            $match : {
-                status : 'active',
-                name : name
-            }
-        },{
-            $skip : paging.page * paging.limit
-        },{
-            $limit : paging.limit
-        }])
-        return result;
-    }else if(!name && stock>0){
-        let result = await Ingredient.aggregate([{
-            $match : {
-                stock  : {
-                    $gte : stock
-                }
-            }
-        },{
-            $skip : paging.page * paging.limit
-        },{
-            $limit : paging.limit
-        }]);
-        return result;
-    }else if(name && stock>0){
-        let result = await Ingredient.aggregate([{
-            $match : {
-                name : name,
-                stock  : {
-                    $gte : stock
-                }
-            }
-        },{
-            $skip : paging.page * paging.limit
-        },{
-            $limit : paging.limit
-        }]);
-        return result;
+            $limit : limit
+        })
     }
+
+    let result = [];
+    filter || paging ? result = await Ingredient.aggregate(aggregateQuery) : result = await Ingredient.find().toArray();
+    return result
+    // if(!name && !stock){
+    //     let result = await Ingredient.aggregate([{
+    //         $match : {
+    //             status : 'active'
+    //         }
+    //     },{
+    //         $skip : paging.page * paging.limit
+    //     },{
+    //         $limit : paging.limit
+    //     }]);
+    //     return result;
+    // }else if(name && !stock){
+    //     let result = await Ingredient.aggregate([{
+    //         $match : {
+    //             status : 'active',
+    //             name : name
+    //         }
+    //     },{
+    //         $skip : paging.page * paging.limit
+    //     },{
+    //         $limit : paging.limit
+    //     }])
+    //     return result;
+    // }else if(!name && stock>0){
+    //     let result = await Ingredient.aggregate([{
+    //         $match : {
+    //             stock  : {
+    //                 $gte : stock
+    //             }
+    //         }
+    //     },{
+    //         $skip : paging.page * paging.limit
+    //     },{
+    //         $limit : paging.limit
+    //     }]);
+    //     return result;
+    // }else if(name && stock>0){
+    //     let result = await Ingredient.aggregate([{
+    //         $match : {
+    //             name : name,
+    //             stock  : {
+    //                 $gte : stock
+    //             }
+    //         }
+    //     },{
+    //         $skip : paging.page * paging.limit
+    //     },{
+    //         $limit : paging.limit
+    //     }]);
+    //     return result;
+    // }
 }
 
 const getOneIngredient = async(parent,{filter})=>{
