@@ -1,4 +1,5 @@
 const Ingredient = require('./ingredient.model');
+const Recipe = require('../Recipe/recipe.model');
 
 const insertIngredient = async(parent, {input})=>{
     if(!input){
@@ -14,59 +15,67 @@ const insertIngredient = async(parent, {input})=>{
     }
 }
 
-const getAllIngredients = async(parent, {filter})=>{
-    const {name, stock, paging} = filter;
-    if(!name && !stock){
-        let result = await Ingredient.aggregate([{
+const getAllIngredients = async(parent, {filter, paging})=>{
+    let aggregateQuery = [];
+    if(filter){
+        let indexMatch = aggregateQuery.push({
             $match : {
-                status : 'active'
+                $and : []
             }
-        },{
-            $skip : paging.page * paging.limit
-        },{
-            $limit : paging.limit
-        }]);
-        return result;
-    }else if(name && !stock){
-        let result = await Ingredient.aggregate([{
-            $match : {
-                status : 'active',
-                name : name
+        }) - 1;
+        
+        if(filter.name){
+            const search = new RegExp(filter.name, 'i');
+            aggregateQuery[indexMatch].$match.$and.push({
+                name : search,
+                status: 'active',
+            })
+        }
+
+        if(filter.stock){
+            const search = new RegExp(filter.stock, 'i')
+            if(search === 0) {
+                throw new Error ('Filter stock must greater then 0')
+            }else{
+                aggregateQuery[indexMatch].$match.$and.push({
+                    stock : {
+                    $gte : search
+                },
+                    status: 'active',
+                })
             }
-        },{
-            $skip : paging.page * paging.limit
-        },{
-            $limit : paging.limit
-        }])
-        return result;
-    }else if(!name && stock>0){
-        let result = await Ingredient.aggregate([{
-            $match : {
-                stock  : {
-                    $gte : stock
-                }
-            }
-        },{
-            $skip : paging.page * paging.limit
-        },{
-            $limit : paging.limit
-        }]);
-        return result;
-    }else if(name && stock>0){
-        let result = await Ingredient.aggregate([{
-            $match : {
-                name : name,
-                stock  : {
-                    $gte : stock
-                }
-            }
-        },{
-            $skip : paging.page * paging.limit
-        },{
-            $limit : paging.limit
-        }]);
-        return result;
+        }
     }
+
+    if(paging){
+        const {limit, page} = paging;
+        aggregateQuery.push({
+            $facet :{
+                page : [{
+                    $skip : page*limit
+                },{
+                    $limit : limit
+                },{
+                    $match : {
+                        "status" : "active"
+                    }
+                }],
+                countData : [{
+                    $group : {
+                        _id: null,
+                        count: {
+                            $sum :1
+                        }
+                    }
+                }]
+            }
+        })
+    }
+
+    let result = [];
+    filter || paging ? result = await Ingredient.aggregate(aggregateQuery) : result = await Ingredient.find().toArray();
+    console.log(result)
+    return result
 }
 
 const getOneIngredient = async(parent,{filter})=>{
@@ -99,21 +108,33 @@ const updateIngredient = async(parent, {input})=>{
     }
 }
 
+const validateDelete = async(id)=>{
+    const result = await Recipe.find({
+        "ingredients.ingredient_id" : id
+    });
+    return result
+}
+
 const deleteIngredient = async(parent, {input},ctx)=>{
         if(!input){
-            throw new ApolloError('Input the data first')
+            throw new Error('Input the data first')
         }else{
             const {id, status} = input;
-            let result = await Ingredient.findByIdAndUpdate({
-                _id : id
-            },{
-                $set : {
-                    status : status
-                }
-            },{
-                new : true
-            })
-            return result
+            const validate = await validateDelete(id);
+            if(!validate){
+                let result = await Ingredient.findByIdAndUpdate({
+                    _id : id
+                },{
+                    $set : {
+                        status : status
+                    }
+                },{
+                    new : true
+                })
+                return result
+            }else{
+                throw new Error('The Ingredients already use in recipes');
+            }
         }
 }
 
