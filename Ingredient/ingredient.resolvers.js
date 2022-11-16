@@ -1,4 +1,5 @@
 const Ingredient = require('./ingredient.model');
+const Recipe = require('../Recipe/recipe.model')
 
 const insertIngredient = async(parent, {input})=>{
     if(!input){
@@ -49,6 +50,10 @@ const getAllIngredients = async(parent, {filter, paging})=>{
             $skip : page*limit
         },{
             $limit : limit
+        },{
+            $match : {
+                status : 'active'
+            }
         })
     }
 
@@ -63,7 +68,8 @@ const getOneIngredient = async(parent,{filter})=>{
     }else{
         const {id} = filter;
         let result = await Ingredient.findOne({
-            _id : id
+            _id : id,
+            status : 'active'
         });
         return result;
     }
@@ -98,14 +104,14 @@ const deleteIngredient = async(parent, {input},ctx)=>{
     if(!input){
         throw new Error('Input the data first')
     }else{
-        const {id, status} = input;
+        const {id} = input;
         const validate = await validateDelete(id);
         if(validate == 0){
             let result = await Ingredient.findByIdAndUpdate({
                 _id : id
             },{
                 $set : {
-                    status : status
+                    status : "deleted"
                 }
             },{
                 new : true
