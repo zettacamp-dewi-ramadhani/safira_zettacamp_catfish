@@ -31,7 +31,7 @@ const getAllIngredients = async(parent, {filter, paging})=>{
                 status: 'active',
             })
         }
-        if(filter.stock){
+        if(filter.stock>=0){
             if(filter.stock === 0) {
                 throw new Error ('Filter stock must greater then 0')
             }else{
