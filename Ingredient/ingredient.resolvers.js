@@ -107,7 +107,7 @@ const deleteIngredient = async(parent, {input},ctx)=>{
         }else{
             const {id, status} = input;
             const validate = await validateDelete(id);
-            if(!validate){
+            if(validate == 0){
                 let result = await Ingredient.findByIdAndUpdate({
                     _id : id
                 },{

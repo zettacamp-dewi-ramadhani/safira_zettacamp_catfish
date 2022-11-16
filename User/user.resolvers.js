@@ -77,7 +77,7 @@ const login = async (parent, {input : {email, password}})=>{
             id : user._id,
             email : user.email
         },tokenSecret,{
-            expiresIn : '1h'
+            expiresIn : '12h'
         });
         return {
             token,
@@ -141,37 +141,6 @@ const getAllUsers = async(parent,{filter,paging})=>{
     let result = [];
     filter || paging ? result = await User.aggregate(aggregateQuery) : result = await User.find().toArray();
     return result
-
-    // const {email, first_name, last_name} = filter;
-    // if(!email && !first_name && !last_name){
-    //     let result = await User.aggregate([{
-    //         $match : {
-    //             status : 'active'
-    //         }
-    //     },{
-    //         $skip : paging.page * paging.limit
-    //     },{
-    //         $limit : paging.limit
-    //     }]);
-    //     return result;
-    // }else{
-    //     let result = await User.aggregate([{
-    //         $match : {
-    //             status : 'active'
-    //         }
-    //     },{
-    //         $in : {
-    //             email : email,
-    //             first_name : first_name,
-    //             last_name : last_name
-    //         }
-    //     },{
-    //         $skip : paging.page * paging.limit
-    //     },{
-    //         $limit : paging.limit
-    //     }])
-    //     return result;
-    // }
 }
 
 const getOneUser = async(parent, {filter})=>{
