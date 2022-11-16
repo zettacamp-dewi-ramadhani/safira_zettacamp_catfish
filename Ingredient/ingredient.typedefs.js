@@ -21,7 +21,6 @@ const IngredientTypeDefs = gql`
     input DataFilter{
         name : String,
         stock : Int,
-        paging : Paging
     }
 
     input OneDataFilter{
@@ -44,7 +43,7 @@ const IngredientTypeDefs = gql`
     }
 
     type Query {
-        getAllIngredients(filter : DataFilter) : [Ingredients],
+        getAllIngredients(filter : DataFilter, paging : Paging) : [Ingredients],
         getOneIngredient(filter : OneDataFilter) : Ingredients
     }
 
