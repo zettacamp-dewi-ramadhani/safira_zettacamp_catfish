@@ -50,6 +50,10 @@ const getAllIngredients = async(parent, {filter, paging})=>{
             $skip : page*limit
         },{
             $limit : limit
+        },{
+            $match : {
+                status : 'active'
+            }
         })
     }
 
@@ -64,7 +68,8 @@ const getOneIngredient = async(parent,{filter})=>{
     }else{
         const {id} = filter;
         let result = await Ingredient.findOne({
-            _id : id
+            _id : id,
+            status : 'active'
         });
         return result;
     }
