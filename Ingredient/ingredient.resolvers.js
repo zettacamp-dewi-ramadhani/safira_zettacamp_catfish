@@ -31,8 +31,7 @@ const getAllIngredients = async(parent, {filter, paging})=>{
                 status: 'active',
             })
         }
-
-        if(filter.stock){
+if(filter.stock){
             const search = new RegExp(filter.stock, 'i')
             if(search === 0) {
                 throw new Error ('Filter stock must greater then 0')
@@ -53,12 +52,15 @@ const getAllIngredients = async(parent, {filter, paging})=>{
             $skip : page*limit
         },{
             $limit : limit
+        },{
+            $match : {
+                status : 'active'
+            }
         })
     }
 
     let result = [];
-    filter || paging ? result = await Ingredient.aggregate(aggregateQuery) : result = await Ingredient.find().toArray();
-    console.log(result)
+    filter || paging ? result = await Ingredient.aggregate(aggregateQuery) : result = await Ingredient.find().toArray()
     return result
 }
 
