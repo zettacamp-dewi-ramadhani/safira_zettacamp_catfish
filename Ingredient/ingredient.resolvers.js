@@ -1,4 +1,5 @@
 const Ingredient = require('./ingredient.model');
+const Recipe = require('../Recipe/recipe.model');
 
 const insertIngredient = async(parent, {input})=>{
     if(!input){
@@ -30,7 +31,6 @@ const getAllIngredients = async(parent, {filter, paging})=>{
                 status: 'active',
             })
         }
-
         if(filter.stock){
             if(filter.stock === 0) {
                 throw new Error ('Filter stock must greater then 0')
@@ -43,7 +43,6 @@ const getAllIngredients = async(parent, {filter, paging})=>{
                 })
             }
         }
-    }
 
     if(paging){
         const {limit, page} = paging;
@@ -51,12 +50,15 @@ const getAllIngredients = async(parent, {filter, paging})=>{
             $skip : page*limit
         },{
             $limit : limit
+        },{
+            $match : {
+                status : 'active'
+            }
         })
     }
 
     let result = [];
-    filter || paging ? result = await Ingredient.aggregate(aggregateQuery) : result = await Ingredient.find().toArray();
-    console.log(result)
+    filter || paging ? result = await Ingredient.aggregate(aggregateQuery) : result = await Ingredient.find().toArray()
     return result
 }
 
@@ -90,21 +92,33 @@ const updateIngredient = async(parent, {input})=>{
     }
 }
 
+const validateDelete = async(id)=>{
+    const result = await Recipe.find({
+        "ingredients.ingredient_id" : id
+    });
+    return result
+}
+
 const deleteIngredient = async(parent, {input},ctx)=>{
         if(!input){
-            throw new ApolloError('Input the data first')
+            throw new Error('Input the data first')
         }else{
             const {id, status} = input;
-            let result = await Ingredient.findByIdAndUpdate({
-                _id : id
-            },{
-                $set : {
-                    status : status
-                }
-            },{
-                new : true
-            })
-            return result
+            const validate = await validateDelete(id);
+            if(!validate){
+                let result = await Ingredient.findByIdAndUpdate({
+                    _id : id
+                },{
+                    $set : {
+                        status : status
+                    }
+                },{
+                    new : true
+                })
+                return result
+            }else{
+                throw new Error('The Ingredients already use in recipes');
+            }
         }
 }
 
