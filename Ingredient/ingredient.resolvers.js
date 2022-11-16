@@ -56,7 +56,6 @@ const getAllIngredients = async(parent, {filter, paging})=>{
 
     let result = [];
     filter || paging ? result = await Ingredient.aggregate(aggregateQuery) : result = await Ingredient.find().toArray();
-    console.log(result)
     return result
 }
 
