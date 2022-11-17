@@ -11,38 +11,38 @@ async function getAvailable({ ingredients }, args, context, info) {
     return Math.min(...minStock);
 }
 
-// const validateIngredient = async(ingredients)=>{
-//     let available = []
-//     for(const data of ingredients){
-//         ingredientData = Ingredient.findOne({
-//             _id : data.ingredient_id
-//         })
-//         if(ingredientData.status == 'deleted'){
-//             available.push(true)
-//         }else{
-//             available.push(false)
-//         }
-//     }
+const validateIngredient = async(ingredients)=>{
+    let available = []
+    for(const data of ingredients){
+        ingredientData = await Ingredient.findOne({
+            _id : data.ingredient_id
+        })
+        if(ingredientData.status == 'deleted'){
+            available.push(false)
+        }else{
+            available.push(true)
+        }
+    }
 
-//     const temp = available.includes(true);
+    const temp = available.includes(true);
     
-//     if(temp === true){
-//         return true;
+    if(temp === true){
+        return true;
         
-//     }else{
-//         return false;
-//     }
-// }
+    }else{
+        return false;
+    }
+}
 
 const createRecipe = async(parent, {input})=>{
     if(!input){
         throw new Error('No input data');
     }else{
         const {recipe_name, ingredients, price, image} = input;    
-        // const validate = await validateIngredient(ingredients);
-        // if(validate == false){
-        //     throw new Error('Ingredient is deleted');
-        // }else{}
+        const validate = await validateIngredient(ingredients);
+        if(validate == false){
+            throw new Error('Ingredient is deleted');
+        }else{}
         let data = new Recipe({
             recipe_name : recipe_name,
             ingredients : ingredients,
