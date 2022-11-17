@@ -5,6 +5,7 @@ const RecipeTypeDefs = gql`
         _id : ID,
         recipe_name : String,
         ingredients : [Ingredient_Detail],
+        price : Int,
         status : Status
     }
 
@@ -23,18 +24,19 @@ const RecipeTypeDefs = gql`
         limit : Int
     }
 
-    input DataFilter {
-        recipe_name : String
+    input DataFilterForRecipe {
+        recipe_name : String,
+        price : Int
     }
 
-    input Detail {
+    input DetailIngredientForRecipe {
         ingredient_id : ID,
         stock_used : Int
     }
     
-    input DataInput {
+    input DataInputRecipe {
         recipe_name : String,
-        ingredients : [Detail]
+        ingredients : [DetailIngredientForRecipe]
         price : Int
     }
 
@@ -54,12 +56,12 @@ const RecipeTypeDefs = gql`
     }
 
     type Query {
-        getAllRecipes(filter : DataFilter, paging : Paging) : [Recipes],
+        getAllRecipes(filter : DataFilterForRecipe, paging : Paging) : [Recipes],
         getOneRecipe(filter : OneDataFilter) : Recipes
     }
 
     type Mutation {
-        createRecipe(input : DataInput) : Recipes,
+        createRecipe(input : DataInputRecipe) : Recipes,
         updateRecipe(input : DataUpdate) : Recipes,
         deleteRecipe(input : DataDelete) : Recipes
     }
