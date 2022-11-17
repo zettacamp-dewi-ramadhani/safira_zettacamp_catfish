@@ -1,22 +1,31 @@
 const Recipe = require('./recipe.model');
+const Ingredient = require('../Ingredient/ingredient.model')
 
-// const validateIngredient = async (id)=>{
-//     for (const ingredient of id){}
+// const validateIngredient = async (_, ingredients)=>{
+//     for (const validate of ingredients){
+//         validate = await Ingredient.find({
+//             status: "deleted"
+//         })
+    
+//         if (validate){ throw new Error('The ingredients has been deleted')}
+//     }
 // }
 
 const createRecipe = async(parent, {input})=>{
-  if(!input){
-    console.log('Nothing to input')
-  }else{
-    const {recipe_name, ingredients, price} = input;  
-    let data = new Recipe({
-      recipe_name : recipe_name,
-      ingredients : ingredients,
-      price : price
-    });
-    await data.save();
-    return data;
-  }
+    if(!input){
+        console.log('Nothing to input')
+    }else{
+        const {recipe_name, ingredients, price, image} = input;
+        // await validateIngredient(ingredients)
+        let data = new Recipe({
+            recipe_name : recipe_name,
+            ingredients : ingredients,
+            price : price,
+            image : image
+        });
+        await data.save();
+        return data;
+    }
 }
 const getAllRecipes = async(parent, {filter, paging})=>{
   let aggregateQuery = [];
@@ -93,21 +102,21 @@ const updateRecipe = async(parent, {input})=>{
   }
 }
 const deleteRecipe = async(parent, {input})=>{
-  if(!input){
-    console.log('No Input Data')
-  }else{
-    const {id, status} = input
-    let result = await Recipe.findByIdAndUpdate({
-      _id : id
-    },{
-      $set : {
-        status : status
-      }
-    },{
-      new : true
-    });
-    return result;
-  }
+    if(!input){
+        console.log('No Input Data')
+    }else{
+        const {id} = input
+        let result = await Recipe.findByIdAndUpdate({
+            _id : id
+        },{
+            $set : {
+                status : 'deleted'
+            }
+        },{
+            new : true
+        });
+        return result;
+    }
 }
 const RecipeResolvers = {
   Query : {
