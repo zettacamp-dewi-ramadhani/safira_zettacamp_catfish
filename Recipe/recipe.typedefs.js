@@ -62,7 +62,7 @@ const RecipeTypeDefs = gql`
     }
 
     type Query {
-        getAllRecipes(filter : DataFilterForRecipe, paging : Paging) : [Recipes],
+        getAllRecipes(filter : DataFilterForRecipe, paging : Paging, status : Status) : [Recipes],
         getOneRecipe(filter : OneDataFilter) : Recipes
     }
 
