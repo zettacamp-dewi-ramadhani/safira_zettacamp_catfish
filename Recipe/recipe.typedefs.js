@@ -7,7 +7,7 @@ const RecipeTypeDefs = gql`
         ingredients : [Ingredient_Detail],
         price : Int,
         image : String,
-        recipe_info : Info,
+        available : Int,
         status : Status
     }
 
@@ -16,14 +16,10 @@ const RecipeTypeDefs = gql`
         stock_used : Int
     }
 
-    enum Info{
-        available,
-        unvailable
-    }
-
     enum Status {
         active,
-        deleted
+        deleted,
+        draft
     }
 
     input Paging {
@@ -52,10 +48,12 @@ const RecipeTypeDefs = gql`
         id : ID
     }
 
-    input DataUpdate {
+    input DataUpdateRecipe {
         id : ID,
         newName : String,
-        newIngredient : [Detail]
+        newIngredient : [DetailIngredientForRecipe],
+        image : String,
+        status : Status
     }
 
     input DataDeleteRecipe{
@@ -69,7 +67,7 @@ const RecipeTypeDefs = gql`
 
     type Mutation {
         createRecipe(input : DataInputRecipe) : Recipes,
-        updateRecipe(input : DataUpdate) : Recipes,
+        updateRecipe(input : DataUpdateRecipe) : Recipes,
         deleteRecipe(input : DataDeleteRecipe) : Recipes
     }
 `

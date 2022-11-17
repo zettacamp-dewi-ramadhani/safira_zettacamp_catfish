@@ -1,32 +1,59 @@
 const Recipe = require('./recipe.model');
 const Ingredient = require('../Ingredient/ingredient.model')
 
-// const validateIngredient = async (_, ingredients)=>{
-//     for (const validate of ingredients){
-//         validate = await Ingredient.find({
-//             status: "deleted"
+async function getAvailable({ ingredients }, args, context, info) {
+    const minStock = []
+    for (let ingredient of ingredients) {
+        const recipe_ingredient = await Ingredient.findById(ingredient.ingredient_id);
+        if (!recipe_ingredient) throw new ApolloError(`Ingredient with ID: ${ingredient.ingredient_id} not found`, "404");
+        minStock.push(Math.floor(recipe_ingredient.stock / ingredient.stock_used));
+    }
+    return Math.min(...minStock);
+}
+
+// const validateIngredient = async(ingredients)=>{
+//     let available = []
+//     for(const data of ingredients){
+//         ingredientData = Ingredient.findOne({
+//             _id : data.ingredient_id
 //         })
+//         if(ingredientData.status == 'deleted'){
+//             available.push(true)
+//         }else{
+//             available.push(false)
+//         }
+//     }
+
+//     const temp = available.includes(true);
     
-//         if (validate){ throw new Error('The ingredients has been deleted')}
+//     if(temp === true){
+//         return true;
+        
+//     }else{
+//         return false;
 //     }
 // }
 
 const createRecipe = async(parent, {input})=>{
-    if(!input){
-        console.log('Nothing to input')
-    }else{
-        const {recipe_name, ingredients, price, image} = input;
-        // await validateIngredient(ingredients)
-        let data = new Recipe({
-            recipe_name : recipe_name,
-            ingredients : ingredients,
-            price : price,
-            image : image
-        });
-        await data.save();
-        return data;
-    }
+    if(!input){
+        throw new Error('No input data');
+    }else{
+        const {recipe_name, ingredients, price, image} = input;    
+        // const validate = await validateIngredient(ingredients);
+        // if(validate == false){
+        //     throw new Error('Ingredient is deleted');
+        // }else{}
+        let data = new Recipe({
+            recipe_name : recipe_name,
+            ingredients : ingredients,
+            price : price,
+            image: image,
+        });
+        await data.save();
+        return data;
+    }
 }
+
 const getAllRecipes = async(parent, {filter, paging})=>{
     let aggregateQuery = [];
     if(filter){
@@ -87,13 +114,15 @@ const updateRecipe = async(parent, {input})=>{
     if(!input){
         console.log('No data');
     }else{
-        const {id, newName, newIngredient} = input;
+        const {id, newName, newIngredient, image, status} = input;
         let data = await Recipe.findByIdAndUpdate({
             _id : id
         },{
             $set : {
                 recipe_name : newName,
-                ingredients : newIngredient
+                ingredients : newIngredient,
+                image : image,
+                status: status
             }
         },{
             new : true
@@ -130,7 +159,10 @@ const RecipeResolvers = {
     },
     Ingredient_Detail : {
         ingredient_id : getRecipeLoader
-    }
+    },
+    Recipes: {
+        available : getAvailable
+    }
 }
 
 module.exports = {RecipeResolvers}

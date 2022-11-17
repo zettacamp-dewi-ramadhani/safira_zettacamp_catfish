@@ -12,15 +12,11 @@ const recipeSchema = new mongoose.Schema({
     }],
     price: {type: Number},
     image: {type: String},
-    info_recipe: {
-        type : String,
-        enum : ['available', 'unvailable'],
-        default : 'available'
-    },
+    available: {type: Number},
     status : {
         type: String,
-        enum : ['active', 'deleted'],
-        default : 'active'
+        enum : ['active', 'deleted', 'draft'],
+        default : 'draft'
     }
 });
 
