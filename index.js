@@ -3,7 +3,6 @@ const app = express();
 const {gql, ApolloServer, ApolloError} = require('apollo-server-express');
 
 const {merge} = require('lodash');
-// const {makeExecutableSchema} = require('@graphql-tools/schema');
 const {makeExecutableSchema} = require('@graphql-tools/schema');
 const {applyMiddleware} = require('graphql-middleware');
 
