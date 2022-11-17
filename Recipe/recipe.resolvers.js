@@ -55,62 +55,63 @@ const createRecipe = async(parent, {input})=>{
 }
 
 const getAllRecipes = async(parent, {filter, paging})=>{
-    let aggregateQuery = [];
-    if(filter){
-        let indexMatch = aggregateQuery.push({
-            $match : {
-                $and : []
-            }
-        }) - 1;
-        
-        if(filter.recipe_name){
-            const search = new RegExp(filter.recipe_name, 'i');
-            aggregateQuery[indexMatch].$match.$and.push({
-                recipe_name : search,
-                status : 'active'
-            })
-        }
-        if(filter.price){
-            aggregateQuery[indexMatch].$match.$and.push({
-                price : filter.price,
-                status : 'active'
-            })
-        }
-    }
-    if(paging){
-        const {limit, page} = paging;
-        aggregateQuery.push({
-            $match : {
-                status : 'active'
-            }
-        },{
-            $skip : page*limit
-        },{
-            $limit : limit
-        })
-    }
-    let result = [];
-    filter || paging ? result = await Recipe.aggregate(aggregateQuery) : result = await Recipe.find().toArray();
-    return result
+  let aggregateQuery = [];
+  if(filter){
+    let indexMatch = aggregateQuery.push({
+      $match : {
+        $and : []
+      }
+    }) - 1;
+    
+    if(filter.recipe_name){
+      const search = new RegExp(filter.recipe_name, 'i');
+      aggregateQuery[indexMatch].$match.$and.push({
+        recipe_name : search,
+        status : 'active'
+      })
+    }
+    if(filter.price){
+      aggregateQuery[indexMatch].$match.$and.push({
+        price : filter.price,
+        status : 'active'
+      })
+    }
+  }
+  if(paging){
+    const {limit, page} = paging;
+    aggregateQuery.push({
+      $match : {
+        status : 'active'
+      }
+    },{
+      $skip : page*limit
+    },{
+      $limit : limit
+    })
+  }
+  let result = [];
+  filter || paging ? result = await Recipe.aggregate(aggregateQuery) : result = await Recipe.find().toArray();
+  return result
 }
 const getRecipeLoader = async(parent, args, ctx)=>{
-    if(parent.ingredient_id){
-        const result = await ctx.recipeLoader.load(parent.ingredient_id);
-        return result;
-    }
+  if(parent.ingredient_id){
+    const result = await ctx.recipeLoader.load(parent.ingredient_id);
+    return result;
+  }
 }
 const getOneRecipe = async(parent, {filter})=>{
-    if(!filter){
-        console.log('No data match')
-    }else{
-        const {id} = filter;
-        let result = await Recipe.findOne({
-            _id : id
-        });
-        return result;
-    }
+  if(!filter){
+    console.log('No data match')
+  }else{
+    const {id} = filter;
+    let result = await Recipe.findOne({
+      _id : id
+    });
+    return result;
+  }
 }
 const updateRecipe = async(parent, {input})=>{
+
     if(!input){
         console.log('No data');
     }else{
