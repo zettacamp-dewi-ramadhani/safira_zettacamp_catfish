@@ -52,6 +52,7 @@ const RecipeTypeDefs = gql`
         id : ID,
         newName : String,
         newIngredient : [DetailIngredientForRecipe],
+        price : Int,
         image : String,
         status : Status
     }

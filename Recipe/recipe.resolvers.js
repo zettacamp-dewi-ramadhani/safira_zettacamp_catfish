@@ -115,13 +115,14 @@ const updateRecipe = async(parent, {input})=>{
     if(!input){
         console.log('No data');
     }else{
-        const {id, newName, newIngredient, image, status} = input;
+        const {id, newName, newIngredient, price, image, status} = input;
         let data = await Recipe.findByIdAndUpdate({
             _id : id
         },{
             $set : {
                 recipe_name : newName,
                 ingredients : newIngredient,
+                price : price,
                 image : image,
                 status: status
             }
