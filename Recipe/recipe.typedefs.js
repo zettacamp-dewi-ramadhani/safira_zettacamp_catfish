@@ -6,12 +6,19 @@ const RecipeTypeDefs = gql`
         recipe_name : String,
         ingredients : [Ingredient_Detail],
         price : Int,
+        image : String,
+        recipe_info : Info,
         status : Status
     }
 
     type Ingredient_Detail {
         ingredient_id : Ingredients,
         stock_used : Int
+    }
+
+    enum Info{
+        available,
+        unvailable
     }
 
     enum Status {
@@ -37,7 +44,8 @@ const RecipeTypeDefs = gql`
     input DataInputRecipe {
         recipe_name : String,
         ingredients : [DetailIngredientForRecipe]
-        price : Int
+        price : Int,
+        image : String
     }
 
     input OneDataFilter{
@@ -50,9 +58,8 @@ const RecipeTypeDefs = gql`
         newIngredient : [Detail]
     }
 
-    input DataDelete{
-        id : ID,
-        status : Status
+    input DataDeleteRecipe{
+        id : ID
     }
 
     type Query {
@@ -63,7 +70,7 @@ const RecipeTypeDefs = gql`
     type Mutation {
         createRecipe(input : DataInputRecipe) : Recipes,
         updateRecipe(input : DataUpdate) : Recipes,
-        deleteRecipe(input : DataDelete) : Recipes
+        deleteRecipe(input : DataDeleteRecipe) : Recipes
     }
 `
 
