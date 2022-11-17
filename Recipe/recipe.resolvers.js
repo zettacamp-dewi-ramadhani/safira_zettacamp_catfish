@@ -54,7 +54,7 @@ const createRecipe = async(parent, {input})=>{
     }
 }
 
-const getAllRecipes = async(parent, {filter, paging})=>{
+const getAllRecipes = async(parent, {filter, paging, status})=>{
   let aggregateQuery = [];
   if(filter){
     let indexMatch = aggregateQuery.push({
@@ -89,8 +89,15 @@ const getAllRecipes = async(parent, {filter, paging})=>{
       $limit : limit
     })
   }
+  if(status){
+    aggregateQuery.push({
+      $match : {
+        status : status
+      }
+    })
+  }
   let result = [];
-  filter || paging ? result = await Recipe.aggregate(aggregateQuery) : result = await Recipe.find().toArray();
+  filter || paging || status ? result = await Recipe.aggregate(aggregateQuery) : result = await Recipe.find().toArray();
   return result
 }
 const getRecipeLoader = async(parent, args, ctx)=>{
