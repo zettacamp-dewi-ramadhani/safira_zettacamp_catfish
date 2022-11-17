@@ -11,6 +11,12 @@ const recipeSchema = new mongoose.Schema({
         stock_used : {type: Number}
     }],
     price: {type: Number},
+    image: {type: String},
+    info_recipe: {
+        type : String,
+        enum : ['available', 'unvailable'],
+        default : 'available'
+    },
     status : {
         type: String,
         enum : ['active', 'deleted'],
