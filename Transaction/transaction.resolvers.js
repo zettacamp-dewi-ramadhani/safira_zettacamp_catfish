@@ -1,25 +1,7 @@
 const Transaction = require('./transaction.model');
 const Ingredient = require('../Ingredient/ingredient.model');
 const Recipe = require('../Recipe/recipe.model');
-const {GraphQLScalarType, Kind} = require('graphql');
 const moment = require('moment');
-
-const dateScalar = new GraphQLScalarType({
-    name : 'Date',
-    description : 'Custom date scalar type',
-    serialize(value){
-        return value.getTime()
-    },
-    parseValue(value){
-        return new Date(value);
-    },
-    parseLiteral(ast){
-        if (ast.kind === Kind.INT){
-            return new Date(parseInt(ast.value, 10));
-        }
-        return null;
-    }
-});
 
 moment.locale('id-ID');
 
@@ -54,7 +36,7 @@ const validateStockIngredient = async(menu)=>{
             ingredientData = await Ingredient.findOne({
                 _id : ingredient.ingredient_id
             });
-            if(ingredientData.stock >= (ingredient.stock_used*recipe.amount)){
+            if(ingredientData.available >= (ingredient.stock_used*recipe.amount)){
                 available.push(true)
             }else{
                 available.push(false)
@@ -85,85 +67,106 @@ const getMenuLoader = async(parent, args, ctx)=>{
     }
 }
 
+const getTotalPrice = async(menu)=>{
+    let total = [];
+    let totalPrice = []
+    for(recipe of menu){
+        recipeData = await Recipe.findOne({
+            _id : recipe.recipe_id
+        });
+        total.push(recipe.amount * recipeData.price);
+        totalPrice = total.reduce((a,b)=>a+b);
+    }
+    return totalPrice;
+}
+
 const createTransaction = async(parent,{input},ctx)=>{
     if(!input){
-        console.log('Nothing to input')
+        throw new Error('Fill the input form to add data');
     }else{
         const userId = ctx.user[0]._id;
         const {menu} = input;
-        let validate = await validateStockIngredient(menu);
+        let validate = await validateStockIngredient(menu);     
+        let totalPrice = await getTotalPrice(menu);
         if(validate === true){
             let data = new Transaction({
-                user_id : userId,
-                menu : menu,
-                order_status : 'success'
-            });
-            await data.save();
-            return data;    
+                 user_id : userId,
+                 menu : menu,
+                 total : totalPrice,
+                 order_status : 'success'
+             });
+             await data.save();
+             return data;    
         }else{
-            let data = new Transaction({
+             let data = new Transaction({
                 user_id : userId,
                 menu : menu,
+                total : totalPrice,
                 order_status : 'failed'
-            });
-            await data.save();
-            return data;
+             });
+             await data.save();
+             return data;
         }
     }
 }
 
-const getAllTransactions = async(parent, {filter_transaction, pagination}, ctx)=>{
+const getAllTransactions = async(parent, {filter, pagination}, ctx)=>{
     let aggregateQuery = [];
     let result = [];
 
-    if(filter_transaction){
-    if(filter_transaction.user_lname){
-        const search = new RegExp(filter_transaction.user_lname, 'i');
-        result = await Transaction.aggregate([{
-            $lookup : {
-                from : 'users',
-                localField : 'user_id',
-                foreignField : '_id',
-                as : 'user_detail'
+    if(filter){
+        if(filter.user_lname || filter.recipe_name){
+            if(filter.user_lname){
+                const search = new RegExp(filter.user_lname, 'i');
+                aggregateQuery.push({
+                    $lookup : {
+                        from : 'users',
+                        localField : 'user_id',
+                        foreignField : '_id',
+                        as : 'user_detail'
+                    }
+                },{
+                    $match :{
+                        'user_detail.last_name' : search
+                    }
+                })
             }
-        },{
-            $match : {
-                "user_detail.last_name" : search
-            }
-        }]);
-    };
 
-    if(filter_transaction.recipe_name){
-        const search = new RegExp(filter_transaction.recipe_name, 'i');
-            result = await Transaction.aggregate([{
-                $lookup : {
-                    from : 'recipes',
-                    localField : 'menu.recipe_id',
-                    foreignField : '_id',
-                    as : 'recipe_detail'
-                }
-            },{
-                $match : {
-                    "recipe_detail.recipe_name" : search
-                }
-            }])
+            if(filter.recipe_name){
+                const search = new RegExp(filter.recipe_name, 'i');
+                aggregateQuery.push({
+                    $lookup : {
+                        from : 'recipes',
+                        localField : 'menu.recipe_id',
+                        foreignField : '_id',
+                        as : 'recipe_detail'
+                    }
+                },{
+                    $match : {
+                        "recipe_detail.recipe_name" : search
+                    }
+                }) 
+            }
         }
+
         let indexMatch = aggregateQuery.push({
             $match : {
                 $and : []
             }
         }) - 1;
 
-        if(filter_transaction.order_status){
-            const search = new RegExp(filter_transaction.order_status, 'i');
+        if(filter.order_status){
+            const search = new RegExp(filter.order_status, 'i');
             aggregateQuery[indexMatch].$match.$and.push({
+                status : 'active',
                 order_status : search
             })
         }
 
-        if(filter_transaction.order_date){
-            const search = new RegExp(filter_transaction.order_date, 'i');
+        if(filter.order_date){
+            const search = new RegExp(filter.order_date, 'i');
             aggregateQuery[indexMatch].$match.$and.push({
+                status : 'active',
                 order_date : search
             });
         }
@@ -182,15 +185,15 @@ const getAllTransactions = async(parent, {filter_transaction, pagination}, ctx)=
         })
     }
 
-    filter_transaction || pagination ? result = await Transaction.aggregate(aggregateQuery) : result = await Transaction.find().toArray();
+    filter || pagination ? result = await Transaction.aggregate(aggregateQuery) : result = await Transaction.find().toArray();
     return result;
 }
 
-const getOneTransactions = async(parent, {filter_transaction})=>{
-    if(!filter_transaction){
-        console.log('No data match');
+const getOneTransactions = async(parent, {filter})=>{
+    if(!filter){
+        throw new Error('Nothing to find');
     }else{
-        const {id} = filter_transaction;
+        const {id} = filter;
         let result = await Transaction.findOne({
             _id : id
         });
@@ -200,7 +203,7 @@ const getOneTransactions = async(parent, {filter_transaction})=>{
 
 const deleteTransaction = async(parent, {input})=>{
     if(!input){
-        console.log('No Input Data')
+        throw new Error('Nothing to delete');
     }else{
         const {id, status} = input
         let result = await Transaction.findByIdAndUpdate({
@@ -217,8 +220,6 @@ const deleteTransaction = async(parent, {input})=>{
 }
 
 const TransactionResolvers = {
-    // Date : dateScalar,
-
     Query : {
         getAllTransactions,
         getOneTransactions

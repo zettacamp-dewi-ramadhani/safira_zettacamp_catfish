@@ -7,6 +7,7 @@ const TransactionTypeDefs = gql`
         _id : ID,
         user_id : Users,
         menu : [Detail_Menu],
+        total : Int,
         order_status : Order,
         order_date : String,
         status : Status
@@ -28,12 +29,12 @@ const TransactionTypeDefs = gql`
         deleted
     }
 
-    input DataDelete {
+    input DataDeleteTransaction {
         id : ID,
         status : Status
     }
 
-    input DataInput {
+    input DataInputTransaction {
         menu : [Detail],
         order_status : Order
     }
@@ -44,14 +45,14 @@ const TransactionTypeDefs = gql`
         note : String
     }
 
-    input DataFilter {
+    input DataFilterTransaction {
         user_lname : String,
         recipe_name : String,
         order_status : Order,
         order_date : String
     }
 
-    input OneDataFilter {
+    input OneFilterTransaction {
         id : ID
     }
 
@@ -61,13 +62,13 @@ const TransactionTypeDefs = gql`
     }
 
     type Query {
-        getAllTransactions(filter_transaction : DataFilter, pagination : Paging) : [Transactions],
-        getOneTransactions(filter_transaction : OneDataFilter) : Transactions
+        getAllTransactions(filter : DataFilterTransaction, pagination : Paging) : [Transactions],
+        getOneTransactions(filter : OneFilterTransaction) : Transactions
     }
 
     type Mutation {
-        createTransaction(input : DataInput) : Transactions,
-        deleteTransaction(input : DataDelete) : Transactions
+        createTransaction(input : DataInputTransaction) : Transactions,
+        deleteTransaction(input : DataDeleteTransaction) : Transactions
     }
 `
 
