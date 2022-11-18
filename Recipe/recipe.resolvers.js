@@ -56,39 +56,40 @@ const createRecipe = async(parent, {input})=>{
 
 const getAllRecipes = async(parent, {filter, paging, status})=>{
   let aggregateQuery = [];
-  if(filter){
-    let indexMatch = aggregateQuery.push({
-      $match : {
-        $and : []
-      }
-    }) - 1;
-    
-    if(filter.recipe_name){
-      const search = new RegExp(filter.recipe_name, 'i');
-      aggregateQuery[indexMatch].$match.$and.push({
-        recipe_name : search,
-        status : 'active'
-      })
-    }
-    if(filter.price){
-      aggregateQuery[indexMatch].$match.$and.push({
-        price : filter.price,
-        status : 'active'
-      })
-    }
+  let matchQuerry = {
+    $and : [],
   }
+
+  if(filter.recipe_name){
+    const search = new RegExp(filter.recipe_name, 'i');
+    matchQuerry.$and.push({
+      recipe_name : search,
+      status : 'active'
+    })
+  }
+
+  if(filter.price){
+    matchQuerry.$and.push({
+      price : filter.price,
+      status : 'active'
+    })
+  }
+
+  if(matchQuerry.$and.length){
+    aggregateQuery.push({
+      $match: matchQuerry
+    })
+  }
+
   if(paging){
     const {limit, page} = paging;
     aggregateQuery.push({
-      $match : {
-        status : 'active'
-      }
-    },{
       $skip : page*limit
     },{
       $limit : limit
     })
   }
+
   if(status){
     aggregateQuery.push({
       $match : {
@@ -96,10 +97,13 @@ const getAllRecipes = async(parent, {filter, paging, status})=>{
       }
     })
   }
+
+  if(!aggregateQuery.length)return await Recipe.find()
   let result = [];
   filter || paging || status ? result = await Recipe.aggregate(aggregateQuery) : result = await Recipe.find().toArray();
   return result
 }
+
 const getRecipeLoader = async(parent, args, ctx)=>{
   if(parent.ingredient_id){
     const result = await ctx.recipeLoader.load(parent.ingredient_id);
