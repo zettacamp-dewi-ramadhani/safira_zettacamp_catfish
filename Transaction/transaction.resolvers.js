@@ -183,7 +183,6 @@ const getAllTransactions = async(parent, {filter_transaction, pagination}, ctx)=
     }
 
     filter_transaction || pagination ? result = await Transaction.aggregate(aggregateQuery) : result = await Transaction.find().toArray();
-    console.log(moment(result[0].order_date).format('LL'))
     return result;
 }
 
