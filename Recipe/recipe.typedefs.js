@@ -5,6 +5,9 @@ const RecipeTypeDefs = gql`
         _id : ID,
         recipe_name : String,
         ingredients : [Ingredient_Detail],
+        price : Int,
+        image : String,
+        available : Int,
         status : Status
     }
 
@@ -15,7 +18,8 @@ const RecipeTypeDefs = gql`
 
     enum Status {
         active,
-        deleted
+        deleted,
+        draft
     }
 
     input Paging {
@@ -23,45 +27,49 @@ const RecipeTypeDefs = gql`
         limit : Int
     }
 
-    input DataFilter {
-        recipe_name : String
+    input DataFilterForRecipe {
+        recipe_name : String,
+        price : Int
     }
 
-    input Detail {
+    input DetailIngredientForRecipe {
         ingredient_id : ID,
         stock_used : Int
     }
     
-    input DataInput {
+    input DataInputRecipe {
         recipe_name : String,
-        ingredients : [Detail]
-        price : Int
+        ingredients : [DetailIngredientForRecipe]
+        price : Int,
+        image : String
     }
 
     input OneDataFilter{
         id : ID
     }
 
-    input DataUpdate {
+    input DataUpdateRecipe {
         id : ID,
         newName : String,
-        newIngredient : [Detail]
-    }
-
-    input DataDelete{
-        id : ID,
+        newIngredient : [DetailIngredientForRecipe],
+        price : Int,
+        image : String,
         status : Status
     }
 
+    input DataDeleteRecipe{
+        id : ID
+    }
+
     type Query {
-        getAllRecipes(filter : DataFilter, paging : Paging) : [Recipes],
+        getAllRecipes(filter : DataFilterForRecipe, paging : Paging, status : Status) : [Recipes],
         getOneRecipe(filter : OneDataFilter) : Recipes
     }
 
     type Mutation {
-        createRecipe(input : DataInput) : Recipes,
-        updateRecipe(input : DataUpdate) : Recipes,
-        deleteRecipe(input : DataDelete) : Recipes
+        createRecipe(input : DataInputRecipe) : Recipes,
+        updateRecipe(input : DataUpdateRecipe) : Recipes,
+        deleteRecipe(input : DataDeleteRecipe) : Recipes
     }
 `
 

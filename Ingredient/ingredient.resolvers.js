@@ -47,13 +47,13 @@ const getAllIngredients = async(parent, {filter, paging})=>{
     if(paging){
         const {limit, page} = paging;
         aggregateQuery.push({
-            $skip : page*limit
-        },{
-            $limit : limit
-        },{
             $match : {
                 status : 'active'
             }
+        },{
+            $skip : page*limit
+        },{
+            $limit : limit
         })
     }
 

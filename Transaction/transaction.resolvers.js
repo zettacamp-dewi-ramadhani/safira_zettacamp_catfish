@@ -86,28 +86,27 @@ const createTransaction = async(parent,{input},ctx)=>{
     }else{
         const userId = ctx.user[0]._id;
         const {menu} = input;
-        let validate = await validateStockIngredient(menu);
-        console.log(validate);
-        // let totalPrice = await getTotalPrice(menu);
-        // if(validate === true){
-        //     let data = new Transaction({
-        //         user_id : userId,
-        //         menu : menu,
-        //         total : totalPrice,
-        //         order_status : 'success'
-        //     });
-        //     await data.save();
-        //     return data;    
-        // }else{
-        //     let data = new Transaction({
-        //         user_id : userId,
-        //         menu : menu,
-        //         total : totalPrice,
-        //         order_status : 'failed'
-        //     });
-        //     await data.save();
-        //     return data;
-        // }
+        let validate = await validateStockIngredient(menu);     
+        let totalPrice = await getTotalPrice(menu);
+        if(validate === true){
+            let data = new Transaction({
+                 user_id : userId,
+                 menu : menu,
+                 total : totalPrice,
+                 order_status : 'success'
+             });
+             await data.save();
+             return data;    
+        }else{
+             let data = new Transaction({
+                user_id : userId,
+                menu : menu,
+                total : totalPrice,
+                order_status : 'failed'
+             });
+             await data.save();
+             return data;
+        }
     }
 }
 

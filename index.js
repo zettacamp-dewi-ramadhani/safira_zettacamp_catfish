@@ -3,7 +3,6 @@ const app = express();
 const {gql, ApolloServer, ApolloError} = require('apollo-server-express');
 
 const {merge} = require('lodash');
-// const {makeExecutableSchema} = require('@graphql-tools/schema');
 const {makeExecutableSchema} = require('@graphql-tools/schema');
 const {applyMiddleware} = require('graphql-middleware');
 
@@ -12,13 +11,11 @@ const {UserTypeDefs} = require('./User/user.typedefs');
 const {IngredientTypeDefs} = require('./Ingredient/ingredient.typedefs');
 const {RecipeTypeDefs} = require('./Recipe/recipe.typedefs');
 const {TransactionTypeDefs} = require('./Transaction/transaction.typedefs');
-const {PermissionTypeDefs} = require('./Permission/permission.typedefs');
 
 const {UserResolvers} = require('./User/user.resolvers');
 const {IngredientResolvers} = require('./Ingredient/ingredient.resolvers');
 const {RecipeResolvers} = require('./Recipe/recipe.resolvers');
 const {TransactionResolvers} = require('./Transaction/transaction.resolvers');
-const {PermissionResolvers} = require('./Permission/permission.resolvers');
 
 const recipeLoader = require('./Recipe/recipe.loader');
 const {dataUserLoader, dataRecipeLoader} = require('./Transaction/transaction.loader');
@@ -36,7 +33,6 @@ const typeDefs = [
     IngredientTypeDefs,
     RecipeTypeDefs,
     TransactionTypeDefs,
-    PermissionTypeDefs
 ]
 
 const resolvers = merge(
@@ -44,7 +40,6 @@ const resolvers = merge(
     IngredientResolvers,
     RecipeResolvers,
     TransactionResolvers,
-    PermissionResolvers
 );
 
 const auth = merge(authJwt);
