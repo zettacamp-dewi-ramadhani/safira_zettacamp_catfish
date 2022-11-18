@@ -21,7 +21,8 @@ const TransactionTypeDefs = gql`
 
     enum Order {
         success,
-        failed
+        failed,
+        pending
     }
 
     enum Status {
@@ -35,8 +36,7 @@ const TransactionTypeDefs = gql`
     }
 
     input DataInputTransaction {
-        menu : [Detail],
-        order_status : Order
+        menu : [Detail]
     }
 
     input Detail {

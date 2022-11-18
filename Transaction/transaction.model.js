@@ -21,7 +21,7 @@ const transactionSchema = new mongoose.Schema({
     total : {type : Number},
     order_status : {
         type : String,
-        enum : ['success', 'failed'],
+        enum : ['success', 'failed','pending'],
         default : 'success'
     },
     order_date : {
