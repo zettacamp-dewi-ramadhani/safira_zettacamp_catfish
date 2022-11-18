@@ -36,7 +36,7 @@ const validateStockIngredient = async(menu)=>{
             ingredientData = await Ingredient.findOne({
                 _id : ingredient.ingredient_id
             });
-            if(ingredientData.available >= (ingredient.stock_used*recipe.amount)){
+            if(ingredientData.stock >= (ingredient.stock_used*recipe.amount)){
                 available.push(true)
             }else{
                 available.push(false)
@@ -86,27 +86,16 @@ const createTransaction = async(parent,{input},ctx)=>{
     }else{
         const userId = ctx.user[0]._id;
         const {menu} = input;
-        let validate = await validateStockIngredient(menu);     
+        console.log(menu.amount)
         let totalPrice = await getTotalPrice(menu);
-        if(validate === true){
-            let data = new Transaction({
-                 user_id : userId,
-                 menu : menu,
-                 total : totalPrice,
-                 order_status : 'success'
-             });
-             await data.save();
-             return data;    
-        }else{
-             let data = new Transaction({
-                user_id : userId,
-                menu : menu,
-                total : totalPrice,
-                order_status : 'failed'
-             });
-             await data.save();
-             return data;
-        }
+        let data = new Transaction({
+            user_id : userId,
+            menu : menu,
+            total : totalPrice,
+            order_status : 'pending'
+        });
+        await data.save();
+        return data;    
     }
 }
 
