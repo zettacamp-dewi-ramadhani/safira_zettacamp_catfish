@@ -56,23 +56,26 @@ const createRecipe = async(parent, {input})=>{
 
 const getAllRecipes = async(parent, {filter, paging, status})=>{
   let aggregateQuery = [];
+
   let matchQuerry = {
     $and : [],
   }
 
-  if(filter.recipe_name){
-    const search = new RegExp(filter.recipe_name, 'i');
-    matchQuerry.$and.push({
-      recipe_name : search,
-      status : 'active'
-    })
-  }
-
-  if(filter.price){
-    matchQuerry.$and.push({
-      price : filter.price,
-      status : 'active'
-    })
+  if(filter){
+    if(filter.recipe_name){
+      const search = new RegExp(filter.recipe_name, 'i');
+      matchQuerry.$and.push({
+        recipe_name : search,
+        status : 'active'
+      })
+    }
+  
+    if(filter.price){
+      matchQuerry.$and.push({
+        price : filter.price,
+        status : 'active'
+      })
+    }
   }
 
   if(matchQuerry.$and.length){
