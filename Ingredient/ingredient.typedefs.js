@@ -5,9 +5,14 @@ const IngredientTypeDefs = gql`
         _id : ID,
         name : String,
         stock : Int,
-        status : Status
+        status : Status,
+        count : Int
     }
 
+    type Ingredients_count {
+        data : [Ingredients]
+        count : Int
+    }
     enum Status {
         active,
         deleted
@@ -15,10 +20,10 @@ const IngredientTypeDefs = gql`
 
     input Paging {
         page : Int,
-        limit : Int
+        limit : Int,
     }
 
-    input DataFilter{
+    input DataFilterIngredients{
         name : String,
         stock : Int,
     }
@@ -42,7 +47,7 @@ const IngredientTypeDefs = gql`
     }
 
     type Query {
-        getAllIngredients(filter : DataFilter, paging : Paging) : [Ingredients],
+        getAllIngredients(filter : DataFilterIngredients, paging : Paging) : Ingredients_count,
         getOneIngredient(filter : OneDataFilter) : Ingredients
     }
 
