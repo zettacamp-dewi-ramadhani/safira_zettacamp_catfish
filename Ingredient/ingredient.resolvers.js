@@ -17,48 +17,65 @@ const insertIngredient = async(parent, {input})=>{
 
 const getAllIngredients = async(parent, {filter, paging})=>{
     let aggregateQuery = [];
+    let matchQuerry = {
+        $and : [],
+    }
+    let count = await Ingredient.count()
+    
     if(filter){
-        let indexMatch = aggregateQuery.push({
-            $match : {
-                $and : []
-            }
-        }) - 1;
-        
         if(filter.name){
             const search = new RegExp(filter.name, 'i');
-            aggregateQuery[indexMatch].$match.$and.push({
+            matchQuerry.$and.push({
                 name : search,
                 status: 'active',
             })
         }
-
+    
         if(filter.stock >=0){ 
             if(filter.stock === 0) {
                 throw new Error ('Filter stock must greater then 0')
+            }else if (filter.stock === null){
+                throw new Error(`Filter stock can't null`)
             }else{
-                aggregateQuery[indexMatch].$match.$and.push({
+                matchQuerry.$and.push({
                     stock : filter.stock,
-                    status: 'active',
+                    status: 'active' 
                 })
             }
         }
     }
 
+    if(matchQuerry.$and.length){
+        aggregateQuery.push({
+          $match: matchQuerry
+        })
+    }
+
     if(paging){
         const {limit, page} = paging;
         aggregateQuery.push({
-            $match : {
-                status : 'active'
-            }
-        },{
             $skip : page*limit
         },{
             $limit : limit
         })
     }
 
+    if(!aggregateQuery.length){
+       let result = await Ingredient.find()
+        result =  {
+            data: result,
+            count: count
+        }
+        return result
+    }
+    
     let result = [];
     filter || paging ? result = await Ingredient.aggregate(aggregateQuery) : result = await Ingredient.find().toArray();
+    
+    result =  {
+        data: result,
+        count: count
+    }
     return result
 }
 
