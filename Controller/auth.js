@@ -39,7 +39,7 @@ module.exports ={
         createRecipe : authJwt,
         updateRecipe : authJwt,
         deleteRecipe : authJwt,
-        createTransaction : authJwt,
-        deleteTransaction : authJwt
+        addCart : authJwt,
+        deleteTransaction : authJwt,
     }
 }

@@ -2,6 +2,7 @@ const Transaction = require('./transaction.model');
 const Ingredient = require('../Ingredient/ingredient.model');
 const Recipe = require('../Recipe/recipe.model');
 const moment = require('moment');
+const mongoose = require('mongoose');
 
 moment.locale('id-ID');
 
@@ -80,29 +81,75 @@ const getTotalPrice = async(menu)=>{
     return totalPrice;
 }
 
-const createTransaction = async(parent,{input},ctx)=>{
-    if(!input){
-        throw new Error('Fill the input form to add data');
-    }else{
-        const userId = ctx.user[0]._id;
-        const {menu} = input;
-        console.log(menu.amount)
-        let totalPrice = await getTotalPrice(menu);
+const updateMenu = async(id, menu)=>{
+    let totalPrice = await getTotalPrice(menu);
+    const addMenu = await Transaction.findByIdAndUpdate({
+        _id : id
+    },{
+        $push : {
+            menu : menu
+        }
+    },{
+        new : true
+    });
+    console.log(addMenu)
+    if(addMenu){
+        const updateTotal = await Transaction.findByIdAndUpdate({
+            _id : id
+        },{
+            $inc : {
+                total : totalPrice
+            }
+        },{
+            new : true
+        });
+        console.log(updateTotal)
+        return updateTotal
+    }
+}
+
+const createTransaction = async(id, menu)=>{
+    let totalPrice = await getTotalPrice(menu);
+    if(id && menu){
         let data = new Transaction({
-            user_id : userId,
+            user_id : id,
             menu : menu,
             total : totalPrice,
             order_status : 'pending'
         });
         await data.save();
-        return data;    
+        return data;
+    }else{
+        throw new Error('Cant create new transaction');
+    }
+}
+
+const addCart = async(parent, {input}, ctx)=>{
+    const userId = ctx.user[0]._id;
+    const data = await Transaction.findOne({
+        user_id : mongoose.Types.ObjectId(userId)
+    });
+    if(!input){
+        throw new Error('No data to input');
+    }else{
+        const {menu} = input
+        if(data == null){
+            const create = await createTransaction(userId, menu);
+            return create
+        }else{
+            const update = await updateMenu(data._id, menu);
+            console.log(update)
+            return update
+        }
     }
 }
 
 const getAllTransactions = async(parent, {filter, pagination}, ctx)=>{
     let aggregateQuery = [];
-    let result = [];
-
+    let matchQuerry = {
+        $and : [],
+    }
+    
     if(filter){
         if(filter.user_lname || filter.recipe_name){
             if(filter.user_lname){
@@ -137,43 +184,45 @@ const getAllTransactions = async(parent, {filter, pagination}, ctx)=>{
                 }) 
             }
         }
-
-        let indexMatch = aggregateQuery.push({
-            $match : {
-                $and : []
-            }
-        }) - 1;
-
+    
         if(filter.order_status){
             const search = new RegExp(filter.order_status, 'i');
-            aggregateQuery[indexMatch].$match.$and.push({
+            matchQuerry.$and.push({
                 status : 'active',
                 order_status : search
             })
         }
-
+    
         if(filter.order_date){
             const search = new RegExp(filter.order_date, 'i');
-            aggregateQuery[indexMatch].$match.$and.push({
+            matchQuerry.$and.push({
                 status : 'active',
                 order_date : search
             });
         }
     }
-
+    
+    if(matchQuerry.$and.length){
+        aggregateQuery.push({
+          $match: matchQuerry
+        })
+    }
+    
     if(pagination){
         const {limit, page} = pagination;
         aggregateQuery.push({
-            $match : {
-                status : 'active'
-            }
-        },{
             $skip : page*limit
         },{
             $limit : limit
         })
     }
-
+    
+    if(!aggregateQuery.length){
+        return await Transaction.find()
+    }
+        
+    let result = [];
+    
     filter || pagination ? result = await Transaction.aggregate(aggregateQuery) : result = await Transaction.find().toArray();
     return result;
 }
@@ -215,7 +264,7 @@ const TransactionResolvers = {
     },
 
     Mutation : {
-        createTransaction,
+        addCart,
         deleteTransaction
     },
 
