@@ -92,7 +92,6 @@ const updateMenu = async(id, menu)=>{
     },{
         new : true
     });
-    console.log(addMenu)
     if(addMenu){
         const updateTotal = await Transaction.findByIdAndUpdate({
             _id : id
@@ -103,7 +102,6 @@ const updateMenu = async(id, menu)=>{
         },{
             new : true
         });
-        console.log(updateTotal)
         return updateTotal
     }
 }
@@ -138,8 +136,45 @@ const addCart = async(parent, {input}, ctx)=>{
             return create
         }else{
             const update = await updateMenu(data._id, menu);
-            console.log(update)
             return update
+        }
+    }
+}
+
+const deleteMenu = async(parent, {input}, ctx)=>{
+    if(!input){
+        throw new Error('No menu to dalete');
+    }else{
+        const userId = ctx.user[0]._id;
+        const data = await Transaction.findOne({
+            user_id : mongoose.Types.ObjectId(userId)
+        });
+        if(data){
+            const {menu} = input
+            let totalPrice = await getTotalPrice(menu);
+            const deleteMenu = await Transaction.findByIdAndUpdate({
+                _id : data._id
+            },{
+                $pull : {
+                    menu : {
+                        $in : [menu]
+                    }
+                }
+            },{
+                new : true
+            });
+            if(deleteMenu){
+                const updateTotal = await Transaction.findByIdAndUpdate({
+                    _id : data._id
+                },{
+                    $inc : {
+                        total : -totalPrice
+                    }
+                },{
+                    new : true
+                });
+                return updateTotal
+            }
         }
     }
 }
@@ -265,7 +300,8 @@ const TransactionResolvers = {
 
     Mutation : {
         addCart,
-        deleteTransaction
+        deleteTransaction,
+        deleteMenu
     },
 
     Transactions : {

@@ -61,10 +61,6 @@ const TransactionTypeDefs = gql`
         limit : Int
     }
 
-    input UpdateMenu {
-        menu : [Detail]
-    }
-
     type Query {
         getAllTransactions(filter : DataFilterTransaction, pagination : Paging) : [Transactions],
         getOneTransactions(filter : OneFilterTransaction) : Transactions
@@ -72,7 +68,8 @@ const TransactionTypeDefs = gql`
 
     type Mutation {
         addCart(input : DataInputTransaction) : Transactions,
-        deleteTransaction(input : DataDeleteTransaction) : Transactions
+        deleteTransaction(input : DataDeleteTransaction) : Transactions,
+        deleteMenu(input : DataInputTransaction) : Transactions
     }
 `
 
