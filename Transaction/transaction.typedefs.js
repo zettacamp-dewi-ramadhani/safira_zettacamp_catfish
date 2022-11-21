@@ -14,6 +14,7 @@ const TransactionTypeDefs = gql`
     }
 
     type Detail_Menu {
+        _id : ID,
         recipe_id : Recipes,
         amount : Int,
         note : String
@@ -31,8 +32,7 @@ const TransactionTypeDefs = gql`
     }
 
     input DataDeleteTransaction {
-        id : ID,
-        status : Status
+        id : ID
     }
 
     input DataInputTransaction {
@@ -61,6 +61,10 @@ const TransactionTypeDefs = gql`
         limit : Int
     }
 
+    input DeleteMenu {
+        id : ID
+    }
+
     type Query {
         getAllTransactions(filter : DataFilterTransaction, pagination : Paging) : [Transactions],
         getOneTransactions(filter : OneFilterTransaction) : Transactions
@@ -69,7 +73,8 @@ const TransactionTypeDefs = gql`
     type Mutation {
         addCart(input : DataInputTransaction) : Transactions,
         deleteTransaction(input : DataDeleteTransaction) : Transactions,
-        deleteMenu(input : DataInputTransaction) : Transactions
+        deleteMenu(input : DeleteMenu) : Transactions,
+        updateOrderStatus : Transactions
     }
 `
 

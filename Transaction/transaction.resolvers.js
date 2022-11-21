@@ -125,7 +125,8 @@ const createTransaction = async(id, menu)=>{
 const addCart = async(parent, {input}, ctx)=>{
     const userId = ctx.user[0]._id;
     const data = await Transaction.findOne({
-        user_id : mongoose.Types.ObjectId(userId)
+        user_id : mongoose.Types.ObjectId(userId),
+        order_status : 'pending'
     });
     if(!input){
         throw new Error('No data to input');
@@ -147,28 +148,29 @@ const deleteMenu = async(parent, {input}, ctx)=>{
     }else{
         const userId = ctx.user[0]._id;
         const data = await Transaction.findOne({
-            user_id : mongoose.Types.ObjectId(userId)
+            user_id : mongoose.Types.ObjectId(userId),
+            order_status : 'pending'
         });
         if(data){
-            const {menu} = input
-            let totalPrice = await getTotalPrice(menu);
+            const {id} = input
             const deleteMenu = await Transaction.findByIdAndUpdate({
                 _id : data._id
             },{
                 $pull : {
                     menu : {
-                        $in : [menu]
+                        _id : mongoose.Types.ObjectId(id)
                     }
                 }
             },{
                 new : true
             });
             if(deleteMenu){
+                let totalPrice = await getTotalPrice(deleteMenu.menu);
                 const updateTotal = await Transaction.findByIdAndUpdate({
                     _id : data._id
                 },{
-                    $inc : {
-                        total : -totalPrice
+                    $set : {
+                        total : totalPrice
                     }
                 },{
                     new : true
@@ -176,6 +178,43 @@ const deleteMenu = async(parent, {input}, ctx)=>{
                 return updateTotal
             }
         }
+    }
+}
+
+const updateOrderStatus = async(parent, args, ctx)=>{
+    const userId = ctx.user[0]._id;
+    const data = await Transaction.findOne({
+        user_id : mongoose.Types.ObjectId(userId),
+        order_status : 'pending'
+    });
+
+    if(data != null){
+        const validate = await validateStockIngredient(data.menu);
+        if(validate === true){
+            const result = await Transaction.findByIdAndUpdate({
+                _id : data._id
+            },{
+                $set : {
+                    order_status : 'success'
+                }
+            },{
+                new : true
+            });
+            return result;
+        }else{
+            const result = await Transaction.findByIdAndUpdate({
+                _id : data._id
+            },{
+                $set : {
+                    order_status : 'failed'
+                }
+            },{
+                new : true
+            });
+            return result;
+        }
+    }else{
+        throw new Error('Cant update order status')
     }
 }
 
@@ -198,7 +237,8 @@ const getAllTransactions = async(parent, {filter, pagination}, ctx)=>{
                     }
                 },{
                     $match :{
-                        'user_detail.last_name' : search
+                        'user_detail.last_name' : search,
+                        status : 'active'
                     }
                 })
             }
@@ -214,7 +254,8 @@ const getAllTransactions = async(parent, {filter, pagination}, ctx)=>{
                     }
                 },{
                     $match : {
-                        "recipe_detail.recipe_name" : search
+                        "recipe_detail.recipe_name" : search,
+                        status : 'active'
                     }
                 }) 
             }
@@ -246,6 +287,10 @@ const getAllTransactions = async(parent, {filter, pagination}, ctx)=>{
     if(pagination){
         const {limit, page} = pagination;
         aggregateQuery.push({
+            $match :{
+                status : 'active'
+            }
+        },{
             $skip : page*limit
         },{
             $limit : limit
@@ -278,12 +323,12 @@ const deleteTransaction = async(parent, {input})=>{
     if(!input){
         throw new Error('Nothing to delete');
     }else{
-        const {id, status} = input
+        const {id} = input
         let result = await Transaction.findByIdAndUpdate({
             _id : id
         },{
             $set : {
-                status : status
+                status : 'deleted'
             }
         },{
             new : true
@@ -301,7 +346,8 @@ const TransactionResolvers = {
     Mutation : {
         addCart,
         deleteTransaction,
-        deleteMenu
+        deleteMenu,
+        updateOrderStatus
     },
 
     Transactions : {

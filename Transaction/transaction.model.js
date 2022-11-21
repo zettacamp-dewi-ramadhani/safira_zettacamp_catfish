@@ -7,7 +7,6 @@ const transactionSchema = new mongoose.Schema({
         ref : 'users'
     },
     menu : [{
-        _id : false,
         recipe_id : {
             type : mongoose.Schema.ObjectId,
             ref : 'recipes'

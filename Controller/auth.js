@@ -41,6 +41,7 @@ module.exports ={
         deleteRecipe : authJwt,
         addCart : authJwt,
         deleteTransaction : authJwt,
-        deleteMenu : authJwt
+        deleteMenu : authJwt,
+        updateOrderStatus : authJwt
     }
 }
