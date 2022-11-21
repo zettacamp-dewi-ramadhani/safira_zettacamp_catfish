@@ -8,12 +8,18 @@ const RecipeTypeDefs = gql`
         price : Int,
         image : String,
         available : Int,
-        status : Status
+        status : Status,
     }
 
     type Ingredient_Detail {
         ingredient_id : Ingredients,
         stock_used : Int
+    }
+
+    type RecipeCount {
+        TotalDocument: Int,
+        countResult : Int,
+        data : [Recipes]
     }
 
     enum Status {
@@ -62,7 +68,7 @@ const RecipeTypeDefs = gql`
     }
 
     type Query {
-        getAllRecipes(filter : DataFilterForRecipe, paging : Paging, status : Status) : [Recipes],
+        getAllRecipes(filter : DataFilterForRecipe, paging : Paging, status : Status) : RecipeCount,
         getOneRecipe(filter : OneDataFilter) : Recipes
     }
 
