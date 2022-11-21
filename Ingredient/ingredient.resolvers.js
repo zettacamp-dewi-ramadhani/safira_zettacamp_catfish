@@ -18,8 +18,11 @@ const insertIngredient = async(parent, {input})=>{
 const getAllIngredients = async(parent, {filter, paging})=>{
     let aggregateQuery = [];
     let matchQuerry = {
-        $and : [],
+        $and : [{
+            status: 'active'
+        }],
     }
+    
     let count = await Ingredient.count()
     
     if(filter){
@@ -27,7 +30,6 @@ const getAllIngredients = async(parent, {filter, paging})=>{
             const search = new RegExp(filter.name, 'i');
             matchQuerry.$and.push({
                 name : search,
-                status: 'active',
             })
         }
     
@@ -39,7 +41,6 @@ const getAllIngredients = async(parent, {filter, paging})=>{
             }else{
                 matchQuerry.$and.push({
                     stock : filter.stock,
-                    status: 'active' 
                 })
             }
         }
@@ -62,19 +63,21 @@ const getAllIngredients = async(parent, {filter, paging})=>{
 
     if(!aggregateQuery.length){
        let result = await Ingredient.find()
-        result =  {
-            data: result,
-            count: count
-        }
         return result
-    }
+    }    
     
-    let result = [];
-    filter || paging ? result = await Ingredient.aggregate(aggregateQuery) : result = await Ingredient.find().toArray();
-    
+    let result = await Ingredient.aggregate(aggregateQuery)
+    // console.log(result)
+    // result = result.map((el)=>{
+    //     return {
+    //         ...el,
+    //         count : result.length
+    //     }
+    // })
     result =  {
         data: result,
-        count: count
+        TotalDocument : count,
+        countResult: result.length
     }
     return result
 }

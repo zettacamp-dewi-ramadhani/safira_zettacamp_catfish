@@ -5,13 +5,13 @@ const IngredientTypeDefs = gql`
         _id : ID,
         name : String,
         stock : Int,
-        status : Status,
-        count : Int
+        status : Status
     }
 
     type Ingredients_count {
+        TotalDocument: Int,
+        countResult : Int,
         data : [Ingredients]
-        count : Int
     }
     enum Status {
         active,
