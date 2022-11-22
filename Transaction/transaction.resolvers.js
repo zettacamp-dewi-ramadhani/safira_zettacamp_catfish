@@ -419,9 +419,13 @@ const updateAmount = async(parent, {input}, ctx)=>{
               }
             );
             if(update){
-                const totalPrice = await getTotalPrice(data.menu)
+                const newdata = await Transaction.findOne({
+                    "menu._id": mongoose.Types.ObjectId(id),
+                    order_status: "pending"
+                });
+                const totalPrice = await getTotalPrice(newdata.menu)
                 const result = await Transaction.findByIdAndUpdate({
-                    _id : data._id
+                    _id : newdata._id
                 },{
                     $set : {
                         total : totalPrice
