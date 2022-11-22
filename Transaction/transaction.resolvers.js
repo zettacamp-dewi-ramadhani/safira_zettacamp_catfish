@@ -418,7 +418,6 @@ const updateAmount = async(parent, {input}, ctx)=>{
                 }
               }
             );
-            console.log(update)
             if(update){
                 const totalPrice = await getTotalPrice(data.menu)
                 const result = await Transaction.findByIdAndUpdate({
@@ -430,7 +429,6 @@ const updateAmount = async(parent, {input}, ctx)=>{
                 },{
                     new : true
                 })
-                console.log(result)
                 return result
             }
         }else{
