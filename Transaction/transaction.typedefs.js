@@ -64,11 +64,13 @@ const TransactionTypeDefs = gql`
     id: ID
   }
 
+  input UpdateAmount {
+    id : ID,
+    amount : Int
+  }
+
   type Query {
-    getAllTransactions(
-      filter: DataFilterTransaction
-      pagination: Paging
-    ): [Transactions]
+    getAllTransactions(filter: DataFilterTransaction, pagination: Paging): [Transactions]
     getOneTransactions(filter: OneFilterTransaction): Transactions
   }
 
@@ -76,7 +78,8 @@ const TransactionTypeDefs = gql`
     addCart(input: DataInputTransaction): Transactions
     deleteTransaction(input: DataDeleteTransaction): Transactions
     deleteMenu(input: DeleteMenu): Transactions
-    updateOrderStatus: Transactions
+    updateOrderStatus: Transactions,
+    updateAmount(input : UpdateAmount) : Transactions
   }
 `;
 

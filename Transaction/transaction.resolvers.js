@@ -398,6 +398,47 @@ const deleteTransaction = async (parent, { input }) => {
   }
 };
 
+const updateAmount = async(parent, {input}, ctx)=>{
+    if(!input){
+        throw new Error('No data input');
+    }else{
+        const {id, amount} = input;
+        const data = await Transaction.findOne({
+          "menu._id": mongoose.Types.ObjectId(id),
+          order_status: "pending"
+        });
+        if(data){
+            const update = await Transaction.updateOne(
+              {
+                "menu._id": mongoose.Types.ObjectId(id)
+              },
+              {
+                $set: {
+                  "menu.$.amount": amount
+                }
+              }
+            );
+            console.log(update)
+            if(update){
+                const totalPrice = await getTotalPrice(data.menu)
+                const result = await Transaction.findByIdAndUpdate({
+                    _id : data._id
+                },{
+                    $set : {
+                        total : totalPrice
+                    }
+                },{
+                    new : true
+                })
+                console.log(result)
+                return result
+            }
+        }else{
+            throw new Error('Cant Update Amount')
+        }
+    }
+}
+
 const TransactionResolvers = {
   Query: {
     getAllTransactions,
@@ -408,7 +449,8 @@ const TransactionResolvers = {
     addCart,
     deleteTransaction,
     deleteMenu,
-    updateOrderStatus
+    updateOrderStatus,
+    updateAmount
   },
 
   Transactions: {
