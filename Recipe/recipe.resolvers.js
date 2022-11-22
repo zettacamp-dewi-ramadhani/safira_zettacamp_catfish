@@ -2,13 +2,20 @@ const Recipe = require('./recipe.model');
 const Ingredient = require('../Ingredient/ingredient.model')
 
 async function getAvailable({ ingredients }, args, context, info) {
-    const minStock = []
-    for (let ingredient of ingredients) {
-        const recipe_ingredient = await Ingredient.findById(ingredient.ingredient_id);
-        if (!recipe_ingredient) throw new ApolloError(`Ingredient with ID: ${ingredient.ingredient_id} not found`, "404");
-        minStock.push(Math.floor(recipe_ingredient.stock / ingredient.stock_used));
-    }
-    return Math.min(...minStock);
+  const minStock = []
+  for (let ingredient of ingredients) {
+      const recipe_ingredient = await Ingredient.findById(ingredient.ingredient_id);
+      if (!recipe_ingredient) throw new ApolloError(`Ingredient with ID: ${ingredient.ingredient_id} not found`, "404");
+      minStock.push(Math.floor(recipe_ingredient.stock / ingredient.stock_used));
+  }
+  let minus = minStock.some(v=> v<0);
+  if(minus == true){
+    let result = 0;
+    return result
+  }else{
+    let result = Math.min(...minStock);
+    return result;
+  }
 }
 
 const validateIngredient = async(ingredients)=>{
@@ -55,27 +62,24 @@ const createRecipe = async(parent, {input})=>{
 }
 
 const getAllRecipes = async(parent, {filter, paging, status})=>{
+ 
   let aggregateQuery = [];
 
   let matchQuerry = {
     $and : [],
   }
 
-  let count = await Recipe.count()
-
   if(filter){
     if(filter.recipe_name){
       const search = new RegExp(filter.recipe_name, 'i');
       matchQuerry.$and.push({
         recipe_name : search,
-        status : 'active'
       })
     }
   
     if(filter.price){
       matchQuerry.$and.push({
         price : filter.price,
-        status : 'active'
       })
     }
   }
@@ -104,21 +108,30 @@ const getAllRecipes = async(parent, {filter, paging, status})=>{
   }
 
   if(!aggregateQuery.length){
-    let result = await Recipe.find()
-    result =  {
-      data: result,
-      TotalDocument : count,
-      countResult: result.length
-    }
+    let result = await Recipe.find().lean()
+    // result =  {
+    //   data: result,
+    //   TotalDocument : count,
+    //   countResult: result.length
+    // }
+    result = result.map((el)=>{
+      return {...el, count_result : result.length}
+    })
     return result
   }
 
   let result = await Recipe.aggregate(aggregateQuery)
-    result =  {
-      data: result,
-      TotalDocument : count,
-      countResult: result.length
-    }
+    // result =  {
+    //   data: result,
+    //   TotalDocument : count,
+    //   countResult: result.length
+    // }
+    result = result.map((el)=>{
+          return {
+              ...el,
+              count_result : result.length
+          }
+    })
   return result
 }
 
