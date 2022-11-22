@@ -14,7 +14,10 @@ const reduceIngredientStock  = async (menu)=>{
         for(const ingredient of recipeData.ingredients){
             const amountData = ingredient.stock_used*recipe.amount;
             ingredientData = await Ingredient.updateOne({
-                _id : ingredient.ingredient_id
+                _id : ingredient.ingredient_id,
+                stock : {
+                    $gte : 0
+                }
             },{
                 $inc : {
                     stock : - amountData
@@ -35,7 +38,10 @@ const validateStockIngredient = async(menu)=>{
         });
         for(const ingredient of recipeData.ingredients){
             ingredientData = await Ingredient.findOne({
-                _id : ingredient.ingredient_id
+                _id : ingredient.ingredient_id,
+                stock : {
+                    $gte : 0
+                }
             });
             if(ingredientData.stock >= (ingredient.stock_used*recipe.amount)){
                 available.push(true)
@@ -113,7 +119,8 @@ const createTransaction = async(id, menu)=>{
             user_id : id,
             menu : menu,
             total : totalPrice,
-            order_status : 'pending'
+            order_status : 'pending',
+            status : 'active'
         });
         await data.save();
         return data;
@@ -126,7 +133,8 @@ const addCart = async(parent, {input}, ctx)=>{
     const userId = ctx.user[0]._id;
     const data = await Transaction.findOne({
         user_id : mongoose.Types.ObjectId(userId),
-        order_status : 'pending'
+        order_status : 'pending',
+        status : 'active'
     });
     if(!input){
         throw new Error('No data to input');
@@ -149,7 +157,8 @@ const deleteMenu = async(parent, {input}, ctx)=>{
         const userId = ctx.user[0]._id;
         const data = await Transaction.findOne({
             user_id : mongoose.Types.ObjectId(userId),
-            order_status : 'pending'
+            order_status : 'pending',
+            status : 'active'
         });
         if(data){
             const {id} = input
@@ -185,7 +194,8 @@ const updateOrderStatus = async(parent, args, ctx)=>{
     const userId = ctx.user[0]._id;
     const data = await Transaction.findOne({
         user_id : mongoose.Types.ObjectId(userId),
-        order_status : 'pending'
+        order_status : 'pending',
+        status : 'active'
     });
 
     if(data != null){
@@ -218,10 +228,12 @@ const updateOrderStatus = async(parent, args, ctx)=>{
     }
 }
 
-const getAllTransactions = async(parent, {filter, pagination}, ctx)=>{
+const getAllTransactions = async(parent, {filter, pagination,order_status}, ctx)=>{
     let aggregateQuery = [];
     let matchQuerry = {
-        $and : [],
+        $and : [{
+            status : 'active'
+        }],
     }
     
     if(filter){
@@ -238,8 +250,7 @@ const getAllTransactions = async(parent, {filter, pagination}, ctx)=>{
                 },{
                     $match :{
                         'user_detail.last_name' : search,
-                        status : 'active'
-                    }
+                        }
                 })
             }
 
@@ -255,8 +266,7 @@ const getAllTransactions = async(parent, {filter, pagination}, ctx)=>{
                 },{
                     $match : {
                         "recipe_detail.recipe_name" : search,
-                        status : 'active'
-                    }
+                        }
                 }) 
             }
         }
@@ -264,7 +274,6 @@ const getAllTransactions = async(parent, {filter, pagination}, ctx)=>{
         if(filter.order_status){
             const search = new RegExp(filter.order_status, 'i');
             matchQuerry.$and.push({
-                status : 'active',
                 order_status : search
             })
         }
@@ -272,7 +281,6 @@ const getAllTransactions = async(parent, {filter, pagination}, ctx)=>{
         if(filter.order_date){
             const search = new RegExp(filter.order_date, 'i');
             matchQuerry.$and.push({
-                status : 'active',
                 order_date : search
             });
         }
@@ -287,13 +295,17 @@ const getAllTransactions = async(parent, {filter, pagination}, ctx)=>{
     if(pagination){
         const {limit, page} = pagination;
         aggregateQuery.push({
-            $match :{
-                status : 'active'
-            }
-        },{
             $skip : page*limit
         },{
             $limit : limit
+        })
+    }
+
+    if(order_status){
+        aggregateQuery.push({
+            $match : {
+                order_status : order_status
+            }
         })
     }
     
@@ -303,7 +315,7 @@ const getAllTransactions = async(parent, {filter, pagination}, ctx)=>{
         
     let result = [];
     
-    filter || pagination ? result = await Transaction.aggregate(aggregateQuery) : result = await Transaction.find().toArray();
+    filter || pagination || order_status ? result = await Transaction.aggregate(aggregateQuery) : result = await Transaction.find().toArray();
     return result;
 }
 

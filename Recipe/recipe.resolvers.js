@@ -2,6 +2,7 @@ const Recipe = require('./recipe.model');
 const Ingredient = require('../Ingredient/ingredient.model')
 
 async function getAvailable({ ingredients }, args, context, info) {
+
   const minStock = []
   for (let ingredient of ingredients) {
       const recipe_ingredient = await Ingredient.findById(ingredient.ingredient_id);

@@ -66,7 +66,7 @@ const TransactionTypeDefs = gql`
     }
 
     type Query {
-        getAllTransactions(filter : DataFilterTransaction, pagination : Paging) : [Transactions],
+        getAllTransactions(filter : DataFilterTransaction, pagination : Paging, order_status : Order) : [Transactions],
         getOneTransactions(filter : OneFilterTransaction) : Transactions
     }
 
