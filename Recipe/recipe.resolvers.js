@@ -8,7 +8,14 @@ async function getAvailable({ ingredients }, args, context, info) {
         if (!recipe_ingredient) throw new ApolloError(`Ingredient with ID: ${ingredient.ingredient_id} not found`, "404");
         minStock.push(Math.floor(recipe_ingredient.stock / ingredient.stock_used));
     }
-    return Math.min(...minStock);
+    let minus = minStock.some(v=> v<0);
+    if(minus == true){
+      let result = 0;
+      return result
+    }else{
+      let result = Math.min(...minStock);
+      return result;
+    }
 }
 
 const validateIngredient = async(ingredients)=>{
