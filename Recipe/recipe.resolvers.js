@@ -1,12 +1,13 @@
 const Recipe = require('./recipe.model');
-const Ingredient = require('../Ingredient/ingredient.model')
+const Ingredient = require('../Ingredient/ingredient.model');
+const { Error } = require('mongoose');
 
 async function getAvailable({ ingredients }, args, context, info) {
 
   const minStock = []
   for (let ingredient of ingredients) {
       const recipe_ingredient = await Ingredient.findById(ingredient.ingredient_id);
-      if (!recipe_ingredient) throw new ApolloError(`Ingredient with ID: ${ingredient.ingredient_id} not found`, "404");
+      if (!recipe_ingredient) throw new Error(`Ingredient with ID: ${ingredient.ingredient_id} not found`, "404");
       minStock.push(Math.floor(recipe_ingredient.stock / ingredient.stock_used));
   }
   let minus = minStock.some(v=> v<0);
@@ -110,11 +111,6 @@ const getAllRecipes = async(parent, {filter, paging, status})=>{
 
   if(!aggregateQuery.length){
     let result = await Recipe.find().lean()
-    // result =  {
-    //   data: result,
-    //   TotalDocument : count,
-    //   countResult: result.length
-    // }
     result = result.map((el)=>{
       return {...el, count_result : result.length}
     })
@@ -122,11 +118,6 @@ const getAllRecipes = async(parent, {filter, paging, status})=>{
   }
 
   let result = await Recipe.aggregate(aggregateQuery)
-    // result =  {
-    //   data: result,
-    //   TotalDocument : count,
-    //   countResult: result.length
-    // }
     result = result.map((el)=>{
           return {
               ...el,
@@ -144,7 +135,7 @@ const getRecipeLoader = async(parent, args, ctx)=>{
 }
 const getOneRecipe = async(parent, {filter})=>{
   if(!filter){
-    console.log('No data match')
+    throw new Error('No data match')
   }else{
     const {id} = filter;
     let result = await Recipe.findOne({
@@ -156,7 +147,7 @@ const getOneRecipe = async(parent, {filter})=>{
 const updateRecipe = async(parent, {input})=>{
 
   if(!input){
-    console.log('No data');
+    throw new Error('No data');
   }else{
     const {id, newName, newIngredient, price, image, status} = input;
     let data = await Recipe.findByIdAndUpdate({
@@ -177,7 +168,7 @@ const updateRecipe = async(parent, {input})=>{
 }
 const deleteRecipe = async(parent, {input})=>{
   if(!input){
-    console.log('No Input Data')
+    throw new Error('No Input Data')
   }else{
     const {id} = input
     let result = await Recipe.findByIdAndUpdate({

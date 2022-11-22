@@ -3,7 +3,7 @@ const Recipe = require('../Recipe/recipe.model')
 
 const insertIngredient = async(parent, {input})=>{
     if(!input){
-        console.log("Nothing to insert")
+        throw new Error("Nothing to insert")
     }else{
         const {name, stock} = input;
         let data = new Ingredient({
@@ -67,13 +67,6 @@ const getAllIngredients = async(parent, {filter, paging})=>{
     }    
     
     let result = await Ingredient.aggregate(aggregateQuery)
-    // console.log(result)
-    // result = result.map((el)=>{
-    //     return {
-    //         ...el,
-    //         count : result.length
-    //     }
-    // })
     result =  {
         data: result,
         TotalDocument : count,
@@ -84,7 +77,7 @@ const getAllIngredients = async(parent, {filter, paging})=>{
 
 const getOneIngredient = async(parent,{filter})=>{
     if(!filter){
-        console.log("Nothing to show");
+        throw new Error("Nothing to show");
     }else{
         const {id} = filter;
         let result = await Ingredient.findOne({
@@ -97,7 +90,7 @@ const getOneIngredient = async(parent,{filter})=>{
 
 const updateIngredient = async(parent, {input})=>{
     if(!input){
-        console.log("Nothing to update")
+        throw new Error("Nothing to update")
     }else{
         const {id, newStock} = input;
         let data = await Ingredient.findByIdAndUpdate({
