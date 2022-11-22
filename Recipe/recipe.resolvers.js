@@ -109,18 +109,12 @@ const getAllRecipes = async(parent, {filter, paging, status})=>{
     })
   }
 
-  // if(status){
-  //   aggregateQuery.push({
-  //     $match : {
-  //       status : status
-  //     }
-  //   })
-  // }
+  let totalCount = await Recipe.find().lean();
 
   if(!aggregateQuery.length){
     let result = await Recipe.find().lean()
     result = result.map((el)=>{
-      return {...el, count_result : result.length}
+      return {...el, count_result : result.length, total_count : totalCount.length}
     })
     return result
   }
@@ -128,8 +122,9 @@ const getAllRecipes = async(parent, {filter, paging, status})=>{
   let result = await Recipe.aggregate(aggregateQuery)
     result = result.map((el)=>{
           return {
-              ...el,
-              count_result : result.length
+            ...el,
+            count_result: result.length,
+            total_count: totalCount.length
           }
     })
   return result

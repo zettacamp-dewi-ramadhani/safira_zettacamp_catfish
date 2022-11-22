@@ -9,7 +9,8 @@ const RecipeTypeDefs = gql`
         image : String,
         available : Int,
         status : Status,
-        count_result: Int
+        count_result: Int,
+        total_count : Int
     }
 
     type Ingredient_Detail {
