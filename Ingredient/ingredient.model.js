@@ -1,7 +1,10 @@
 const {db, mongoose} = require('../Controller/database');
 
 const ingredientSchema = new mongoose.Schema({
-    name : {type: String},
+    name : {
+        type: String,
+        unique : true
+    },
     stock: {type: Number},
     status : {
         type: String,

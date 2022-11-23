@@ -1,7 +1,10 @@
 const {db, mongoose} = require('../Controller/database')
 
 const recipeSchema = new mongoose.Schema({
-    recipe_name : {type : String},
+    recipe_name : {
+        type : String,
+        unique : true
+    },
     ingredients : [{
         _id : false,
         ingredient_id : {

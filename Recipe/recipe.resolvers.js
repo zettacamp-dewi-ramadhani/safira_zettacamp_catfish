@@ -68,7 +68,11 @@ const getAllRecipes = async(parent, {filter, paging, status})=>{
   let aggregateQuery = [];
 
   let matchQuerry = {
-    $and : [],
+    $and : [{
+      status : {
+        $ne : "deleted"
+      }
+    }],
   }
 
   if(filter){

@@ -247,22 +247,20 @@ const updateOrderStatus = async (parent, args, ctx) => {
           new: true
         }
       );
-      return result;
+      throw new Error("Your transaction is failed")
     }
   } else {
     throw new Error("Cant update order status");
   }
 };
 
-const getAllTransactions = async (
-  parent,
-  { filter, pagination, order_status },
-  ctx
-) => {
+const getAllTransactions = async (parent,{ filter, pagination, order_status },ctx) => {
+  const userId = ctx.user[0]._id;
   let aggregateQuery = [];
   let matchQuerry = {
     $and: [
       {
+        user_id : userId,
         status: "active"
       }
     ]
