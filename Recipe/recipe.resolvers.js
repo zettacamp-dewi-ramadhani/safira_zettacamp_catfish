@@ -51,7 +51,7 @@ const createRecipe = async(parent, {input})=>{
         const validate = await validateIngredient(ingredients);
         if(validate == false){
             throw new Error('Ingredient is deleted');
-        }else{}
+        }else{
         let data = new Recipe({
             recipe_name : recipe_name,
             ingredients : ingredients,
@@ -60,6 +60,7 @@ const createRecipe = async(parent, {input})=>{
         });
         await data.save();
         return data;
+      }
     }
 }
 
