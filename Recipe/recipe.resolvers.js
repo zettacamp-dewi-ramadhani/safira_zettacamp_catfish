@@ -107,6 +107,10 @@ const getAllRecipes = async(parent, {filter, paging, status})=>{
   if(paging){
     const {limit, page} = paging;
     aggregateQuery.push({
+      $sort : {
+        created_at : -1
+      }
+    },{
       $skip : page*limit
     },{
       $limit : limit
