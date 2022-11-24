@@ -13,7 +13,7 @@ const ingredientSchema = new mongoose.Schema({
     default: "active"
   },
   created_at: {
-    type: String,
+    type: Date,
     default: Date.now()
   }
 });
