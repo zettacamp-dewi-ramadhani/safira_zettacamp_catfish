@@ -19,7 +19,7 @@ const signUp = async (parent, {input})=>{
                 view : true
             },{
                 name : "Cart",
-                view : true
+                view : false
             },{
                 name : "Login",
                 view : false
