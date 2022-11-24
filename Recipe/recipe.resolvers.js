@@ -1,6 +1,6 @@
 const Recipe = require('./recipe.model');
 const Ingredient = require('../Ingredient/ingredient.model');
-const { Error } = require('mongoose');
+// const { Error } = require('mongoose');
 
 async function getAvailable({ ingredients }, args, context, info) {
 
@@ -44,25 +44,31 @@ const validateIngredient = async(ingredients)=>{
 }
 
 const createRecipe = async(parent, {input})=>{
+  const {recipe_name, ingredients, price, image} = input;    
     if(!input){
         throw new Error('No input data');
     }else{
-        const {recipe_name, ingredients, price, image} = input;    
-        const validate = await validateIngredient(ingredients);
-        if(validate == false){
-            throw new Error('Ingredient is deleted');
-        }else{
-        let data = new Recipe({
-            recipe_name : recipe_name,
-            ingredients : ingredients,
-            price : price,
-            image: image,
-        });
-        await data.save();
-        return data;
+      const validate = await validateIngredient(ingredients);
+      if(validate == false){
+          throw new Error('Ingredient is deleted');
+      }else{
+          const indetify = new RegExp(recipe_name, 'i');
+          const verify = await Recipe.findOne({recipe_name: indetify})
+          if(verify){
+            throw new Error('Recipe has been include')
+          }else{
+            let data = new Recipe({
+                recipe_name : recipe_name,
+                ingredients : ingredients,
+                price : price,
+                image: image,
+            });
+            await data.save();
+            return data;
+          }
       }
     }
-}
+};
 
 const getAllRecipes = async(parent, {filter, paging, status})=>{
  
@@ -108,13 +114,13 @@ const getAllRecipes = async(parent, {filter, paging, status})=>{
   if(paging){
     const {limit, page} = paging;
     aggregateQuery.push({
-      $sort : {
-        created_at : -1
-      }
-    },{
       $skip : page*limit
     },{
       $limit : limit
+    },{
+      $sort : {
+        created_at : -1
+      }
     })
   }
 

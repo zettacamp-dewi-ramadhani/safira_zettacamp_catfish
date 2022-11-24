@@ -11,13 +11,13 @@ const insertIngredient = async(parent, {input})=>{
         if(verify){
             throw new Error('Ingredient has been include')
         }else{
-        let data = new Ingredient({
-            name : name,
-            stock : stock
-        });
-        await data.save();
-        return data;
-      }
+          let data = new Ingredient({
+              name : name,
+              stock : stock
+          });
+          await data.save();
+          return data;
+        }
     }
 };
 
