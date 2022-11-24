@@ -5,7 +5,8 @@ const IngredientTypeDefs = gql`
         _id : ID,
         name : String,
         stock : Int,
-        status : Status
+        status : Status,
+        created_at : String
     }
 
     type Ingredients_count {

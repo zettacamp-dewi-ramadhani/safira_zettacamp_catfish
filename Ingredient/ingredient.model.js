@@ -1,4 +1,5 @@
 const {db, mongoose} = require('../Controller/database');
+const moment = require('moment')
 
 const ingredientSchema = new mongoose.Schema({
     name : {
@@ -10,6 +11,10 @@ const ingredientSchema = new mongoose.Schema({
         type: String,
         enum : ['active', 'deleted'],
         default : 'active'
+    },
+    created_at : {
+        type : Date,
+        default : Date.now()
     }
 });
 
