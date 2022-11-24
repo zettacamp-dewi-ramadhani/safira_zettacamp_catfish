@@ -1,18 +1,24 @@
 const Ingredient = require("./ingredient.model");
 const Recipe = require("../Recipe/recipe.model");
 
-const insertIngredient = async (parent, { input }) => {
-  if (!input) {
-    throw new Error("Nothing to insert");
-  } else {
-    const { name, stock } = input;
-    let data = new Ingredient({
-      name: name,
-      stock: stock
-    });
-    await data.save();
-    return data;
-  }
+const insertIngredient = async(parent, {input})=>{
+    if(!input){
+        throw new Error("Nothing to insert")
+    }else{
+        const {name, stock} = input;
+        const dataName = new RegExp(name, 'i');
+        const verify = await Ingredient.findOne({ name: dataName });
+        if(verify){
+            throw new Error('Ingredient has been include')
+        }else{
+        let data = new Ingredient({
+            name : name,
+            stock : stock
+        });
+        await data.save();
+        return data;
+      }
+    }
 };
 
 const getAllIngredients = async (parent, { filter, paging }) => {
@@ -65,7 +71,7 @@ const getAllIngredients = async (parent, { filter, paging }) => {
     },
     {
         $sort: {
-          created_at: -1
+          created_at: 1
         }
       }
     );
