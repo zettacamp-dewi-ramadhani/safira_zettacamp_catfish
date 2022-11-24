@@ -97,16 +97,23 @@ const getAllRecipes = async(parent, {filter, paging, status})=>{
     }
   }
 
+  let totalCount = await Recipe.find().lean();
   if(matchQuerry.$and.length){
     aggregateQuery.push({
       $match: matchQuerry
     })
+    let updateCount = await Recipe.aggregate(aggregateQuery);
+    count = updateCount.length;
   }
 
   if(status){
     aggregateQuery.push({
       $match : {
         status : status
+      }
+    },{
+      $sort : {
+        created_at : -1
       }
     })
   }
@@ -124,7 +131,7 @@ const getAllRecipes = async(parent, {filter, paging, status})=>{
     })
   }
 
-  let totalCount = await Recipe.find().lean();
+  // let totalCount =await Ingredient.count();
 
   if(!aggregateQuery.length){
     let result = await Recipe.find().lean()
