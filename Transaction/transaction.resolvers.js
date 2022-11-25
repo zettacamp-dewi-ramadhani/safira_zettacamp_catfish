@@ -161,12 +161,18 @@ const addCart = async (parent, { input }, ctx) => {
     throw new Error("No data to input");
   } else {
     const { menu } = input;
-    if (data == null) {
-      const create = await createTransaction(userId, menu);
-      return create;
-    } else {
-      const update = await updateMenu(data._id, menu);
-      return update;
+    for(const recipe of menu){
+      if(recipe.amount <=0){
+        throw new Error('Amount cannot below 0');
+      }else{
+        if (data == null) {
+          const create = await createTransaction(userId, menu);
+          return create;
+        } else {
+          const update = await updateMenu(data._id, menu);
+          return update;
+        }
+      }
     }
   }
 };
@@ -412,41 +418,45 @@ const updateAmount = async(parent, {input}, ctx)=>{
         throw new Error('No data input');
     }else{
         const {id, amount, note} = input;
-        const data = await Transaction.findOne({
-          "menu._id": mongoose.Types.ObjectId(id),
-          order_status: "pending"
-        });
-        if(data){
-            const update = await Transaction.updateOne(
-              {
-                "menu._id": mongoose.Types.ObjectId(id)
-              },
-              {
-                $set: {
-                  "menu.$.amount": amount,
-                  "menu.$.note" : note
-                }
-              }
-            );
-            if(update){
-                const newdata = await Transaction.findOne({
-                    "menu._id": mongoose.Types.ObjectId(id),
-                    order_status: "pending"
-                });
-                const totalPrice = await getTotalPrice(newdata.menu)
-                const result = await Transaction.findByIdAndUpdate({
-                    _id : newdata._id
-                },{
-                    $set : {
-                        total : totalPrice
-                    }
-                },{
-                    new : true
-                })
-                return result
-            }
+        if(amount <=0){
+          throw new Error("Amount cannot below 0");
         }else{
-            throw new Error('Cant Update Amount')
+          const data = await Transaction.findOne({
+            "menu._id": mongoose.Types.ObjectId(id),
+            order_status: "pending"
+          });
+          if(data){
+              const update = await Transaction.updateOne(
+                {
+                  "menu._id": mongoose.Types.ObjectId(id)
+                },
+                {
+                  $set: {
+                    "menu.$.amount": amount,
+                    "menu.$.note" : note
+                  }
+                }
+              );
+              if(update){
+                  const newdata = await Transaction.findOne({
+                      "menu._id": mongoose.Types.ObjectId(id),
+                      order_status: "pending"
+                  });
+                  const totalPrice = await getTotalPrice(newdata.menu)
+                  const result = await Transaction.findByIdAndUpdate({
+                      _id : newdata._id
+                  },{
+                      $set : {
+                          total : totalPrice
+                      }
+                  },{
+                      new : true
+                  })
+                  return result
+              }
+          }else{
+              throw new Error('Cant Update Amount')
+          }
         }
     }
 }
