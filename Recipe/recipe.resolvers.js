@@ -1,5 +1,7 @@
 const Recipe = require('./recipe.model');
 const Ingredient = require('../Ingredient/ingredient.model');
+const Transaction = require('../Transaction/transaction.model');
+const mongoose = require('mongoose')
 // const { Error } = require('mongoose');
 
 async function getAvailable({ ingredients }, args, context, info) {
@@ -181,25 +183,32 @@ const getOneRecipe = async(parent, {filter})=>{
   }
 }
 const updateRecipe = async(parent, {input})=>{
-
   if(!input){
     throw new Error('No data');
   }else{
     const {id, newName, newIngredient, price, image, status} = input;
-    let data = await Recipe.findByIdAndUpdate({
-      _id : id
-    },{
-      $set : {
-        recipe_name : newName,
-        ingredients : newIngredient,
-        price : price,
-        image : image,
-        status: status
-      }
-    },{
-      new : true
+    const validate = await Transaction.findOne({
+      "menu.recipe_id": id,
+      order_status: "pending"
     });
-    return data;
+    if(validate){
+      throw new Error("This menu is active in cart");
+    }else{
+      let data = await Recipe.findByIdAndUpdate({
+        _id : id
+      },{
+        $set : {
+          recipe_name : newName,
+          ingredients : newIngredient,
+          price : price,
+          image : image,
+          status: status
+        }
+      },{
+        new : true
+      });
+      return data;
+    }
   }
 }
 const deleteRecipe = async(parent, {input})=>{
