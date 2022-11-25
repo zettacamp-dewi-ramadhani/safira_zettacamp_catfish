@@ -71,85 +71,95 @@ const createRecipe = async(parent, {input})=>{
 };
 
 const getAllRecipes = async(parent, {filter, paging, status})=>{
- 
   let aggregateQuery = [];
 
   let matchQuerry = {
-    $and : [{
-      status : {
-        $ne : "deleted"
+    $and: [
+      {
+        status: {
+          $ne: "deleted"
+        }
       }
-    }],
+    ]
+  };
+
+  if (filter) {
+    if (filter.recipe_name) {
+      const search = new RegExp(filter.recipe_name, "i");
+      matchQuerry.$and.push({
+        recipe_name: search
+      });
+    }
+
+    if (filter.price) {
+      matchQuerry.$and.push({
+        price: filter.price
+      });
+    }
   }
 
-  if(filter){
-    if(filter.recipe_name){
-      const search = new RegExp(filter.recipe_name, 'i');
-      matchQuerry.$and.push({
-        recipe_name : search,
-      })
-    }
-  
-    if(filter.price){
-      matchQuerry.$and.push({
-        price : filter.price,
-      })
-    }
-  }
-
-  let totalCount = await Recipe.find().lean();
-  if(matchQuerry.$and.length){
+  let totalCount =await Ingredient.count();
+  if (matchQuerry.$and.length) {
     aggregateQuery.push({
       $match: matchQuerry
-    })
+    });
     let updateCount = await Recipe.aggregate(aggregateQuery);
-    count = updateCount.length;
+    totalCount = updateCount.length;
   }
 
-  if(status){
-    aggregateQuery.push({
-      $match : {
-        status : status
+  if (status) {
+    aggregateQuery.push(
+      {
+        $match: {
+          status: status
+        }
+      },
+      {
+        $sort: {
+          created_at: -1
+        }
       }
-    },{
-      $sort : {
-        created_at : -1
+    );
+  }
+
+  if (paging) {
+    const { limit, page } = paging;
+    aggregateQuery.push(
+      {
+        $sort: {
+          created_at: -1
+        }
+      },
+      {
+        $skip: page * limit
+      },
+      {
+        $limit: limit
       }
-    })
+    );
   }
 
-  if(paging){
-    const {limit, page} = paging;
-    aggregateQuery.push({
-      $skip : page*limit
-    },{
-      $limit : limit
-    },{
-      $sort : {
-        created_at : -1
-      }
-    })
+  if (!aggregateQuery.length) {
+    let result = await Recipe.find().lean();
+    result = result.map(el => {
+      return {
+        ...el,
+        count_result: result.length,
+        total_count: totalCount
+      };
+    });
+    return result;
   }
 
-  // let totalCount =await Ingredient.count();
-
-  if(!aggregateQuery.length){
-    let result = await Recipe.find().lean()
-    result = result.map((el)=>{
-      return {...el, count_result : result.length, total_count : totalCount.length}
-    })
-    return result
-  }
-
-  let result = await Recipe.aggregate(aggregateQuery)
-    result = result.map((el)=>{
-          return {
-            ...el,
-            count_result: result.length,
-            total_count: totalCount.length
-          }
-    })
-  return result
+  let result = await Recipe.aggregate(aggregateQuery);
+  result = result.map(el => {
+    return {
+      ...el,
+      count_result: result.length,
+      total_count: totalCount.length
+    };
+  });
+  return result;
 }
 
 const getRecipeLoader = async(parent, args, ctx)=>{
