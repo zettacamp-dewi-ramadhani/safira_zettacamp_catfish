@@ -72,7 +72,6 @@ const createRecipe = async(parent, {input})=>{
 
 const getAllRecipes = async(parent, {filter, paging, status})=>{
   let aggregateQuery = [];
-
   let matchQuerry = {
     $and: [
       {
@@ -121,6 +120,8 @@ const getAllRecipes = async(parent, {filter, paging, status})=>{
         }
       }
     );
+    let updateCount = await Recipe.aggregate(aggregateQuery);
+    totalCount = updateCount.length;
   }
 
   if (paging) {
