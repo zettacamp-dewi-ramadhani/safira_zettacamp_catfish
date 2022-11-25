@@ -31,7 +31,7 @@ const reduceIngredientStock = async menu => {
   return true;
 };
 
-const validateStockIngredient = async menu => {
+const validateStockIngredient = async (menu, amount) => {
   let recipeData = [];
   let ingredientData = [];
   let available = [];
@@ -90,35 +90,46 @@ const getTotalPrice = async menu => {
 };
 
 const updateMenu = async (id, menu) => {
-  let totalPrice = await getTotalPrice(menu);
-  const addMenu = await Transaction.findByIdAndUpdate(
-    {
-      _id: id
-    },
-    {
-      $push: {
-        menu: menu
-      }
-    },
-    {
-      new: true
-    }
-  );
-  if (addMenu) {
-    const updateTotal = await Transaction.findByIdAndUpdate(
+  let validateMenu = []
+  for(const recipe of menu){
+    validateMenu = await Transaction.find({
+      _id : id,
+      "menu.recipe_id" : recipe.recipe_id
+    })
+  }
+  if(validateMenu.length != 0){
+    throw new Error('This menu already in cart, you can update from cart')
+  }else{
+    let totalPrice = await getTotalPrice(menu);
+    const addMenu = await Transaction.findByIdAndUpdate(
       {
         _id: id
       },
       {
-        $inc: {
-          total: totalPrice
+        $push: {
+          menu: menu
         }
       },
       {
         new: true
       }
     );
-    return updateTotal;
+    if (addMenu) {
+      const updateTotal = await Transaction.findByIdAndUpdate(
+        {
+          _id: id
+        },
+        {
+          $inc: {
+            total: totalPrice
+          }
+        },
+        {
+          new: true
+        }
+      );
+      return updateTotal;
+    }
   }
 };
 
@@ -217,38 +228,41 @@ const updateOrderStatus = async (parent, args, ctx) => {
   });
 
   if (data != null) {
-    const validate = await validateStockIngredient(data.menu);
-    if (validate === true) {
-      const result = await Transaction.findByIdAndUpdate(
-        {
-          _id: data._id
-        },
-        {
-          $set: {
-            order_status: "success"
-          }
-        },
-        {
-          new: true
-        }
-      );
-      return result;
-    } else {
-      const result = await Transaction.findByIdAndUpdate(
-        {
-          _id: data._id
-        },
-        {
-          $set: {
-            order_status: "failed"
-          }
-        },
-        {
-          new: true
-        }
-      );
-      throw new Error("Your transaction is failed")
-    }
+    const amount = await validateMenu(data.menu)
+    console.log(amount)
+    // return amount
+    // const validate = await validateStockIngredient(data.menu);
+    // if (validate === true) {
+    //   const result = await Transaction.findByIdAndUpdate(
+    //     {
+    //       _id: data._id
+    //     },
+    //     {
+    //       $set: {
+    //         order_status: "success"
+    //       }
+    //     },
+    //     {
+    //       new: true
+    //     }
+    //   );
+    //   return result;
+    // } else {
+    //   const result = await Transaction.findByIdAndUpdate(
+    //     {
+    //       _id: data._id
+    //     },
+    //     {
+    //       $set: {
+    //         order_status: "failed"
+    //       }
+    //     },
+    //     {
+    //       new: true
+    //     }
+    //   );
+    //   throw new Error("Your transaction is failed")
+    // }
   } else {
     throw new Error("Cant update order status");
   }
@@ -400,7 +414,7 @@ const updateAmount = async(parent, {input}, ctx)=>{
     if(!input){
         throw new Error('No data input');
     }else{
-        const {id, amount} = input;
+        const {id, amount, note} = input;
         const data = await Transaction.findOne({
           "menu._id": mongoose.Types.ObjectId(id),
           order_status: "pending"
@@ -412,7 +426,8 @@ const updateAmount = async(parent, {input}, ctx)=>{
               },
               {
                 $set: {
-                  "menu.$.amount": amount
+                  "menu.$.amount": amount,
+                  "menu.$.note" : note
                 }
               }
             );

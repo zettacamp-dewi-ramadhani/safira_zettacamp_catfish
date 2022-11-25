@@ -66,7 +66,8 @@ const TransactionTypeDefs = gql`
 
   input UpdateAmount {
     id : ID,
-    amount : Int
+    amount : Int,
+    note : String
   }
 
   type Query {
