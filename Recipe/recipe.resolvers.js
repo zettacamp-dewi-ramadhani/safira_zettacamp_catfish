@@ -105,7 +105,6 @@ const getAllRecipes = async(parent, {filter, paging, status})=>{
     let updateCount = await Recipe.aggregate(aggregateQuery);
     totalCount = updateCount.length;
   }
-  console.log(totalCount)
 
   if (status) {
     aggregateQuery.push(
