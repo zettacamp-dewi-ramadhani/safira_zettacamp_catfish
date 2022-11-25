@@ -228,41 +228,38 @@ const updateOrderStatus = async (parent, args, ctx) => {
   });
 
   if (data != null) {
-    const amount = await validateMenu(data.menu)
-    console.log(amount)
-    // return amount
-    // const validate = await validateStockIngredient(data.menu);
-    // if (validate === true) {
-    //   const result = await Transaction.findByIdAndUpdate(
-    //     {
-    //       _id: data._id
-    //     },
-    //     {
-    //       $set: {
-    //         order_status: "success"
-    //       }
-    //     },
-    //     {
-    //       new: true
-    //     }
-    //   );
-    //   return result;
-    // } else {
-    //   const result = await Transaction.findByIdAndUpdate(
-    //     {
-    //       _id: data._id
-    //     },
-    //     {
-    //       $set: {
-    //         order_status: "failed"
-    //       }
-    //     },
-    //     {
-    //       new: true
-    //     }
-    //   );
-    //   throw new Error("Your transaction is failed")
-    // }
+    const validate = await validateStockIngredient(data.menu);
+    if (validate === true) {
+      const result = await Transaction.findByIdAndUpdate(
+        {
+          _id: data._id
+        },
+        {
+          $set: {
+            order_status: "success"
+          }
+        },
+        {
+          new: true
+        }
+      );
+      return result;
+    } else {
+      const result = await Transaction.findByIdAndUpdate(
+        {
+          _id: data._id
+        },
+        {
+          $set: {
+            order_status: "failed"
+          }
+        },
+        {
+          new: true
+        }
+      );
+      throw new Error("Your transaction is failed")
+    }
   } else {
     throw new Error("Cant update order status");
   }
