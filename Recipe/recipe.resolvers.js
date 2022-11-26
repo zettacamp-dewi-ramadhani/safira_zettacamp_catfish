@@ -72,7 +72,7 @@ const createRecipe = async(parent, {input})=>{
     }
 };
 
-const getAllRecipes = async(parent, {filter, paging, status, special})=>{
+const getAllRecipes = async(parent, {filter, paging, status, special, highlight})=>{
  
   let aggregateQuery = [];
 
@@ -134,6 +134,18 @@ const getAllRecipes = async(parent, {filter, paging, status, special})=>{
     })
   }
 
+  if(highlight){
+    aggregateQuery.push({
+      $match: {
+        highlight : highlight
+      }
+    },{
+      $sort : {
+        created_at : -1
+      }
+    })
+  }
+
   if(paging){
     const {limit, page} = paging;
     aggregateQuery.push({
@@ -187,7 +199,7 @@ const updateRecipe = async(parent, {input})=>{
   if(!input){
     throw new Error('No data');
   }else{
-    const {id, newName, newIngredient, price, image, status} = input;
+    const {id, newName, newIngredient, price, image, status, special, highlight} = input;
     const validate = await Transaction.findOne({
       "menu.recipe_id": id,
       order_status: "pending"
@@ -203,7 +215,9 @@ const updateRecipe = async(parent, {input})=>{
           ingredients : newIngredient,
           price : price,
           image : image,
-          status: status
+          status: status,
+          special: special,
+          highlight: highlight
         }
       },{
         new : true
