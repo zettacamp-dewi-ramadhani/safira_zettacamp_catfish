@@ -9,6 +9,7 @@ const RecipeTypeDefs = gql`
         image : String,
         available : Int,
         status : Status,
+        special_offers : Boolean
         count_result: Int,
         total_count : Int
     }
@@ -64,7 +65,7 @@ const RecipeTypeDefs = gql`
     }
 
     type Query {
-        getAllRecipes(filter : DataFilterForRecipe, paging : Paging, status : Status) : [Recipes],
+        getAllRecipes(filter : DataFilterForRecipe, paging : Paging, status : Status, special:Boolean) : [Recipes],
         getOneRecipe(filter : OneDataFilter) : Recipes
     }
 
