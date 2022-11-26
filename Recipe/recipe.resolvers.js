@@ -216,7 +216,7 @@ const updateRecipe = async(parent, {input})=>{
           price : price,
           image : image,
           status: status,
-          special: special,
+          special_offers: special,
           highlight: highlight
         }
       },{
