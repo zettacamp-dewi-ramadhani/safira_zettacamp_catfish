@@ -23,6 +23,10 @@ const recipeSchema = new mongoose.Schema({
     enum: ["active", "deleted", "draft"],
     default: "draft"
   },
+  special_offers :{
+    type: Boolean,
+    default: false
+  },
   created_at: {
     type: String,
     default: Date.now()
