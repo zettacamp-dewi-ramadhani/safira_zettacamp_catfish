@@ -9,7 +9,8 @@ const RecipeTypeDefs = gql`
         image : String,
         available : Int,
         status : Status,
-        special_offers : Boolean
+        special_offers : Boolean,
+        highlight : Boolean,
         count_result: Int,
         total_count : Int
     }
@@ -57,7 +58,9 @@ const RecipeTypeDefs = gql`
         newIngredient : [DetailIngredientForRecipe],
         price : Int,
         image : String,
-        status : Status
+        status : Status,
+        special: Boolean,
+        highlight: Boolean
     }
 
     input DataDeleteRecipe{
@@ -65,7 +68,7 @@ const RecipeTypeDefs = gql`
     }
 
     type Query {
-        getAllRecipes(filter : DataFilterForRecipe, paging : Paging, status : Status, special:Boolean) : [Recipes],
+        getAllRecipes(filter : DataFilterForRecipe, paging : Paging, status : Status, special:Boolean, highlight:Boolean) : [Recipes],
         getOneRecipe(filter : OneDataFilter) : Recipes
     }
 

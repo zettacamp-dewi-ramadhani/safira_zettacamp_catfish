@@ -27,6 +27,10 @@ const recipeSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  highlight :{
+    type: Boolean,
+    default: false
+  },
   created_at: {
     type: String,
     default: Date.now()
