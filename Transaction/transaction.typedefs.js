@@ -80,6 +80,7 @@ const TransactionTypeDefs = gql`
     deleteTransaction(input: DataDeleteTransaction): Transactions
     deleteMenu(input: DeleteMenu): Transactions
     updateOrderStatus: Transactions,
+    cancelOrder: Transactions,
     updateAmount(input : UpdateAmount) : Transactions
   }
 `;

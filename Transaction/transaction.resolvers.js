@@ -106,7 +106,11 @@ const getTotalPrice = async (menu) => {
 		recipeData = await Recipe.findOne({
 			_id: recipe.recipe_id,
 		});
-		total.push(recipe.amount * recipeData.price);
+    if(recipeData.special_offers === true){
+      total.push(recipe.amount * recipeData.price * 0.1);
+    }else{
+      total.push(recipe.amount * recipeData.price);
+    }
 		totalPrice = total.reduce((a, b) => a + b);
 	}
 	return totalPrice;
@@ -208,9 +212,11 @@ const addCart = async (parent, { input }, ctx) => {
 			} else {
 				if (data == null) {
 					const create = await createTransaction(userId, menu);
+          			await getCancelOrder.start(userId);
 					return create;
 				} else {
 					const update = await updateMenu(data._id, menu);
+          			await getCancelOrder;
 					return update;
 				}
 			}
@@ -265,8 +271,9 @@ const deleteMenu = async (parent, { input }, ctx) => {
 		}
 	}
 };
+
 const updateOrderStatus = async (parent, args, ctx) => {
-	scheduleTask.stop();
+  await getCancelOrder.stop()
 	const userId = ctx.user[0]._id;
 	const data = await Transaction.findOne({
 		user_id: mongoose.Types.ObjectId(userId),
@@ -299,39 +306,49 @@ const updateOrderStatus = async (parent, args, ctx) => {
 	}
 };
 
-const cancelOrder = async (parent, args, ctx) => {
-	// const scheduleTask = await cron.schedule('* * * * *', async () => {
-	const userId = ctx.user[0]._id;
-	const data = await Transaction.findOne({
-		user_id: mongoose.Types.ObjectId(userId),
-		order_status: "pending",
-		status: "active",
-	});
-	console.log("1");
+const getCancelOrder = cron.schedule('* * * * *', async()=>{
+	await cancelOrder
+},{
+  scheduled : false
+})
 
-	if (data != null) {
-		const result = await Transaction.findByIdAndUpdate(
-			{
-				_id: data._id,
-			},
-			{
-				$set: {
-					order_status: "failed",
-				},
-			},
-			{
-				new: true,
-			}
-		);
-		console.log("2");
-		if (result) {
-			await increaseIngredientStock(result.menu);
-			throw new Error("Your time is up, your order is automaticly canceled");
-		}
-	}
-	// })
-	//   await scheduleTask.stop();
-	//   console.log("3");
+const cancelOrder = async (parent, args, ctx) => {
+    // const promise = await new Promise((res, rej)=>{
+      // setTimeout(async ()=>{
+        const userId = ctx.user[0]._id;
+        const data = await Transaction.findOne({
+          user_id: mongoose.Types.ObjectId(userId),
+          order_status: "pending",
+          status: "active",
+        });
+      
+        if (data != null) {
+          const result = await Transaction.findByIdAndUpdate(
+            {
+              _id: data._id,
+            },
+            {
+              $set: {
+                order_status: "failed",
+              },
+            },
+            {
+              new: true,
+            }
+          );
+          if (result) {
+            increaseIngredientStock(result.menu);
+            // res("Your time is up, your order is automaticly canceled");
+            throw new Error("Your time is up, your order is automaticly canceled");
+          }
+        }else{
+          // rej("Cant cancel your order");
+          throw new Error("Cant cancel your order");
+        }
+      // }, 60000);
+  // });
+  // return promise
+  // throw new Error(promise)
 };
 
 const getAllTransactions = async (parent, { filter, pagination, order_status }, ctx) => {
@@ -429,7 +446,7 @@ const getAllTransactions = async (parent, { filter, pagination, order_status }, 
 	}
 
 	if (!aggregateQuery.length) {
-		return await Transaction.find();
+		return  Transaction.find();
 	}
 
 	let result = await Transaction.aggregate(aggregateQuery);
@@ -540,7 +557,7 @@ const TransactionResolvers = {
 		deleteMenu,
 		updateOrderStatus,
 		updateAmount,
-		cancelOrder,
+    // cancelOrder
 	},
 
 	Transactions: {

@@ -5,6 +5,7 @@ const {gql, ApolloServer, ApolloError} = require('apollo-server-express');
 const {merge} = require('lodash');
 const {makeExecutableSchema} = require('@graphql-tools/schema');
 const {applyMiddleware} = require('graphql-middleware');
+const cron = require('node-cron');
 
 
 const {UserTypeDefs} = require('./User/user.typedefs');
@@ -19,6 +20,8 @@ const {TransactionResolvers} = require('./Transaction/transaction.resolvers');
 
 const recipeLoader = require('./Recipe/recipe.loader');
 const {dataUserLoader, dataRecipeLoader} = require('./Transaction/transaction.loader');
+
+const {cancelResolver} = require('./Transaction/transaction.cancel');
 
 const authJwt = require('./Controller/auth');
 
@@ -44,6 +47,10 @@ const resolvers = merge(
 
 const auth = merge(authJwt);
 
+// const scheduleTask = cron.schedule('* * * * *', ()=>{
+//     return cancelResolver
+// })
+
 const executableSchema = makeExecutableSchema({
     typeDefs,
     resolvers
@@ -63,7 +70,8 @@ const server = new ApolloServer({
             req,
             recipeLoader,
             dataUserLoader,
-            dataRecipeLoader
+            dataRecipeLoader,
+            // scheduleTask
         }
     }
 })

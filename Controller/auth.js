@@ -43,6 +43,7 @@ module.exports = {
     deleteTransaction: authJwt,
     deleteMenu: authJwt,
     updateOrderStatus: authJwt,
+    cancelOrder: authJwt,
     updateAmount : authJwt
   }
 };
