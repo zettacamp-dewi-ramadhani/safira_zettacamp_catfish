@@ -73,11 +73,11 @@ const getAllIngredients = async (parent, { filter, paging }) => {
   if (paging) {
     const { limit, page } = paging;
     aggregateQuery.push(
-      // {
-      //   $sort: {
-      //     created_at: -1
-      //   }
-      // },
+      {
+        $sort: {
+          created_at: -1
+        }
+      },
       {
         $skip: page * limit
       },
