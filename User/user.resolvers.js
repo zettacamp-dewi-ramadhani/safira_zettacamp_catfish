@@ -69,26 +69,30 @@ const login = async (parent, {input : {email, password}})=>{
         email : email
     });
 
-    const decryptedPass = await bcrypt.compare(password, user.password);
-    if(user.status === "deleted"){
-        throw new Error('Login Error');
-    }else if(user && decryptedPass){
-        const token = jwt.sign({
-            id : user._id,
-            email : user.email
-        },tokenSecret,{
-            expiresIn : '12h'
-        });
-        return {
-            token,
-            user : {
-                _id : user._id,
-                email : user.email,
-                user_type : user.user_type
-            }
-        }
-    }else{
+    if(user == null){
         throw new Error('User not found');
+    }else{
+        const decryptedPass = await bcrypt.compare(password, user.password);
+        if(user.status === "deleted"){
+            throw new Error('Login Error');
+        }else if(user && decryptedPass){
+            const token = jwt.sign({
+                id : user._id,
+                email : user.email
+            },tokenSecret,{
+                expiresIn : '12h'
+            });
+            return {
+                token,
+                user : {
+                    _id : user._id,
+                    email : user.email,
+                    user_type : user.user_type
+                }
+            }
+        }else{
+            throw new Error('User not found');
+        }
     }
 }
 
