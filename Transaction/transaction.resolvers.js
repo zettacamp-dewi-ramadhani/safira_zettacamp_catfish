@@ -279,7 +279,6 @@ const deleteMenu = async (parent, { input }, ctx) => {
 };
 
 const updateOrderStatus = async (parent, args, ctx) => {
-  // await getCancelOrder.stop()
   const userId = ctx.user[0]._id;
   const data = await Transaction.findOne({
     user_id: mongoose.Types.ObjectId(userId),
@@ -288,27 +287,16 @@ const updateOrderStatus = async (parent, args, ctx) => {
   });
 
   if (data != null) {
-    const validate = await validateStockIngredient(data.menu);
-    if (validate === true) {
-      const result = await Transaction.findByIdAndUpdate(
-        {
-          _id: data._id
-        },
-        {
-          $set: {
-            order_status: "success"
-          }
-        },
-        {
-          new: true
-        }
-      );
-      return result;
-    } else {
-      throw new Error(
-        "Your transaction is failed because the amount is overstock ours"
-      );
-    }
+    const result = await Transaction.findByIdAndUpdate({
+      _id: data._id
+    },{
+      $set: {
+        order_status: "success"
+      }
+    },{
+      new: true
+    });
+    return result;
   } else {
     throw new Error("Cant update order status");
   }
@@ -342,11 +330,7 @@ const cancelOrder = async (userId, time) => {
   }
 }
 
-const getAllTransactions = async (
-  parent,
-  { filter, pagination, order_status },
-  ctx
-) => {
+const getAllTransactions = async (parent,{ filter, pagination, order_status },ctx) => {
   const userId = ctx.user[0]._id;
   let aggregateQuery = [];
   let matchQuerry = {
@@ -517,21 +501,31 @@ const updateAmount = async (parent, { input }, ctx) => {
             "menu._id": mongoose.Types.ObjectId(id),
             order_status: "pending"
           });
-          const totalPrice = await getTotalPrice(newdata.menu);
-          const result = await Transaction.findByIdAndUpdate(
-            {
+          const validate = await validateStockIngredient(newdata.menu)
+          if(validate == true){
+            const totalPrice = await getTotalPrice(newdata.menu);
+            const result = await Transaction.findByIdAndUpdate({
               _id: newdata._id
-            },
-            {
+            },{
               $set: {
                 total: totalPrice
               }
-            },
-            {
-              new: true
-            }
-          );
-          return result;
+            },{
+                new: true
+            });
+            return result;
+          }else{
+            const result = await Transaction.findByIdAndUpdate({
+              _id : newdata._id
+            },{
+              $set : {
+                menu : data.menu
+              }
+            },{
+              new : true
+            })
+            throw new Error("Your transaction is failed because the amount is overstock ours");
+          }
         }
       } else {
         throw new Error("Cant Update Amount");
