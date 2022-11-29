@@ -21,8 +21,6 @@ const {TransactionResolvers} = require('./Transaction/transaction.resolvers');
 const recipeLoader = require('./Recipe/recipe.loader');
 const {dataUserLoader, dataRecipeLoader} = require('./Transaction/transaction.loader');
 
-const {cancelResolver} = require('./Transaction/transaction.cancel');
-
 const authJwt = require('./Controller/auth');
 
 const typeDef = gql`
