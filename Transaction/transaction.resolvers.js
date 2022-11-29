@@ -309,7 +309,15 @@ const cancelOrder = async (userId, time) => {
     status: "active"
   });
   if(data != null){
-    cron.schedule(`${time.getSeconds()} ${time.getMinutes() + 5} * * * *`, async () => {
+    let hour;
+    let minute = time.getMinutes() + 5;
+    if(minute > 59){
+      hour = time.getHours()+1;
+      minute = minute-59;
+    }else{
+      hour = '*'
+    }
+    cron.schedule(`${time.getSeconds()} ${minute} ${hour} * * * *`, async () => {
       const result = await Transaction.findOneAndUpdate({
         _id: data._id,
         order_status : data.order_status
@@ -398,10 +406,28 @@ const getAllTransactions = async (parent,{ filter, pagination, order_status },ct
     }
   }
 
+  let totalCount = await Transaction.find().lean();
+
   if (matchQuerry.$and.length) {
     aggregateQuery.push({
       $match: matchQuerry
     });
+    let updateCount = await Transaction.aggregate(aggregateQuery);
+    count = updateCount.length;
+  }
+  
+  if (order_status) {
+    aggregateQuery.push({
+      $match: {
+        order_status: order_status
+      }
+    },{
+      $sort : {
+        order_date : -1
+      }
+    });
+    let updateCount = await Transaction.aggregate(aggregateQuery);
+    count = updateCount.length;
   }
 
   if (pagination) {
@@ -416,23 +442,25 @@ const getAllTransactions = async (parent,{ filter, pagination, order_status },ct
     );
   }
 
-  if (order_status) {
-    aggregateQuery.push({
-      $match: {
-        order_status: order_status
-      }
-    });
-  }
 
   if (!aggregateQuery.length) {
-    return Transaction.find();
+    let result = await Transaction.find().lean();
+    result = result.map((el)=>{
+      return {
+        ...el,
+        count : result.length,
+        total : totalCount.length
+      }
+    })
+    return result
   }
 
   let result = await Transaction.aggregate(aggregateQuery);
   result = result.map(el => {
     return {
       ...el,
-      count: result.length
+      count: result.length,
+      total : totalCount.length
     };
   });
   return result;
