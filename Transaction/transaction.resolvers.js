@@ -240,7 +240,7 @@ const deleteMenu = async (parent, { input }, ctx) => {
       order_status: "pending",
       status: "active"
     });
-    if (data) {
+    if (data != null) {
       const { id } = input;
       const deleteMenu = await Transaction.findByIdAndUpdate(
         {
@@ -257,7 +257,7 @@ const deleteMenu = async (parent, { input }, ctx) => {
           new: true
         }
       );
-      if (deleteMenu) {
+      if (deleteMenu.menu.length != 0) {
         let totalPrice = await getTotalPrice(deleteMenu.menu);
         const updateTotal = await Transaction.findByIdAndUpdate(
           {
@@ -273,6 +273,22 @@ const deleteMenu = async (parent, { input }, ctx) => {
           }
         );
         return updateTotal;
+      }else{
+        let result = await Transaction.findByIdAndUpdate(
+          {
+            _id: data._id
+          },
+          {
+            $set: {
+              status: "deleted"
+            }
+          },
+          {
+            new: true
+          }
+        );
+        increaseIngredientStock(data.menu);
+        throw new Error('Your transaction is deleted');
       }
     }
   }
