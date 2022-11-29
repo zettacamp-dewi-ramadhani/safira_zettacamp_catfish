@@ -99,7 +99,7 @@ const getAllRecipes = async(parent, {filter, paging, status, special, highlight}
     }
   }
 
-  let totalCount = await Recipe.find().lean();
+  let totalCount = await Recipe.find().count();
   if(matchQuerry.$and.length){
     aggregateQuery.push({
       $match: matchQuerry
@@ -162,7 +162,7 @@ const getAllRecipes = async(parent, {filter, paging, status, special, highlight}
   if(!aggregateQuery.length){
     let result = await Recipe.find().lean()
     result = result.map((el)=>{
-      return {...el, count_result : result.length, total_count : totalCount.length}
+      return {...el, count_result : result.length, total_count : totalCount}
     })
     return result
   }
@@ -172,7 +172,7 @@ const getAllRecipes = async(parent, {filter, paging, status, special, highlight}
           return {
             ...el,
             count_result: result.length,
-            total_count: totalCount.length
+            total_count: totalCount
           }
     })
   return result
@@ -196,34 +196,33 @@ const getOneRecipe = async(parent, {filter})=>{
   }
 }
 const updateRecipe = async(parent, {input})=>{
+  const {id, newName, newIngredient, price, image, status, special, highlight} = input;
+  // const validate = await Transaction.findOne({
+  //   "menu.recipe_id": id,
+  //   order_status: "pending"
+  // });
   if(!input){
     throw new Error('No data');
   }else{
-    const {id, newName, newIngredient, price, image, status, special, highlight} = input;
-    const validate = await Transaction.findOne({
-      "menu.recipe_id": id,
-      order_status: "pending"
+    // if(validate){
+    //   throw new Error("This menu is active in cart");
+    // }else{}
+    let data = await Recipe.findByIdAndUpdate({
+      _id : id
+    },{
+      $set : {
+        recipe_name : newName,
+        ingredients : newIngredient,
+        price : price,
+        image : image,
+        status: status,
+        special_offers: special,
+        highlight: highlight
+      }
+    },{
+      new : true
     });
-    if(validate){
-      throw new Error("This menu is active in cart");
-    }else{
-      let data = await Recipe.findByIdAndUpdate({
-        _id : id
-      },{
-        $set : {
-          recipe_name : newName,
-          ingredients : newIngredient,
-          price : price,
-          image : image,
-          status: status,
-          special_offers: special,
-          highlight: highlight
-        }
-      },{
-        new : true
-      });
-      return data;
-    }
+    return data;
   }
 }
 const deleteRecipe = async(parent, {input})=>{
