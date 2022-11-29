@@ -406,14 +406,14 @@ const getAllTransactions = async (parent,{ filter, pagination, order_status },ct
     }
   }
 
-  let totalCount = await Transaction.find().lean();
+  let totalCount = await Transaction.count();
 
   if (matchQuerry.$and.length) {
     aggregateQuery.push({
       $match: matchQuerry
     });
     let updateCount = await Transaction.aggregate(aggregateQuery);
-    count = updateCount.length;
+    totalCount = updateCount.length;
   }
   
   if (order_status) {
@@ -427,7 +427,7 @@ const getAllTransactions = async (parent,{ filter, pagination, order_status },ct
       }
     });
     let updateCount = await Transaction.aggregate(aggregateQuery);
-    count = updateCount.length;
+    totalCount = updateCount.length;
   }
 
   if (pagination) {
@@ -449,7 +449,7 @@ const getAllTransactions = async (parent,{ filter, pagination, order_status },ct
       return {
         ...el,
         count : result.length,
-        total : totalCount.length
+        total_docs : totalCount
       }
     })
     return result
@@ -460,7 +460,7 @@ const getAllTransactions = async (parent,{ filter, pagination, order_status },ct
     return {
       ...el,
       count: result.length,
-      total : totalCount.length
+      total_docs : totalCount
     };
   });
   return result;

@@ -9,7 +9,8 @@ const TransactionTypeDefs = gql`
     order_status: Order
     order_date: String
     status: Status
-    count: Int
+    count: Int,
+    total_docs : Int
   }
 
   type Detail_Menu {
