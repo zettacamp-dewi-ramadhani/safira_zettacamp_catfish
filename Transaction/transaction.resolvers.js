@@ -121,7 +121,8 @@ const updateMenu = async (id, menu) => {
   for (const recipe of menu) {
     validateMenu = await Transaction.find({
       _id: id,
-      "menu.recipe_id": recipe.recipe_id
+      "menu.recipe_id": recipe.recipe_id,
+      // order_status : "pending"
     });
   }
   if (validateMenu.length != 0) {
@@ -364,7 +365,7 @@ const getAllTransactions = async (parent,{ filter, pagination, order_status },ct
         status: "active"
       }
     ]
-  };
+  }; 
 
   if (filter) {
     if (filter.user_lname || filter.recipe_name) {

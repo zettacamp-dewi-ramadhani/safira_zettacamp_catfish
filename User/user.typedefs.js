@@ -7,7 +7,9 @@ const UserTypeDefs = gql`
         first_name : String,
         last_name : String,
         user_type : [UserType],
-        status : Status
+        status : Status,
+        count : Int,
+        total_count : Int
     }
 
     type UserType {

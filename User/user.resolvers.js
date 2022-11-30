@@ -98,37 +98,43 @@ const login = async (parent, {input : {email, password}})=>{
 
 const getAllUsers = async(parent,{filter,paging})=>{
     let aggregateQuery = [];
-    if(filter){
-        let indexMatch = aggregateQuery.push({
-            $match : {
-                $and : []
-            }
-        }) - 1;
-        
+    let matchQuerry = {
+        $and : [{
+            status : 'active'
+        }]
+    }
+    
+    if(filter){       
         if(filter.email){
             const search = new RegExp(filter.email, 'i');
-            aggregateQuery[indexMatch].$match.$and.push({
-                email : search,
-                status : 'active'
+            matchQuerry.$and.push({
+                email : search
             })
         }
 
         if(filter.first_name){
             const search = new RegExp(filter.first_name, 'i');
-            aggregateQuery[indexMatch].$match.$and.push({
-                first_name : search,
-                status : 'active'
-            })
+            matchQuerry.$and.push({
+              first_name: search
+            });
         }
 
         if(filter.last_name){
             const search = new RegExp(filter.last_name, 'i');
-            aggregateQuery[indexMatch].$match.$and.push({
-                last_name : search,
-                status : 'active'
-            })
+            matchQuerry.$and.push({
+              last_name: search
+            });
         }
     }
+    let totalCount = await User.count();
+    if(matchQuerry.$and.length){
+        aggregateQuery.push({
+            $match : matchQuerry
+        })
+        let updateCount = await User.aggregate(aggregateQuery);
+        totalCount = updateCount.length;
+    }
+
     if(paging){
         const {limit, page} = paging;
         aggregateQuery.push({
@@ -142,9 +148,27 @@ const getAllUsers = async(parent,{filter,paging})=>{
         })
     }
 
-    let result = [];
-    filter || paging ? result = await User.aggregate(aggregateQuery) : result = await User.find().toArray();
-    return result
+    if(!aggregateQuery.length){
+        let result = await User.find().lean();
+        result = result.map(el => {
+          return {
+            ...el,
+            count: result.length,
+            total_count: totalCount
+          };
+        });
+        return result;
+    }
+
+    let result = await User.aggregate(aggregateQuery);
+    result = result.map(el => {
+      return {
+        ...el,
+        count: result.length,
+        total_count: totalCount
+      };
+    });
+    return result;
 }
 
 const getOneUser = async(parent, {filter})=>{
