@@ -196,33 +196,33 @@ const getOneRecipe = async(parent, {filter})=>{
   }
 }
 const updateRecipe = async(parent, {input})=>{
-  const {id, newName, newIngredient, price, image, status, special, highlight} = input;
   // const validate = await Transaction.findOne({
-  //   "menu.recipe_id": id,
-  //   order_status: "pending"
-  // });
-  if(!input){
-    throw new Error('No data');
-  }else{
-    // if(validate){
-    //   throw new Error("This menu is active in cart");
-    // }else{}
-    let data = await Recipe.findByIdAndUpdate({
-      _id : id
-    },{
-      $set : {
-        recipe_name : newName,
-        ingredients : newIngredient,
-        price : price,
-        image : image,
-        status: status,
-        special_offers: special,
-        highlight: highlight
-      }
-    },{
-      new : true
-    });
-    return data;
+    //   "menu.recipe_id": id,
+    //   order_status: "pending"
+    // });
+    if(!input){
+      throw new Error('No data');
+    }else{
+      // if(validate){
+        //   throw new Error("This menu is active in cart");
+        // }else{}
+      const {id, newName, newIngredient, price, image, status, special, highlight} = input;
+      let data = await Recipe.findByIdAndUpdate({
+        _id : id
+      },{
+        $set : {
+          recipe_name : newName,
+          ingredients : newIngredient,
+          price : price,
+          image : image,
+          status: status,
+          special_offers: special,
+          highlight: highlight
+        }
+      },{
+        new : true
+      });
+      return data;
   }
 }
 const deleteRecipe = async(parent, {input})=>{
