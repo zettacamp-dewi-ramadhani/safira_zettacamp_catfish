@@ -67,8 +67,12 @@ const UserTypeDefs = gql`
     }
 
     input UserDelete{
-        id : ID,
-        status : Status
+        id : ID
+    }
+
+    input ForgetPass {
+        email : String,
+        password : String
     }
 
     type Query{
@@ -80,7 +84,8 @@ const UserTypeDefs = gql`
         signUp(input: UserSignup) : Users,
         login(input: UserLogin) : AuthLoad,
         updateUser(input : UserUpdate) : Users,
-        deleteUser(input: UserDelete) : Users
+        deleteUser(input: UserDelete) : Users,
+        forgetPass(input : ForgetPass) : Users
     }
 `
 

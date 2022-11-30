@@ -196,17 +196,46 @@ const deleteUser = async(parent,{input}, ctx)=>{
     if(!input){
         throw new Error("Nothing to update")
     }else{
-        const {id, status} = input;
+        const {id} = input;
         let result = await User.findByIdAndUpdate({
             _id : id
         },{
             $set : {
-                status : status
+                status : 'deleted'
             }
         },{
             new : true
         });
         return result;
+    }
+}
+
+const forgetPass = async (parent, {input}, ctx)=>{
+    if(!input){
+        throw new Error("No data input");
+    }else{
+        const {email, password} = input;
+        const validate = await User.findOne({
+            email : email
+        });
+
+        if(validate == null){
+            throw new Error('User not found, please register first');
+        }else if(validate.status == 'deleted'){
+            throw new Error('Your account is already deleted. Please register again')
+        }else{
+            const encryptedPass = await bcrypt.hash(password, 10);
+            const reset = await User.findByIdAndUpdate({
+                _id : validate._id
+            },{
+                $set : {
+                    password : encryptedPass
+                }
+            },{
+                new : true
+            });
+            return reset
+        }
     }
 }
 
@@ -220,7 +249,8 @@ const UserResolvers = {
         signUp,
         login,
         updateUser,
-        deleteUser
+        deleteUser,
+        forgetPass
     }
 }
 
