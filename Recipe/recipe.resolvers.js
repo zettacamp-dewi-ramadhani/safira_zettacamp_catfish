@@ -2,7 +2,6 @@ const Recipe = require('./recipe.model');
 const Ingredient = require('../Ingredient/ingredient.model');
 const Transaction = require('../Transaction/transaction.model');
 const mongoose = require('mongoose')
-// const { Error } = require('mongoose');
 
 async function getAvailable({ ingredients }, args, context, info) {
 
