@@ -325,7 +325,6 @@ const cancelOrder = async (userId, time) => {
     order_status: "pending",
     status: "active"
   });
-  console.log(data);
   if(data != null){
     let hour;
     let minute = time.getMinutes() + 5;
@@ -335,9 +334,6 @@ const cancelOrder = async (userId, time) => {
     }else{
       hour = '*'
     }
-    console.log(time);
-    console.log(hour);
-    console.log(minute);
     cron.schedule(`${time.getSeconds()} ${minute} ${hour} * * * *`, async () => {
       const result = await Transaction.findOneAndUpdate({
         _id: data._id,
