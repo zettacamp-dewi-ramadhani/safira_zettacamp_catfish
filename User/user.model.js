@@ -18,11 +18,13 @@ const userSchema = new mongoose.Schema({
         name : {type: String},
         view : {type: Boolean}
     }],
+
     status : {
         type: String,
         enum : ['active', 'deleted'],
         default : 'active'
-    }
+    },
+    wallet : {type: Number}
 });
 
 const User = mongoose.model('users', userSchema);

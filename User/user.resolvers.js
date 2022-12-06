@@ -36,6 +36,17 @@ const signUp = async (parent, {input})=>{
                         view : true
                     }
                 )
+                
+                let user = new User({
+                    email : email,
+                    password : encryptedPass,
+                    first_name : first_name,
+                    last_name : last_name,
+                    user_type : usertype
+                });
+        
+                await user.save();
+                return user;
             }else if (role === 'user'){
                 usertype.push(
                     ...generalPermit,{
@@ -46,18 +57,20 @@ const signUp = async (parent, {input})=>{
                         view : false
                     }
                 )
+
+                let user = new User({
+                    email : email,
+                    password : encryptedPass,
+                    first_name : first_name,
+                    last_name : last_name,
+                    user_type : usertype,
+                    wallet : 50000
+                });
+        
+                await user.save();
+                return user;
             }
 
-            let user = new User({
-                email : email,
-                password : encryptedPass,
-                first_name : first_name,
-                last_name : last_name,
-                user_type : usertype
-            });
-    
-            await user.save();
-            return user;
         }
     }catch(err){
         throw new Error('Sign Up Error')
