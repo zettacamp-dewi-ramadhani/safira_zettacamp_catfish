@@ -10,7 +10,8 @@ const TransactionTypeDefs = gql`
     order_date: String
     status: Status
     count: Int,
-    total_docs : Int
+    total_docs : Int,
+    sold : Int
   }
 
   type Detail_Menu {
@@ -70,10 +71,18 @@ const TransactionTypeDefs = gql`
     amount : Int,
     note : String
   }
+  
+  type Income {
+    count : Int
+    sold : Int
+    balance : Int
+  }
 
   type Query {
     getAllTransactions(filter: DataFilterTransaction, pagination: Paging): [Transactions]
     getOneTransactions(filter: OneFilterTransaction): Transactions
+    getIncome : Income
+    getSuccessTransactions(pagination : Paging) : [Transactions]
   }
 
   type Mutation {
