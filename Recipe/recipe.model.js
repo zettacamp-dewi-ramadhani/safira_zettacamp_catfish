@@ -1,5 +1,6 @@
 const {db, mongoose} = require('../Controller/database')
 
+// create schema for database
 const recipeSchema = new mongoose.Schema({
   recipe_name: {
     type: String,
@@ -37,5 +38,6 @@ const recipeSchema = new mongoose.Schema({
   }
 });
 
+// create model from schema and database
 const Recipe = mongoose.model('recipes', recipeSchema);
 module.exports = Recipe;

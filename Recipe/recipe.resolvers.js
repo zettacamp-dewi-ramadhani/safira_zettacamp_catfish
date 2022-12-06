@@ -3,14 +3,17 @@ const Ingredient = require('../Ingredient/ingredient.model');
 const Transaction = require('../Transaction/transaction.model');
 const mongoose = require('mongoose')
 
+// add function to get available data from minimum ingredient stock and recipe stock used
 async function getAvailable({ ingredients }, args, context, info) {
-
   const minStock = []
+  // find ingredient from recipes
   for (let ingredient of ingredients) {
       const recipe_ingredient = await Ingredient.findById(ingredient.ingredient_id);
       if (!recipe_ingredient) throw new Error(`Ingredient with ID: ${ingredient.ingredient_id} not found`, "404");
+      // calculate minimum stock
       minStock.push(Math.floor(recipe_ingredient.stock / ingredient.stock_used));
   }
+  // check if min stock below 0
   let minus = minStock.some(v=> v<0);
   if(minus == true){
     let result = 0;
@@ -21,6 +24,7 @@ async function getAvailable({ ingredients }, args, context, info) {
   }
 }
 
+// validate ingredient status 
 const validateIngredient = async(ingredients)=>{
     let available = []
     for(const data of ingredients){
@@ -44,11 +48,13 @@ const validateIngredient = async(ingredients)=>{
     }
 }
 
+// create new recipe
 const createRecipe = async(parent, {input})=>{
   const {recipe_name, ingredients, price, image} = input;    
     if(!input){
         throw new Error('No input data');
     }else{
+      // check ingredient status
       const validate = await validateIngredient(ingredients);
       if(validate == false){
           throw new Error('Ingredient is deleted');

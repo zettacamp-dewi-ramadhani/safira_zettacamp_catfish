@@ -7,7 +7,7 @@ const ingredientLoader = async(dataId)=>{
             $in : dataId
         }
     });
-    // return dataList;
+    // return data with map object;
     const dataMap = {};
     dataList.forEach((data) => {
         dataMap[data._id] = data;

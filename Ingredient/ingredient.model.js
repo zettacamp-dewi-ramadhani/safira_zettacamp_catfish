@@ -1,6 +1,7 @@
 const {db, mongoose} = require('../Controller/database');
 const moment = require('moment')
 
+// create schema for database
 const ingredientSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -18,5 +19,6 @@ const ingredientSchema = new mongoose.Schema({
   }
 });
 
+// create model from schema and database
 const Ingredient = mongoose.model('ingredients', ingredientSchema);
 module.exports = Ingredient;
