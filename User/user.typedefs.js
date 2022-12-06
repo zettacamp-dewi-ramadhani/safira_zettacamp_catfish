@@ -8,6 +8,7 @@ const UserTypeDefs = gql`
         last_name : String,
         user_type : [UserType],
         status : Status,
+        wallet: Int,
         count : Int,
         total_count : Int
     }
