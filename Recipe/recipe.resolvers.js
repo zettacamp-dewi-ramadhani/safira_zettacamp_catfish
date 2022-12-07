@@ -134,6 +134,7 @@ const getAllRecipes = async(parent, {filter, paging, status, special, highlight}
       }
     },{
       $sort : {
+        discount : -1,
         created_at : -1
       }
     })
@@ -146,7 +147,6 @@ const getAllRecipes = async(parent, {filter, paging, status, special, highlight}
       }
     },{
       $sort : {
-        discount : -1,
         created_at : -1
       }
     })
