@@ -277,6 +277,25 @@ const forgetPass = async (parent, {input}, ctx)=>{
     }
 }
 
+const topUp = async (parent, {input}, ctx)=>{
+    const {balance} = input
+    if(!input){
+        throw new Error("No data input");
+    }else{
+        const userId = ctx.user[0]._id;
+        const topUpWallet = await User.findByIdAndUpdate({
+            _id: userId
+        },{
+            $inc: {
+                wallet : balance
+            }
+        },{
+            new : true
+        })
+        return topUpWallet
+    }
+}
+
 const UserResolvers = {
     Query : {
         getAllUsers,
@@ -288,7 +307,8 @@ const UserResolvers = {
         login,
         updateUser,
         deleteUser,
-        forgetPass
+        forgetPass,
+        topUp
     }
 }
 
