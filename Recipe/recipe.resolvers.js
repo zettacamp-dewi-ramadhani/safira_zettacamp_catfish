@@ -211,7 +211,7 @@ const updateRecipe = async(parent, {input})=>{
       // if(validate){
         //   throw new Error("This menu is active in cart");
         // }else{}
-      const {id, newName, newIngredient, price, image, status, special, highlight} = input;
+      const {id, newName, newIngredient, price, image, status, discount, special, highlight} = input;
       let data = await Recipe.findByIdAndUpdate({
         _id : id
       },{
@@ -221,6 +221,7 @@ const updateRecipe = async(parent, {input})=>{
           price : price,
           image : image,
           status: status,
+          discount : discount,
           special_offers: special,
           highlight: highlight
         }
