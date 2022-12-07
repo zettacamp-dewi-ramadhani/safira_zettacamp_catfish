@@ -1,9 +1,11 @@
 const Transaction = require("./transaction.model");
 const Ingredient = require("../Ingredient/ingredient.model");
 const Recipe = require("../Recipe/recipe.model");
+const User = require("../User/user.model")
 const moment = require("moment");
 const mongoose = require("mongoose");
 const cron = require("node-cron");
+const { verify } = require("jsonwebtoken");
 
 moment.locale("id-ID");
 
@@ -295,6 +297,41 @@ const deleteMenu = async (parent, { input }, ctx) => {
   }
 };
 
+//reduce wallet balance
+const reduceWallet = async (id, total) => {
+  // const userId = ctx.user[0]._id;
+  const walletBalance = await User.updateOne({
+    _id : id,
+    wallet:{
+      $gte: 0
+    }
+  },{
+    $inc: {
+      wallet: -total
+    }
+  })
+  return walletBalance
+};
+
+// validate wallet cost 
+const validateWallet = async(id, total)=>{
+  // const userId = ctx.user[0]._id;
+  const verifyUser = await User.findOne({
+    _id : id
+  })
+
+  if (verifyUser != null){
+    if(verifyUser.wallet < total){
+      return false
+    }
+    if(verifyUser.wallet >= total){
+      await reduceWallet(id, total)
+      return true
+    }
+  } else{ throw new error('User is not verify')}
+  
+}
+
 const updateOrderStatus = async (parent, args, ctx) => {
   const userId = ctx.user[0]._id;
   const data = await Transaction.findOne({
@@ -303,20 +340,25 @@ const updateOrderStatus = async (parent, args, ctx) => {
     status: "active"
   });
 
-  if (data != null) {
-    const result = await Transaction.findByIdAndUpdate({
-      _id: data._id
-    },{
-      $set: {
-        order_status: "success"
+    if (data != null) {
+      const validate = await validateWallet(userId, data.total)
+      if(validate == true){
+        const result = await Transaction.findByIdAndUpdate({
+          _id: data._id
+        },{
+          $set: {
+            order_status: "success"
+          }
+        },{
+          new: true
+        });
+        return result;
+      }else {
+        throw new Error("Top Up")
       }
-    },{
-      new: true
-    });
-    return result;
-  } else {
-    throw new Error("Cant update order status");
-  }
+    } else {
+      throw new Error("Cant update order status");
+    }
 };
 
 const cancelOrder = async (userId, time) => {
