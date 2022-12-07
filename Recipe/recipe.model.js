@@ -24,6 +24,10 @@ const recipeSchema = new mongoose.Schema({
     enum: ["active", "deleted", "draft"],
     default: "draft"
   },
+  discount : {
+    type: Number,
+    default: 0
+  },
   special_offers :{
     type: Boolean,
     default: false

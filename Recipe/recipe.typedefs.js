@@ -9,6 +9,7 @@ const RecipeTypeDefs = gql`
         image : String,
         available : Int,
         status : Status,
+        discount: Int,
         special_offers : Boolean,
         highlight : Boolean,
         count_result: Int,
@@ -59,6 +60,7 @@ const RecipeTypeDefs = gql`
         price : Int,
         image : String,
         status : Status,
+        discount : Int,
         special: Boolean,
         highlight: Boolean
     }
