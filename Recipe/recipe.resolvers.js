@@ -209,7 +209,7 @@ const updateRecipe = async(parent, {input})=>{
     if(!input){
       throw new Error('No data');
     }else{
-      const {id, newName, newIngredient, price, image, status, discount, special, highlight} = input;
+      const {id, newIngredient, price, image, status, discount, special, highlight} = input;
       if(price<=0){
         throw new Error("Price can't 0 or below 0")
       }else if(discount<0){
@@ -219,7 +219,6 @@ const updateRecipe = async(parent, {input})=>{
           _id : id
         },{
           $set : {
-            recipe_name : newName,
             ingredients : newIngredient,
             price : price,
             image : image,
