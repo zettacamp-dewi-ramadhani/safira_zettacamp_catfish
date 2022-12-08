@@ -64,14 +64,18 @@ const createRecipe = async(parent, {input})=>{
           if(verify){
             throw new Error('Recipe has been include')
           }else{
-            let data = new Recipe({
-                recipe_name : recipe_name,
-                ingredients : ingredients,
-                price : price,
-                image: image,
-            });
-            await data.save();
-            return data;
+            if(price<=0){
+              throw new Error("Price can't 0 or below 0")
+            }else {
+              let data = new Recipe({
+                  recipe_name : recipe_name,
+                  ingredients : ingredients,
+                  price : price,
+                  image: image,
+              });
+              await data.save();
+              return data;
+            }
           }
       }
     }
@@ -202,34 +206,33 @@ const getOneRecipe = async(parent, {filter})=>{
   }
 }
 const updateRecipe = async(parent, {input})=>{
-  // const validate = await Transaction.findOne({
-    //   "menu.recipe_id": id,
-    //   order_status: "pending"
-    // });
     if(!input){
       throw new Error('No data');
     }else{
-      // if(validate){
-        //   throw new Error("This menu is active in cart");
-        // }else{}
       const {id, newName, newIngredient, price, image, status, discount, special, highlight} = input;
-      let data = await Recipe.findByIdAndUpdate({
-        _id : id
-      },{
-        $set : {
-          recipe_name : newName,
-          ingredients : newIngredient,
-          price : price,
-          image : image,
-          status: status,
-          discount : discount,
-          special_offers: special,
-          highlight: highlight
-        }
-      },{
-        new : true
-      });
-      return data;
+      if(price<=0){
+        throw new Error("Price can't 0 or below 0")
+      }else if(discount<0){
+        throw new Error("discount can't below then 0")
+      }else {
+        let data = await Recipe.findByIdAndUpdate({
+          _id : id
+        },{
+          $set : {
+            recipe_name : newName,
+            ingredients : newIngredient,
+            price : price,
+            image : image,
+            status: status,
+            discount : discount,
+            special_offers: special,
+            highlight: highlight
+          }
+        },{
+          new : true
+        });
+        return data;
+      }
   }
 }
 const deleteRecipe = async(parent, {input})=>{
