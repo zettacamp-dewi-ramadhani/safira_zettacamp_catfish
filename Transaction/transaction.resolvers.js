@@ -109,7 +109,8 @@ const getTotalPrice = async menu => {
       _id: recipe.recipe_id
     });
     if (recipeData.special_offers === true) {
-      total.push(recipe.amount * recipeData.price * (1 - 0.1));
+      discount = recipeData.discount / 100;
+      total.push(recipe.amount * recipeData.price * (1 - discount));
     } else {
       total.push(recipe.amount * recipeData.price);
     }
@@ -299,7 +300,6 @@ const deleteMenu = async (parent, { input }, ctx) => {
 
 //reduce wallet balance
 const reduceWallet = async (id, total) => {
-  // const userId = ctx.user[0]._id;
   const walletBalance = await User.updateOne({
     _id : id,
     wallet:{
@@ -315,7 +315,6 @@ const reduceWallet = async (id, total) => {
 
 // validate wallet cost 
 const validateWallet = async(id, total)=>{
-  // const userId = ctx.user[0]._id;
   const verifyUser = await User.findOne({
     _id : id
   })
@@ -354,7 +353,7 @@ const updateOrderStatus = async (parent, args, ctx) => {
         });
         return result;
       }else {
-        throw new Error("Top Up")
+        throw new Error("Your wallet balance not enough, you can topup or cancel order")
       }
     } else {
       throw new Error("Cant update order status");
@@ -468,23 +467,16 @@ const getAllTransactions = async (parent,{ filter, pagination, order_status },ct
   let totalCount = await Transaction.count();
 
   if (matchQuerry.$and.length) {
-    aggregateQuery.push({
-      $match: matchQuerry
-    });
-    let updateCount = await Transaction.aggregate(aggregateQuery);
-    totalCount = updateCount.length;
-  }
-  
-  if (order_status) {
-    aggregateQuery.push({
-      $match: {
-        order_status: order_status
+    aggregateQuery.push(
+      {
+        $match: matchQuerry
+      },
+      {
+        $sort: {
+          order_date: -1
+        }
       }
-    },{
-      $sort : {
-        order_date : -1
-      }
-    });
+    );
     let updateCount = await Transaction.aggregate(aggregateQuery);
     totalCount = updateCount.length;
   }
