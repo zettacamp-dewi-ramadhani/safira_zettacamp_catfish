@@ -16,13 +16,17 @@ const insertIngredient = async (parent, { input }) => {
       // the data already exist by name
       throw new Error("Ingredient has been include");
     } else {
-      let data = new Ingredient({
-        name: name,
-        stock: stock
-      });
-      // save data
-      await data.save();
-      return data;
+      if(stock<0){
+        throw new Error("Can't put stock below then 0")
+      }else{
+        let data = new Ingredient({
+          name: name,
+          stock: stock
+        });
+        // save data
+        await data.save();
+        return data;
+      }
     }
   }
 };
@@ -140,20 +144,24 @@ const updateIngredient = async (parent, { input }) => {
     throw new Error("Nothing to update");
   } else {
     const { id, newStock } = input;
-    let data = await Ingredient.findByIdAndUpdate(
-      {
-        _id: id
-      },
-      {
-        $set: {
-          stock: newStock
+    if(newStock<0){
+      throw new Error("Can't put stock below then 0")
+    }else{
+      let data = await Ingredient.findByIdAndUpdate(
+        {
+          _id: id
+        },
+        {
+          $set: {
+            stock: newStock
+          }
+        },
+        {
+          new: true
         }
-      },
-      {
-        new: true
-      }
-    );
-    return data;
+      );
+      return data;
+    }
   }
 };
 
