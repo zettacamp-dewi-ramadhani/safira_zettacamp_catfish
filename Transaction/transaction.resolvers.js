@@ -1,7 +1,7 @@
 const Transaction = require("./transaction.model");
 const Ingredient = require("../Ingredient/ingredient.model");
 const Recipe = require("../Recipe/recipe.model");
-const User = require("../User/user.model")
+const User = require("../User/user.model");
 const moment = require("moment");
 const mongoose = require("mongoose");
 const cron = require("node-cron");
@@ -125,7 +125,7 @@ const updateMenu = async (id, menu) => {
     validateMenu = await Transaction.find({
       _id: id,
       "menu.recipe_id": recipe.recipe_id,
-      // order_status : "pending"
+      order_status: "pending"
     });
   }
   if (validateMenu.length != 0) {
@@ -220,7 +220,7 @@ const addCart = async (parent, { input }, ctx) => {
       } else {
         if (data == null) {
           const create = await createTransaction(userId, menu);
-          const time = new Date()
+          const time = new Date();
           await cancelOrder(userId, time);
           return create;
         } else {
@@ -277,7 +277,7 @@ const deleteMenu = async (parent, { input }, ctx) => {
           }
         );
         return updateTotal;
-      }else{
+      } else {
         let result = await Transaction.findByIdAndUpdate(
           {
             _id: data._id
@@ -292,7 +292,7 @@ const deleteMenu = async (parent, { input }, ctx) => {
           }
         );
         increaseIngredientStock(data.menu);
-        throw new Error('Your transaction is deleted');
+        throw new Error("Your transaction is deleted");
       }
     }
   }
@@ -300,36 +300,40 @@ const deleteMenu = async (parent, { input }, ctx) => {
 
 //reduce wallet balance
 const reduceWallet = async (id, total) => {
-  const walletBalance = await User.updateOne({
-    _id : id,
-    wallet:{
-      $gte: 0
+  const walletBalance = await User.updateOne(
+    {
+      _id: id,
+      wallet: {
+        $gte: 0
+      }
+    },
+    {
+      $inc: {
+        wallet: -total
+      }
     }
-  },{
-    $inc: {
-      wallet: -total
-    }
-  })
-  return walletBalance
+  );
+  return walletBalance;
 };
 
-// validate wallet cost 
-const validateWallet = async(id, total)=>{
+// validate wallet cost
+const validateWallet = async (id, total) => {
   const verifyUser = await User.findOne({
-    _id : id
-  })
+    _id: id
+  });
 
-  if (verifyUser != null){
-    if(verifyUser.wallet < total){
-      return false
+  if (verifyUser != null) {
+    if (verifyUser.wallet < total) {
+      return false;
     }
-    if(verifyUser.wallet >= total){
-      await reduceWallet(id, total)
-      return true
+    if (verifyUser.wallet >= total) {
+      await reduceWallet(id, total);
+      return true;
     }
-  } else{ throw new error('User is not verify')}
-  
-}
+  } else {
+    throw new error("User is not verify");
+  }
+};
 
 const updateOrderStatus = async (parent, args, ctx) => {
   const userId = ctx.user[0]._id;
@@ -339,25 +343,31 @@ const updateOrderStatus = async (parent, args, ctx) => {
     status: "active"
   });
 
-    if (data != null) {
-      const validate = await validateWallet(userId, data.total)
-      if(validate == true){
-        const result = await Transaction.findByIdAndUpdate({
+  if (data != null) {
+    const validate = await validateWallet(userId, data.total);
+    if (validate == true) {
+      const result = await Transaction.findByIdAndUpdate(
+        {
           _id: data._id
-        },{
+        },
+        {
           $set: {
             order_status: "success"
           }
-        },{
+        },
+        {
           new: true
-        });
-        return result;
-      }else {
-        throw new Error("Your wallet balance not enough, you can topup or cancel order")
-      }
+        }
+      );
+      return result;
     } else {
-      throw new Error("Cant update order status");
+      throw new Error(
+        "Your wallet balance not enough, you can topup or cancel order"
+      );
     }
+  } else {
+    throw new Error("Cant update order status");
+  }
 };
 
 const cancelOrder = async (userId, time) => {
@@ -366,37 +376,50 @@ const cancelOrder = async (userId, time) => {
     order_status: "pending",
     status: "active"
   });
-  if(data != null){
+  if (data != null) {
     let hour;
     let minute = time.getMinutes() + 5;
-    if(minute > 59){
-      hour = time.getHours()+1;
-      minute = minute-59;
-    }else{
-      hour = '*'
+    if (minute > 59) {
+      hour = time.getHours() + 1;
+      minute = minute - 59;
+    } else {
+      hour = "*";
     }
-    cron.schedule(`${time.getSeconds()} ${minute} ${hour} * * * *`, async () => {
-      const result = await Transaction.findOneAndUpdate({
-        _id: data._id,
-        order_status : data.order_status
-      },{
-        $set: {
-          order_status: "failed"
+    cron.schedule(
+      `${time.getSeconds()} ${minute} ${hour} * * * *`,
+      async () => {
+        const result = await Transaction.findOneAndUpdate(
+          {
+            _id: data._id,
+            order_status: data.order_status
+          },
+          {
+            $set: {
+              order_status: "failed"
+            }
+          },
+          {
+            new: true
+          }
+        );
+        if (result) {
+          increaseIngredientStock(data.menu);
+          throw new Error(
+            "Your time is up, your order is automaticly canceled"
+          );
         }
-      },{
-        new: true
-      });
-      if (result) {
-        increaseIngredientStock(data.menu);
-        throw new Error("Your time is up, your order is automaticly canceled");
       }
-    });
+    );
   } else {
     throw new Error("Cant cancel your order");
   }
-}
+};
 
-const getAllTransactions = async (parent,{ filter, pagination, order_status },ctx) => {
+const getAllTransactions = async (
+  parent,
+  { filter, pagination, order_status },
+  ctx
+) => {
   const userId = ctx.user[0]._id;
   let aggregateQuery = [];
   let matchQuerry = {
@@ -406,7 +429,7 @@ const getAllTransactions = async (parent,{ filter, pagination, order_status },ct
         status: "active"
       }
     ]
-  }; 
+  };
 
   if (filter) {
     if (filter.user_lname || filter.recipe_name) {
@@ -493,17 +516,16 @@ const getAllTransactions = async (parent,{ filter, pagination, order_status },ct
     );
   }
 
-
   if (!aggregateQuery.length) {
     let result = await Transaction.find().lean();
-    result = result.map((el)=>{
+    result = result.map(el => {
       return {
         ...el,
-        count : result.length,
-        total_docs : totalCount
-      }
-    })
-    return result
+        count: result.length,
+        total_docs: totalCount
+      };
+    });
+    return result;
   }
 
   let result = await Transaction.aggregate(aggregateQuery);
@@ -511,7 +533,7 @@ const getAllTransactions = async (parent,{ filter, pagination, order_status },ct
     return {
       ...el,
       count: result.length,
-      total_docs : totalCount
+      total_docs: totalCount
     };
   });
   return result;
@@ -580,30 +602,40 @@ const updateAmount = async (parent, { input }, ctx) => {
             "menu._id": mongoose.Types.ObjectId(id),
             order_status: "pending"
           });
-          const validate = await validateStockIngredient(newdata.menu)
-          if(validate == true){
+          const validate = await validateStockIngredient(newdata.menu);
+          if (validate == true) {
             const totalPrice = await getTotalPrice(newdata.menu);
-            const result = await Transaction.findByIdAndUpdate({
-              _id: newdata._id
-            },{
-              $set: {
-                total: totalPrice
-              }
-            },{
+            const result = await Transaction.findByIdAndUpdate(
+              {
+                _id: newdata._id
+              },
+              {
+                $set: {
+                  total: totalPrice
+                }
+              },
+              {
                 new: true
-            });
-            return result;
-          }else{
-            const result = await Transaction.findByIdAndUpdate({
-              _id : newdata._id
-            },{
-              $set : {
-                menu : data.menu
               }
-            },{
-              new : true
-            })
-            throw new Error("Your transaction is failed because the amount is overstock ours");
+            );
+            return result;
+          } else {
+            const result = await Transaction.findByIdAndUpdate(
+              {
+                _id: newdata._id
+              },
+              {
+                $set: {
+                  menu: data.menu
+                }
+              },
+              {
+                new: true
+              }
+            );
+            throw new Error(
+              "Your transaction is failed because the amount is overstock ours"
+            );
           }
         }
       } else {
@@ -614,43 +646,51 @@ const updateAmount = async (parent, { input }, ctx) => {
 };
 
 const getIncome = async (parent, aggregate, ctx) => {
-  let income = await Transaction.aggregate([{
-    $match : {
-      $and : [{
-          order_status : 'success',
-          status : 'active'
-      }]
-    }
-  },{
-    $addFields: {
-      sold : {
-        $add: [{
-          "$sum": "$menu.amount"
-        }]
+  let income = await Transaction.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            order_status: "success",
+            status: "active"
+          }
+        ]
+      }
+    },
+    {
+      $addFields: {
+        sold: {
+          $add: [
+            {
+              $sum: "$menu.amount"
+            }
+          ]
+        }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        balance: {
+          $sum: "$total"
+        },
+        count: {
+          $sum: 1
+        },
+        sold: {
+          $sum: "$sold"
+        }
       }
     }
-},{
-    $group : {
-      _id : null,
-      balance : {
-        $sum : "$total"
-      },
-      count : {
-          $sum : 1
-      },
-      sold : {
-          $sum : "$sold"
-      }
-    }
-}]);
+  ]);
   return {
-    count : income[0].count,
-    sold : income[0].sold,
+    count: income[0].count,
+    sold: income[0].sold,
     balance: income[0].balance
   };
 };
 
-const getSuccessTransactions = async(parent, {pagination}, ctx)=>{
+const getSuccessTransactions = async (parent, { pagination }, ctx) => {
   let aggregateQuery = [];
   let matchQuerry = {
     $and: [
@@ -660,7 +700,7 @@ const getSuccessTransactions = async(parent, {pagination}, ctx)=>{
       }
     ]
   };
-  
+
   let totalCount = await Transaction.count();
 
   if (matchQuerry.$and.length) {
@@ -722,7 +762,7 @@ const getSuccessTransactions = async(parent, {pagination}, ctx)=>{
       return {
         ...el,
         count: result.length,
-        total_docs: totalCount,
+        total_docs: totalCount
         // sold : soldAmount[0].sold
       };
     });
@@ -734,12 +774,12 @@ const getSuccessTransactions = async(parent, {pagination}, ctx)=>{
     return {
       ...el,
       count: result.length,
-      total_docs: totalCount,
+      total_docs: totalCount
       // sold : soldAmount[0].sold
     };
   });
   return result;
-}
+};
 
 const TransactionResolvers = {
   Query: {
@@ -754,8 +794,7 @@ const TransactionResolvers = {
     deleteTransaction,
     deleteMenu,
     updateOrderStatus,
-    updateAmount,
-    cancelOrder
+    updateAmount
   },
 
   Transactions: {

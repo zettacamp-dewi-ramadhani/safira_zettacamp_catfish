@@ -9,9 +9,9 @@ const TransactionTypeDefs = gql`
     order_status: Order
     order_date: String
     status: Status
-    count: Int,
-    total_docs : Int,
-    sold : Int
+    count: Int
+    total_docs: Int
+    sold: Int
   }
 
   type Detail_Menu {
@@ -67,31 +67,33 @@ const TransactionTypeDefs = gql`
   }
 
   input UpdateAmount {
-    id : ID,
-    amount : Int,
-    note : String
+    id: ID
+    amount: Int
+    note: String
   }
-  
+
   type Income {
-    count : Int
-    sold : Int
-    balance : Int
+    count: Int
+    sold: Int
+    balance: Int
   }
 
   type Query {
-    getAllTransactions(filter: DataFilterTransaction, pagination: Paging): [Transactions]
+    getAllTransactions(
+      filter: DataFilterTransaction
+      pagination: Paging
+    ): [Transactions]
     getOneTransactions(filter: OneFilterTransaction): Transactions
-    getIncome : Income
-    getSuccessTransactions(pagination : Paging) : [Transactions]
+    getIncome: Income
+    getSuccessTransactions(pagination: Paging): [Transactions]
   }
 
   type Mutation {
     addCart(input: DataInputTransaction): Transactions
     deleteTransaction(input: DataDeleteTransaction): Transactions
     deleteMenu(input: DeleteMenu): Transactions
-    updateOrderStatus: Transactions,
-    cancelOrder: Transactions,
-    updateAmount(input : UpdateAmount) : Transactions
+    updateOrderStatus: Transactions
+    updateAmount(input: UpdateAmount): Transactions
   }
 `;
 

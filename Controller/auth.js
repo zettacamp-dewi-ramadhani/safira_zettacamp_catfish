@@ -31,7 +31,7 @@ module.exports = {
     getAllTransactions: authJwt,
     getOneTransactions: authJwt,
     getIncome: authJwt,
-    getSuccessTransactions : authJwt
+    getSuccessTransactions: authJwt
   },
 
   Mutation: {
@@ -47,7 +47,6 @@ module.exports = {
     deleteTransaction: authJwt,
     deleteMenu: authJwt,
     updateOrderStatus: authJwt,
-    cancelOrder: authJwt,
     updateAmount: authJwt,
     topUp: authJwt
   }
