@@ -574,73 +574,84 @@ const deleteTransaction = async (parent, { input }) => {
 };
 
 const updateAmount = async (parent, { input }, ctx) => {
+  const map = new Map();
+  const updateQuery = {};
+
   if (!input) {
     throw new Error("No data input");
   } else {
-    const { id, amount, note } = input;
-    if (amount <= 0) {
-      throw new Error("Amount cannot below 0");
-    } else {
-      const data = await Transaction.findOne({
-        "menu._id": mongoose.Types.ObjectId(id),
-        order_status: "pending"
+    const data = await Transaction.findOne({
+      "menu._id": mongoose.Types.ObjectId(input.id),
+      order_status: "pending"
+    });
+    if (data != null) {
+      if (input.amount) {
+        if (input.amount <= 0) {
+          throw new Error("Amount cannot below 0");
+        } else {
+          map.set("menu.$.amount", input.amount);
+        }
+      }
+      if (input.note) {
+        map.set("menu.$.note", input.note);
+      }
+
+      map.forEach((value, field) => {
+        updateQuery[field] = value;
       });
-      if (data) {
-        const update = await Transaction.updateOne(
-          {
-            "menu._id": mongoose.Types.ObjectId(id)
-          },
-          {
-            $set: {
-              "menu.$.amount": amount,
-              "menu.$.note": note
+      const update = await Transaction.updateOne(
+        {
+          "menu._id": mongoose.Types.ObjectId(input.id)
+        },
+        {
+          $set: updateQuery
+        }
+      );
+      if (update) {
+        const newdata = await Transaction.findOne({
+          "menu._id": mongoose.Types.ObjectId(input.id),
+          order_status: "pending"
+        });
+        const validate = await validateStockIngredient(newdata.menu);
+        if (validate == true) {
+          const totalPrice = await getTotalPrice(newdata.menu);
+          const result = await Transaction.findByIdAndUpdate(
+            {
+              _id: newdata._id
+            },
+            {
+              $set: {
+                total: totalPrice
+              }
+            },
+            {
+              new: true
             }
-          }
-        );
-        if (update) {
-          const newdata = await Transaction.findOne({
-            "menu._id": mongoose.Types.ObjectId(id),
-            order_status: "pending"
-          });
-          const validate = await validateStockIngredient(newdata.menu);
-          if (validate == true) {
-            const totalPrice = await getTotalPrice(newdata.menu);
-            const result = await Transaction.findByIdAndUpdate(
-              {
-                _id: newdata._id
-              },
-              {
-                $set: {
-                  total: totalPrice
-                }
-              },
-              {
-                new: true
+          );
+          return result;
+        } else {
+          const result = await Transaction.findByIdAndUpdate(
+            {
+              _id: newdata._id
+            },
+            {
+              $set: {
+                menu: data.menu
               }
-            );
-            return result;
-          } else {
-            const result = await Transaction.findByIdAndUpdate(
-              {
-                _id: newdata._id
-              },
-              {
-                $set: {
-                  menu: data.menu
-                }
-              },
-              {
-                new: true
-              }
-            );
-            throw new Error(
-              "Your transaction is failed because the amount is overstock ours"
-            );
-          }
+            },
+            {
+              new: true
+            }
+          );
+          throw new Error(
+            "Your transaction is failed because the amount is overstock ours"
+          );
         }
       } else {
-        throw new Error("Cant Update Amount");
+        throw new Error("Cant Update Your Transaction");
       }
+    } else {
+      throw new Error("Data Not Found");
     }
   }
 };
