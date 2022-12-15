@@ -1,4 +1,4 @@
-const { db, mongoose } = require("../Middleware/database");
+const { mongoose } = require("../Middleware/database");
 const moment = require("moment");
 
 // create schema for database
