@@ -581,6 +581,7 @@ const deleteTransaction = async (parent, { input }) => {
         new: true
       }
     );
+    await increaseIngredientStock(result.menu);
     return result;
   }
 };
