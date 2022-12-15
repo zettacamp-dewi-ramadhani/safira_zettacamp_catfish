@@ -33,6 +33,10 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     enum: ["active", "deleted"],
     default: "active"
+  },
+  created_at: {
+    type: Date,
+    default: Date.now()
   }
 });
 

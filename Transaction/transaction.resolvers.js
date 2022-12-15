@@ -403,14 +403,22 @@ const cancelOrder = async (userId, time) => {
         );
         if (result) {
           increaseIngredientStock(data.menu);
-          throw new Error(
-            "Your time is up, your order is automaticly canceled"
-          );
+          // throw new Error(
+          //   "Your time is up, your order is automaticly canceled"
+          // );
+          console.log("Your time is up, your order is automaticly canceled");
+          return {
+            message: "Your time is up, your order is automaticly canceled"
+          };
         }
       }
     );
   } else {
-    throw new Error("Cant cancel your order");
+    // throw new Error("Cant cancel your order");
+    console.log("Cant cancel your order");
+    return {
+      message: "Your time is up, your order is automaticly canceled"
+    };
   }
 };
 
@@ -495,7 +503,7 @@ const getAllTransactions = async (
       },
       {
         $sort: {
-          order_date: -1
+          created_at: -1
         }
       }
     );
@@ -511,6 +519,11 @@ const getAllTransactions = async (
       },
       {
         $limit: limit
+      },
+      {
+        $sort: {
+          created_at: -1
+        }
       }
     );
   }
@@ -720,7 +733,7 @@ const getSuccessTransactions = async (parent, { pagination }, ctx) => {
       },
       {
         $sort: {
-          order_date: -1
+          created_at: -1
         }
       },
       {
@@ -749,7 +762,7 @@ const getSuccessTransactions = async (parent, { pagination }, ctx) => {
       },
       {
         $sort: {
-          order_date: -1
+          created_at: -1
         }
       },
       {
