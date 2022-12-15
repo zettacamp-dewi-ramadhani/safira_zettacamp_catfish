@@ -5,7 +5,6 @@ const User = require("../User/user.model");
 const moment = require("moment");
 const mongoose = require("mongoose");
 const cron = require("node-cron");
-const { verify } = require("jsonwebtoken");
 
 moment.locale("id-ID");
 
