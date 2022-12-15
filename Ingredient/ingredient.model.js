@@ -1,5 +1,5 @@
-const {db, mongoose} = require('../Controller/database');
-const moment = require('moment')
+const { db, mongoose } = require("../Middleware/database");
+const moment = require("moment");
 
 // create schema for database
 const ingredientSchema = new mongoose.Schema({
@@ -20,5 +20,5 @@ const ingredientSchema = new mongoose.Schema({
 });
 
 // create model from schema and database
-const Ingredient = mongoose.model('ingredients', ingredientSchema);
+const Ingredient = mongoose.model("ingredients", ingredientSchema);
 module.exports = Ingredient;
