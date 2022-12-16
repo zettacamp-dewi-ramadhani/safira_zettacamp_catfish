@@ -48,6 +48,7 @@ module.exports = {
     deleteMenu: authJwt,
     updateOrderStatus: authJwt,
     updateAmount: authJwt,
-    topUp: authJwt
+    topUp: authJwt,
+    cancelConfirmation: authJwt
   }
 };

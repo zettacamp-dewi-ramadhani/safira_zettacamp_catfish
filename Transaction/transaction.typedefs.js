@@ -12,6 +12,7 @@ const TransactionTypeDefs = gql`
     count: Int
     total_docs: Int
     sold: Int
+    confirm: Boolean
   }
 
   type Detail_Menu {
@@ -66,6 +67,10 @@ const TransactionTypeDefs = gql`
     id: ID
   }
 
+  input Cancel {
+    id: ID
+  }
+
   input UpdateAmount {
     id: ID
     amount: Int
@@ -94,6 +99,7 @@ const TransactionTypeDefs = gql`
     deleteMenu(input: DeleteMenu): Transactions
     updateOrderStatus: Transactions
     updateAmount(input: UpdateAmount): Transactions
+    cancelConfirmation(input: Cancel): Transactions
   }
 `;
 

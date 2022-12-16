@@ -377,13 +377,14 @@ const cancelOrder = async (userId, time) => {
   });
   if (data != null) {
     let hour;
-    let minute = time.getMinutes() + 5;
+    let minute = time.getMinutes() + 1;
     if (minute > 59) {
       hour = time.getHours() + 1;
       minute = minute - 59;
     } else {
       hour = "*";
     }
+
     cron.schedule(
       `${time.getSeconds()} ${minute} ${hour} * * * *`,
       async () => {
@@ -407,18 +408,12 @@ const cancelOrder = async (userId, time) => {
           //   "Your time is up, your order is automaticly canceled"
           // );
           console.log("Your time is up, your order is automaticly canceled");
-          return {
-            message: "Your time is up, your order is automaticly canceled"
-          };
         }
       }
     );
   } else {
     // throw new Error("Cant cancel your order");
     console.log("Cant cancel your order");
-    return {
-      message: "Your time is up, your order is automaticly canceled"
-    };
   }
 };
 
@@ -428,7 +423,13 @@ const getAllTransactions = async (
   ctx
 ) => {
   const userId = ctx.user[0]._id;
-  let aggregateQuery = [];
+  let aggregateQuery = [
+    {
+      $sort: {
+        created_at: -1
+      }
+    }
+  ];
   let matchQuerry = {
     $and: [
       {
@@ -498,13 +499,13 @@ const getAllTransactions = async (
 
   if (matchQuerry.$and.length) {
     aggregateQuery.push(
+      // {
+      //   $sort: {
+      //     created_at: -1
+      //   }
+      // },
       {
         $match: matchQuerry
-      },
-      {
-        $sort: {
-          created_at: -1
-        }
       }
     );
     let updateCount = await Transaction.aggregate(aggregateQuery);
@@ -514,16 +515,16 @@ const getAllTransactions = async (
   if (pagination) {
     const { limit, page } = pagination;
     aggregateQuery.push(
+      // {
+      //   $sort: {
+      //     created_at: -1
+      //   }
+      // },
       {
         $skip: page * limit
       },
       {
         $limit: limit
-      },
-      {
-        $sort: {
-          created_at: -1
-        }
       }
     );
   }
@@ -551,13 +552,15 @@ const getAllTransactions = async (
   return result;
 };
 
-const getOneTransactions = async (parent, { filter }) => {
+const getOneTransactions = async (parent, { filter }, ctx) => {
   if (!filter) {
     throw new Error("Nothing to find");
   } else {
+    const userId = ctx.user[0]._id;
     const { id } = filter;
     let result = await Transaction.findOne({
-      _id: id
+      _id: id,
+      user_id: userId
     });
     return result;
   }
@@ -805,6 +808,29 @@ const getSuccessTransactions = async (parent, { pagination }, ctx) => {
   return result;
 };
 
+const cancelConfirmation = async (parent, { input }, ctx) => {
+  const userId = ctx.user[0]._id;
+  if (!input) {
+    throw new Error("Can't confirm transaction");
+  } else {
+    const { id } = input;
+    const cancel = await Transaction.findOneAndUpdate(
+      {
+        _id: id,
+        user_id: userId,
+        order_status: "failed",
+        status: "active"
+      },
+      {
+        $set: {
+          confirm: true
+        }
+      }
+    );
+    return cancel;
+  }
+};
+
 const TransactionResolvers = {
   Query: {
     getAllTransactions,
@@ -818,7 +844,8 @@ const TransactionResolvers = {
     deleteTransaction,
     deleteMenu,
     updateOrderStatus,
-    updateAmount
+    updateAmount,
+    cancelConfirmation
   },
 
   Transactions: {

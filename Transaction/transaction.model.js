@@ -34,6 +34,10 @@ const transactionSchema = new mongoose.Schema({
     enum: ["active", "deleted"],
     default: "active"
   },
+  confirm: {
+    type: Boolean,
+    default: false
+  },
   created_at: {
     type: Date,
     default: Date.now()
