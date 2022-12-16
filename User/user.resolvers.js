@@ -346,14 +346,14 @@ const topUp = async (parent, { input }, ctx) => {
 
 const UserResolvers = {
   Query: {
-    getAllUsers,
+    // getAllUsers,
     getOneUser
   },
 
   Mutation: {
     signUp,
     login,
-    updateUser,
+    // updateUser,
     deleteUser,
     forgetPass,
     topUp

@@ -377,7 +377,7 @@ const cancelOrder = async (userId, time) => {
   });
   if (data != null) {
     let hour;
-    let minute = time.getMinutes() + 1;
+    let minute = time.getMinutes() + 5;
     if (minute > 59) {
       hour = time.getHours() + 1;
       minute = minute - 59;
@@ -426,7 +426,7 @@ const getAllTransactions = async (
   let aggregateQuery = [
     {
       $sort: {
-        created_at: -1
+        _id: -1
       }
     }
   ];
@@ -498,16 +498,9 @@ const getAllTransactions = async (
   let totalCount = await Transaction.count();
 
   if (matchQuerry.$and.length) {
-    aggregateQuery.push(
-      // {
-      //   $sort: {
-      //     created_at: -1
-      //   }
-      // },
-      {
-        $match: matchQuerry
-      }
-    );
+    aggregateQuery.push({
+      $match: matchQuerry
+    });
     let updateCount = await Transaction.aggregate(aggregateQuery);
     totalCount = updateCount.length;
   }
@@ -515,11 +508,6 @@ const getAllTransactions = async (
   if (pagination) {
     const { limit, page } = pagination;
     aggregateQuery.push(
-      // {
-      //   $sort: {
-      //     created_at: -1
-      //   }
-      // },
       {
         $skip: page * limit
       },

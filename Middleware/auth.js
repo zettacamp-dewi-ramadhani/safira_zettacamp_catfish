@@ -22,7 +22,7 @@ const authJwt = async (resolver, parent, args, ctx, info) => {
 // request an authorization
 module.exports = {
   Query: {
-    getAllUsers: authJwt,
+    // getAllUsers: authJwt,
     // getOneUser: authJwt,
     getAllIngredients: authJwt,
     getOneIngredient: authJwt,
@@ -35,7 +35,7 @@ module.exports = {
   },
 
   Mutation: {
-    updateUser: authJwt,
+    // updateUser: authJwt,
     deleteUser: authJwt,
     insertIngredient: authJwt,
     updateIngredient: authJwt,
