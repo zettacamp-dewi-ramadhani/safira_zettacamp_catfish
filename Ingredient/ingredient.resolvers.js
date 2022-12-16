@@ -16,8 +16,8 @@ const insertIngredient = async (parent, { input }) => {
       // the data already exist by name
       throw new Error("Ingredient has been include");
     } else {
-      if(stock<0){
-        throw new Error("Can't put stock below then 0")
+      if(stock<=0){
+        throw new Error("Can't put stock below than 0 or zero")
       }else{
         let data = new Ingredient({
           name: name,
