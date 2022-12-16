@@ -144,8 +144,8 @@ const updateIngredient = async (parent, { input }) => {
     throw new Error("Nothing to update");
   } else {
     const { id, newStock } = input;
-    if(newStock<0){
-      throw new Error("Can't put stock below then 0")
+    if(newStock<=0){
+      throw new Error("Can't put stock below then 0 or zero")
     }else{
       let data = await Ingredient.findByIdAndUpdate(
         {
